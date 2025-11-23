@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import Styles from './GlobalCard.module.css'
+import Styles from './AuthLayOut.module.css'
 
-export default function GlobalCard() {
+export default function AuthLayOut() {
 
     let [ Count , SetCount ] = useState()
 
@@ -9,7 +9,7 @@ export default function GlobalCard() {
     
       return (
     <div>
-      globalCard
+      authLayOut
     </div>
   )
 }
