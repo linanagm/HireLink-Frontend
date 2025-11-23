@@ -9,8 +9,9 @@ function App() {
   return (
     <>
     
-      <div>
-        <Home />
+      <div className="bg-red-400">
+        <i className='fa-brands fa-facebook'></i>
+        <Home  />
         <a href="https://vite.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
         </a>
