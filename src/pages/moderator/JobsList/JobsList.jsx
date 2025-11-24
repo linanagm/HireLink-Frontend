@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import Styles from './Profile.module.css'
+import Styles from './JobManaging.module.css'
 
-export default function Profile() {
+export default function JobsList() {
 
     let [ Count , SetCount ] = useState()
 
@@ -9,7 +9,7 @@ export default function Profile() {
     
       return (
     <div>
-      onboardingProfile
+      jobManaging
     </div>
   )
 }
