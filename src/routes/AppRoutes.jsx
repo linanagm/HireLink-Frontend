@@ -9,8 +9,15 @@ import JobPublicDetails from '../pages/public/JobPublicDetails/JobPublicDetails'
 import TalentList from '../pages/public/TalentList/TalentList'
 import TalentPublicDetails from '../pages/public/TalentPublicDetails/TalentPublicDetails'
 import NotFound from '../pages/public/NotFound/NotFound'
+
+//Auth Pages
+import Register from '../pages/Auth/Register/Register'
+import Login from '../pages/Auth/Login/Login'
+
 //layouts
 import MainLayOut from '../layouts/MainLayOut/MainLayOut'
+import AuthLayOut from '../layouts/AuthLayOut/AuthLayOut'
+
 
 
 
@@ -41,7 +48,16 @@ export default function AppRoutes() {
 },
 
   //2-auth routes
-  
+  { path: "/auth" , element: <AuthLayOut />, 
+    
+    children: [
+            //auth routes
+            { index: true ,   element: <authLayOut /> },
+            { path:"register" ,  element:<Register />},
+            { path:"login", element:<Login />},
+            
+  ]
+  },
   
   //3-talent routes
 
