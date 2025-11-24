@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { Helmet } from 'react-helmet'
 
 export default function Home() {
 
@@ -7,8 +8,14 @@ export default function Home() {
       useEffect (() => {}, [])
     
       return (
-    <div>
+    <>
+      <Helmet>
+        <title>Home</title>
+        <meta name="description" content="Helmet application" />
+    </Helmet>
+ 
+      
       home
-    </div>
-  )
+    </>
+      )
 }
