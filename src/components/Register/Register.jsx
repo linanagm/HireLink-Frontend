@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import Styles from './RegisterForm.module.css'
+import Styles from './Register.module.css'
 
-export default function RegisterForm() {
+export default function Register() {
 
     let [ Count , SetCount ] = useState()
 
