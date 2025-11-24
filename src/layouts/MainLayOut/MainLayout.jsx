@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import Styles from './Layout.module.css'
-import Navbar from '../Navbar/Navbar'
-import Footer from '../Footer/Footer'
+import Navbar from '../../components/Navbar/Navbar'
+import Footer from '../../components/Footer/Footer'
 import { Outlet } from 'react-router-dom'
 
 
-export default function LayOut() {
+export default function MainLayOut() {
 
     let [ Count , SetCount ] = useState()
 
