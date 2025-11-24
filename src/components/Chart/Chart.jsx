@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import Styles from './Home.module.css'
+import Styles from './Chart.module.css'
 
-export default function Home() {
+export default function Chart() {
 
     let [ Count , SetCount ] = useState()
 
@@ -9,7 +9,7 @@ export default function Home() {
     
       return (
     <div>
-      home
+      chart
     </div>
   )
 }

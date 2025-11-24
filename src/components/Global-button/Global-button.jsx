@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import Styles from './Home.module.css'
+import Styles from './GlobalButton.module.css'
 
-export default function Home() {
+export default function GlobalButton() {
 
     let [ Count , SetCount ] = useState()
 
@@ -9,7 +9,7 @@ export default function Home() {
     
       return (
     <div>
-      home
+      globalButton
     </div>
   )
 }
