@@ -1,0 +1,48 @@
+Backend endpoints:
+
+Prefix: v1/
+
+/auth/register
+/auth/login
+/auth/logout
+/auth/me
+/auth/refresh
+
+GET /talent/profile - Get talent profile (Talent only)
+PUT /talent/profile - Update talent profile (Talent only)
+POST /talent/profile/avatar - Upload avatar (Talent only)
+GET /talent/resume - Get resume (Talent only)
+PUT /talent/resume - Update resume (Talent only)
+POST /talent/resume/upload - Upload resume pdf (Talent only)
+GET /talent/recommendations/jobs - Get recommended jobs (Talent only)
+
+GET /employer/profile - Get employer profile (Employer only)
+PUT /employer/profile - Update employer profile (Employer only)
+POST /employer/logo - Upload company logo (Employer only)
+GET /employer/jobs - List employer's jobs (Employer only)
+POST /employer/jobs - Create new job (Employer only)
+GET /employer/jobs/:jobId - Get job details (Employer only)
+PUT /employer/jobs/:jobId - Update job (Employer only)
+DELETE /employer/jobs/:jobId - Delete job (Employer only)
+GET /employer/applications - List applications for employer's jobs (Employer only)
+GET /employer/applications/:applicationId - Get application details (Employer only)
+
+PATCH /employer/applications/:applicationId/status
+
+GET /jobs - List all active jobs (Public)
+GET /jobs/:jobId - Get job details (Public)
+GET /talent - List talent profiles (Public, limited info)
+GET /talent/:talentId - Get talent public profile (Public)
+
+GET /moderation/jobs - List jobs for moderation (Moderator only)
+PATCH /moderation/jobs/:jobId - Approve/reject job (Moderator only)
+GET /moderation/talent - List talent profiles for moderation (Moderator only)
+PATCH /moderation/talent/:talentId - Approve/suspend talent (Moderator only)
+GET /moderation/employers - List employers for moderation (Moderator only)
+PATCH /moderation/employers/:employerId - Approve/suspend employer (Moderator only)
+
+POST /applications - Submit job application (Talent only)
+GET /applications - List user's applications (Talent only)
+GET /applications/:applicationId - Get application details (Talent/Employer)
+DELETE /applications/:applicationId - Withdraw application (Talent only)
+
