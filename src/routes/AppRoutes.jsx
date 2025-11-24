@@ -1,26 +1,28 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 
 //Public Pages
-import Home from '../pages/public/Home/Home'
-import About from '../pages/public/About/About'
-import Contact from '../pages/public/Contact/Contact'
-import JobList from '../pages/public/JobList/JobList'
-import JobPublicDetails from '../pages/public/JobPublicDetails/JobPublicDetails'
-import TalentList from '../pages/public/TalentList/TalentList'
-import TalentPublicDetails from '../pages/public/TalentPublicDetails/TalentPublicDetails'
-import NotFound from '../pages/public/NotFound/NotFound'
+import Home from '../pages/Main/Home'
+import About from '../pages/Main/About'
+import Contact from '../pages/Main/Contact'
+import JobList from '../pages/Main/JobList'
+import JobPublicDetails from '../pages/Main/JobPublicDetails'
+import TalentList from '../pages/Main/TalentList'
+import TalentPublicDetails from '../pages/Main/TalentPublicDetails'
+import NotFound from '../pages/Main/NotFound'
 
 //Auth Pages
-import Register from '../pages/Auth/Register/Register'
-import Login from '../pages/Auth/Login/Login'
+import Register from '../pages/Auth/Register'
+import Login from '../pages/Auth/Login'
+
+//talent pages
+import TalentProfile from '../pages/talent/TalentProfile'
+import EditTalentProfile from '../pages/talent/EditTalentProfile'
+import FindJob from '../pages/talent/FindJob'
+import MyApplications from '../pages/talent/MyApplications'
 
 //layouts
-import MainLayOut from '../layouts/MainLayOut/MainLayOut'
-import AuthLayOut from '../layouts/AuthLayOut/AuthLayOut'
-
-
-
-
+import MainLayOut from '../components/layouts/MainLayout'
+import AuthLayOut from '../components/layouts/AuthLayOut'
 
 
 
@@ -52,7 +54,7 @@ export default function AppRoutes() {
     
     children: [
             //auth routes
-            { index: true ,   element: <authLayOut /> },
+            { index: true ,   element: <AuthLayOut /> },
             { path:"register" ,  element:<Register />},
             { path:"login", element:<Login />},
             
@@ -60,6 +62,15 @@ export default function AppRoutes() {
   },
   
   //3-talent routes
+  { path: "talent", element: <MainLayOut /> ,
+    
+    children: [
+      { path:"findjob" , element: <FindJob />}, //recommenditionjobs
+      { path: "profile" , element: <TalentProfile />},
+      { path: "profile/edit" , element: <EditTalentProfile />},
+      { path: "applications" , element: <MyApplications />},
+
+  ]},
 
   //4-emplyer routes
 
