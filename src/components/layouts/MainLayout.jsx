@@ -1,6 +1,6 @@
 import React , { useState, useEffect } from 'react'
-import Navbar from '../../components/Main/Navbar'
-import Footer from '../../components/Main/Footer'
+import Navbar from '../Main/Navbar'
+import Footer from '../Main/Footer'
 import { Outlet } from 'react-router-dom'
 
 

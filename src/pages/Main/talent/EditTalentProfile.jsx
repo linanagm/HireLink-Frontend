@@ -8,7 +8,7 @@ export default function EditTalentProfile() {
     
       return (
     <div>
-      talentProfile
+      EdittalentProfile
     </div>
   )
 }
