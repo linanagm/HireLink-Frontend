@@ -1,126 +1,123 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
-
+import React, { lazy, Suspense } from 'react'
 //Public Pages
-import Home from '../pages/Main/Home'
-import About from '../pages/Main/About'
-import Contact from '../pages/Main/Contact'
-import JobList from '../pages/Main/JobList'
-import JobPublicDetails from '../pages/Main/JobPublicDetails'
-import TalentList from '../pages/Main/TalentList'
-import TalentPublicDetails from '../pages/Main/TalentPublicDetails'
-import NotFound from '../pages/Main/NotFound'
+
+const Home = lazy (()=>import ('../pages/Main/Home'));
+const About = lazy (()=> import('../pages/Main/About'));
+const Contact = lazy(()=> import('../pages/Main/Contact'));
+const JobList = lazy (()=> import('../pages/Main/JobList'));
+const JobPublicDetails = lazy (()=> import('../pages/Main/JobPublicDetails'))
+const TalentList = lazy(()=> import ('../pages/Main/TalentList'));
+const TalentPublicDetails = lazy(()=>import('../pages/Main/TalentPublicDetails'));
+const NotFound = lazy(()=>import('../pages/Main/NotFound'))
 
 //Auth Pages
-import Register from '../pages/Auth/Register'
-import Login from '../pages/Auth/Login'
+const Register = lazy(()=>import('../pages/Auth/Register'));
+const Login = lazy(()=>import('../pages/Auth/Login'))
 
 //talent pages
-import TalentProfile from '../pages/Main/talent/TalentProfile'
-import EditTalentProfile from '../pages/Main/talent/EditTalentProfile'
-import ProfileAvatar from '../pages/Main/talent/ProfileAvatar'
-import FindJob from '../pages/Main/talent/FindJob'
-import MyApplications from '../pages/Main/talent/MyApplications'
-import ApplicationDetails from '../pages/Main/talent/ApplicationDetails'
-import EditApplication from '../pages/Main/talent/EditApplication'
-import JobProposal from '../pages/Main/talent/JobProposal'
-import TalentAccountSettings from '../pages/Main/talent/TalentAccountSettings'
+const TalentProfile = lazy(()=>import('../pages/Main/talent/TalentProfile'))
+const EditTalentProfile = lazy(()=>import('../pages/Main/talent/EditTalentProfile'))
+const ProfileAvatar = lazy(()=>import('../pages/Main/talent/ProfileAvatar'))
+const FindJob = lazy(()=>import('../pages/Main/talent/FindJob'))
+const MyApplications = lazy(()=>import('../pages/Main/talent/MyApplications'))
+const ApplicationDetails = lazy(()=>import('../pages/Main/talent/ApplicationDetails'))
+const EditApplication = lazy(()=>import('../pages/Main/talent/EditApplication'))
+const JobProposal = lazy(()=>import('../pages/Main/talent/JobProposal'))
+const TalentAccountSettings = lazy(()=>import('../pages/Main/talent/TalentAccountSettings'))
 
 //employer routes
-import EmployerProfile from '../pages/Main/employer/EmployerProfile'
-import EditProfile from '../pages/Main/employer/EditProfile'
-import PostAJob from '../pages/Main/employer/PostAJob'
-import JobsList from '../pages/Main/employer/JobsList'
-import JobDetails from '../pages/Main/employer/JobDetails'
-import MyApplicants from '../pages/Main/employer/MyApplicants'
-import SearchTalents from '../pages/Main/employer/SearchTalents'
-import EditJob from '../pages/Main/employer/EditJob'
-
+const EmployerProfile = lazy(()=>import('../pages/Main/Employer/EditProfile'))
+const EditProfile = lazy(()=>import('../pages/Main/employer/EditProfile'))
+const PostAJob = lazy(()=>import('../pages/Main/employer/PostAJob'))
+const JobsList = lazy(()=>import('../pages/Main/employer/JobsList'))
+const JobDetails = lazy(()=>import('../pages/Main/employer/JobDetails'))
+const MyApplicants = lazy(()=>import('../pages/Main/employer/MyApplicants'))  
+const SearchTalents = lazy(()=>import('../pages/Main/Employer/SearchTalents'))
+const EditJob = lazy(()=>import('../pages/Main/employer/EditJob'))
 
 //layouts
-import MainLayOut from '../components/Layouts/MainLayout'
-import AuthLayOut from '../components/Layouts/AuthLayout'
+const MainLayOut = lazy(()=>import('../components/Layouts/MainLayout'))
+const AuthLayOut = lazy(()=>import('../components/Layouts/AuthLayout'))
 
-
-
-
+// import MainLayOut from '../components/layouts/MainLayout';
+// import AuthLayOut from '../components/layouts/AuthLayout';
 
 /******************************************* Routes ******************************************/
 
 
 
 export default function AppRoutes() {
-  const routes = createBrowserRouter([
 
- 
-    
+  const routes = createBrowserRouter([
 
     //1-public routes
   { path: "/" ,
-    element: <MainLayOut /> , 
+    element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><MainLayOut /></Suspense> , 
     
     children: [
             //public routes
-            { index: true ,   element:  <Home /> },
-            { path:"about" ,  element:<About />},
-            { path:"contact", element:<Contact />},
+            { index: true ,   element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><Home /></Suspense>},
+            { path:"about" ,  element:<Suspense className='text-9xl' fallback={<h1>Loading</h1>}><About /></Suspense> },
+             { path:"contact", element:<Suspense className='text-9xl' fallback={<h1>Loading</h1>}><Contact /></Suspense>},
 
             //Public Jobs
-            { path:"jobs" , element:<JobList />},
-            { path:"jobs/:jobId" , element:<JobPublicDetails />},
+            { path:"jobs" , element:<Suspense className='text-9xl' fallback={<h1>Loading</h1>}><JobList /></Suspense>},
+            { path:"jobs/:jobId" , element:<Suspense className='text-9xl' fallback={<h1>Loading</h1>}><JobPublicDetails /></Suspense>},
             
             //Public Talents list
-            { path:"talents" , element:<TalentList />},
-            { path:"talents/:talentId" ,element:<TalentPublicDetails />}
+            { path:"talents" , element:<Suspense className='text-9xl' fallback={<h1>Loading</h1>}><TalentList /></Suspense>},
+            { path:"talents/:talentId" ,element:<Suspense className='text-9xl' fallback={<h1>Loading</h1>}><TalentPublicDetails /></Suspense>}
   ]
 },
 
 
   //2-auth routes
-  { path: "/auth" , element: <AuthLayOut />, 
+  { path: "/auth" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><AuthLayOut /></Suspense>, 
     children: [
             //auth routes
-            { index: true ,  element: <AuthLayOut />  },
-            { path:"register" ,  element:<Register />},
-            { path:"login", element:<Login />},
+            { index: true ,  element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><Register /></Suspense>  },
+            { path:"register" ,  element:<Suspense className='text-9xl' fallback={<h1>Loading</h1>}><Register /></Suspense>},
+            { path:"login", element:<Suspense className='text-9xl' fallback={<h1>Loading</h1>}><Login /></Suspense>},
             
   ]
   },
   
   //3-talent routes
-  { path: "talent", element: <MainLayOut /> ,
+  { path: "talent", element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><MainLayOut /></Suspense> ,
     children: [
-      { path: "findjob" , element: <FindJob />}, //recommenditionjobs
-      { path: "profile" , element: <TalentProfile />},
-      { path: "profile/edit" , element: <EditTalentProfile />},
-      { path: "profile/avatar" , element: <ProfileAvatar />},
+      { path: "findjob" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><FindJob /></Suspense>}, //recommenditionjobs
+      { path: "profile" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><TalentProfile /></Suspense>},
+      { path: "profile/edit" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><EditTalentProfile /></Suspense>},
+      { path: "profile/avatar" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><ProfileAvatar /></Suspense>},
 
-      { path: "applications" , element: <MyApplications />},
-      { path: "applications/:applicationId" , element: <ApplicationDetails />},
-      { path: "applications/:applicationId/edit" , element: <EditApplication />},
+      { path: "applications" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><MyApplications /></Suspense>},
+      { path: "applications/:applicationId" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><ApplicationDetails /></Suspense>},
+      { path: "applications/:applicationId/edit" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><EditApplication /></Suspense>},
      
-      { path: "jobs/:jobId/proposal" , element: <JobProposal />},
-      { path: "profile/settings" , element: <TalentAccountSettings />}
+      { path: "jobs/:jobId/proposal" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><JobProposal /></Suspense>},
+      { path: "profile/settings" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><TalentAccountSettings /></Suspense>}
 
   ]},
 
   //4-empolyer routes
-  { path: "employer", element: <MainLayOut /> ,
+  { path: "employer", element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><MainLayOut /></Suspense> ,
     children: [
-      { path : "profile" , element: <EmployerProfile />},
-      { path : "profile/edit" , element: <EditProfile />},
-      { path : "jobs" , element: <JobsList />},
-      { path : "jobs/new" , element: <PostAJob />},
-      { path : "jobs/:jobId" , element: <EditJob />},
-      { path : "jobs/:jobId/applicants" , element: <MyApplicants />},
-      { path : "jobs/:jobId/applicants/search" , element: <SearchTalents />},
-      { path : "jobs/:jobId" , element: <JobDetails />},
+      { path : "profile" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><EmployerProfile /></Suspense>},
+      { path : "profile/edit" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><EditProfile /></Suspense>},
+      { path : "jobs" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><JobsList /></Suspense>},
+      { path : "jobs/new" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><PostAJob /></Suspense>},
+      { path : "jobs/:jobId" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><EditJob /></Suspense>},
+      { path : "jobs/:jobId/applicants" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><MyApplicants /></Suspense>},
+      { path : "jobs/:jobId/applicants/search" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><SearchTalents /></Suspense>},
+      { path : "jobs/:jobId" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><JobDetails /></Suspense>},
 
       
     ]},
 
 
   //Not Found route
-  { path: "*" , element: <NotFound />}
+  { path: "*" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><NotFound /></Suspense>}
 
 ]);
 
@@ -130,6 +127,6 @@ export default function AppRoutes() {
         </>
     
     
-}
+};
 
 
