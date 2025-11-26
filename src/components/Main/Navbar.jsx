@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from 'react'
+import { NavLink } from 'react-router-dom'
 
 export default function Navbar() {
 
-    let [ Count , SetCount ] = useState()
+    let [ count , setCount ] = useState(0)
 
       useEffect (() => {}, [])
     
-      return (
-    <div>
-      navbar
-    </div>
-  )
+      return<> Navbar</>  
 }
