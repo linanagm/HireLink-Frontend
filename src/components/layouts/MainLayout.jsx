@@ -15,13 +15,9 @@ export default function MainLayOut() {
       <NavbarComponent/>
 
         <div className='container mx-auto py-4 '>
-          
                 <Outlet/>
-    
         </div>
-        
-        
-     
+      
     
       <Footer/>
     </div>

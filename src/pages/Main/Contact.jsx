@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { Helmet } from 'react-helmet'
 
 export default function Contact() {
 
@@ -8,6 +9,11 @@ export default function Contact() {
     
       return (
     <div>
+      <Helmet>
+        <title>Contact Us</title>
+        <meta name="description" content="Helmet application" />
+    </Helmet>
+ 
       contact
     </div>
   )
