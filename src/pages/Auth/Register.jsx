@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import RegisterForm from '../../components/Main/RegisterForm'
 
 export default function Register() {
 
@@ -8,7 +9,7 @@ export default function Register() {
     
       return (
     <div>
-      registerForm
+      <RegisterForm />
     </div>
   )
 }

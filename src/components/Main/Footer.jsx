@@ -6,9 +6,11 @@ export default function Footer() {
 
       useEffect (() => {}, [])
     
-      return (
-    <div>
-      footer
-    </div>
-  )
+      return <>
+      
+      
+      Footer
+      
+      </>
+  
 }

@@ -1,7 +1,7 @@
 import React , { useState, useEffect } from 'react'
-import Navbar from '../Main/Navbar'
 import Footer from '../Main/Footer'
 import { Outlet } from 'react-router-dom'
+import NavbarComponent from '../Main/Navbar'
 
 
 export default function MainLayOut() {
@@ -12,10 +12,15 @@ export default function MainLayOut() {
     
       return (
     <div>
-      <Navbar/>
+      <NavbarComponent/>
 
-
-        <Outlet/>
+        <div className='container mx-auto py-4 '>
+          
+                <Outlet/>
+    
+        </div>
+        
+        
      
     
       <Footer/>

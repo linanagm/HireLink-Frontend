@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react'
+import RegisterForm from '../../components/Main/RegisterForm'
 
-
-export default function Home() {
+export default function Register() {
 
     let [ Count , SetCount ] = useState(0)
 
       useEffect (() => {}, [])
     
       return (
-    <div className='container'>
-      HOME
-      
-      
-
+    <div>
+      contact
+      <RegisterForm />
     </div>
   )
 }

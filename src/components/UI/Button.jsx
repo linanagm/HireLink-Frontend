@@ -8,7 +8,9 @@ export default function GlobalButton() {
     
       return (
     <div>
-      globalButton
+      <button class="bg-sky-500 hover:bg-sky-700 ...">Save changes</button>
+
+      
     </div>
   )
 }

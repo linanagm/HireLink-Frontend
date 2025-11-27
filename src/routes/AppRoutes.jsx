@@ -61,6 +61,7 @@ export default function AppRoutes() {
     children: [
             //public routes
             { index: true ,   element:  <Home /> },
+            { path:"home" ,  element:<Home />},
             { path:"about" ,  element:<About />},
             { path:"contact", element:<Contact />},
 
@@ -79,7 +80,7 @@ export default function AppRoutes() {
   { path: "/auth" , element: <AuthLayOut />, 
     children: [
             //auth routes
-            { index: true ,  element: <AuthLayOut />  },
+            { index: true ,  element: <Register />  },
             { path:"register" ,  element:<Register />},
             { path:"login", element:<Login />},
             
