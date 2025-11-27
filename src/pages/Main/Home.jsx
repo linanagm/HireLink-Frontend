@@ -1,21 +1,19 @@
 import React, { useState, useEffect } from 'react'
-import { Helmet } from 'react-helmet'
+//import { Helmet } from 'react-helmet'
+
 
 export default function Home() {
 
-    let [ Count , SetCount ] = useState()
+    let [ Count , SetCount ] = useState(0)
 
       useEffect (() => {}, [])
     
       return (
-    <>
-      <Helmet>
-        <title>Home</title>
-        <meta name="description" content="Helmet application" />
-    </Helmet>
- 
+    <div className='container'>
+      HOME
       
-      home
-    </>
-      )
+      
+
+    </div>
+  )
 }

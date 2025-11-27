@@ -15,6 +15,7 @@
     "@fortawesome/fontawesome-free": "^7.1.0",
     "@mui/material": "^7.3.5",
     "axios": "^1.13.2",
+    "flowbite-react": "^0.12.10",
     "generate-react-cli": "^9.1.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
@@ -24,6 +25,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.3.7",
     "@eslint/js": "^9.36.0",
+    "@tailwindcss/vite": "^4.1.17",
     "@types/react": "^19.1.16",
     "@types/react-dom": "^19.1.9",
     "@vitejs/plugin-react": "^5.0.4",

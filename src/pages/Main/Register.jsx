@@ -3,12 +3,13 @@ import RegisterForm from '../../components/Main/RegisterForm'
 
 export default function Register() {
 
-    let [ Count , SetCount ] = useState()
+    let [ Count , SetCount ] = useState(0)
 
       useEffect (() => {}, [])
     
       return (
     <div>
+      contact
       <RegisterForm />
     </div>
   )

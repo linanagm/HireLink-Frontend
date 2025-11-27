@@ -1,3 +1,111 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+/* @import "tailwindcss"; */
+@plugin "flowbite-react/plugin/tailwindcss";
+@source "../.flowbite-react/class-list.json";
+
+
+
+/* --------------------------------------------------------------------- Global css style ---------------------------------------------------------- */
+
+/* index.css */
+/********** root theme variables (Global colors) *************/
+:root {
+  --color-primary: #8D1AA8;      
+  --color-secondary: #CF85E4;    
+  --color-accent: #FD819D;       
+  --color-bg: #f1f5f9;           
+  --color-text: #1f2937;         
+  --color-text-secondary: #525253;
+  --color-text-shadow: #CCCCCC;
+  --color-white: #ffffff;
+}
+
+/********************* Global Reset   ************************/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: "Inter" , sans-serif;
+}
+
+/* global links */
+a {
+    color: var(--color-primary);
+}
+
+a:hover {
+    color: var(--color-secondary);
+}
+
+
+/*************************  Buttons ****************************/
+
+/* Solid Button */
+.my-btn-solid {
+    background-color: var(--color-primary);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight:500;
+    transition: background-color 0.25s ease
+}
+
+.my-btn-solid:hover {
+    background-color: var(--color-secondary);
+    color: var(--color-text)
+}
+
+
+/*  Outline Button */
+.my-btn-outline {
+    background-color: transparent;
+    color: var(--color-primary);
+    border: 2px solid var(--color-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    transition: all 0.25s ease;
+}
+
+.my-btn-outline:hover {
+    
+  background-color: var(--color-primary);
+  color: white;
+
+}
+
+/* Disabled Button */
+.my-btn-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/****************************** Card  ********************************/
+.my-card {
+    background-color: var(--color-white);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+/***************************** Titles ************************* */
+.title-main {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+.subtitle {
+    font-size: 1.125rem;
+    color: var(--color-text-secondary);
+}
+

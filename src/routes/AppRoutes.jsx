@@ -27,7 +27,7 @@ const JobProposal = lazy(()=>import('../pages/Main/talent/JobProposal'))
 const TalentAccountSettings = lazy(()=>import('../pages/Main/talent/TalentAccountSettings'))
 
 //employer routes
-const EmployerProfile = lazy(()=>import('../pages/Main/Employer/EditProfile'))
+const EmployerProfile = lazy(()=>import('../pages/Main/employer/EmployerProfile'))
 const EditProfile = lazy(()=>import('../pages/Main/employer/EditProfile'))
 const PostAJob = lazy(()=>import('../pages/Main/employer/PostAJob'))
 const JobsList = lazy(()=>import('../pages/Main/employer/JobsList'))
@@ -40,8 +40,6 @@ const EditJob = lazy(()=>import('../pages/Main/employer/EditJob'))
 const MainLayOut = lazy(()=>import('../components/Layouts/MainLayout'))
 const AuthLayOut = lazy(()=>import('../components/Layouts/AuthLayout'))
 
-// import MainLayOut from '../components/layouts/MainLayout';
-// import AuthLayOut from '../components/layouts/AuthLayout';
 
 /******************************************* Routes ******************************************/
 
@@ -57,9 +55,10 @@ export default function AppRoutes() {
     
     children: [
             //public routes
-            { index: true ,   element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><Home /></Suspense>},
-            { path:"about" ,  element:<Suspense className='text-9xl' fallback={<h1>Loading</h1>}><About /></Suspense> },
-             { path:"contact", element:<Suspense className='text-9xl' fallback={<h1>Loading</h1>}><Contact /></Suspense>},
+            { index: true ,   element:  <Home /> },
+            { path:"home" ,  element:<Home />},
+            { path:"about" ,  element:<About />},
+            { path:"contact", element:<Contact />},
 
             //Public Jobs
             { path:"jobs" , element:<Suspense className='text-9xl' fallback={<h1>Loading</h1>}><JobList /></Suspense>},
@@ -76,9 +75,9 @@ export default function AppRoutes() {
   { path: "/auth" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><AuthLayOut /></Suspense>, 
     children: [
             //auth routes
-            { index: true ,  element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><Register /></Suspense>  },
-            { path:"register" ,  element:<Suspense className='text-9xl' fallback={<h1>Loading</h1>}><Register /></Suspense>},
-            { path:"login", element:<Suspense className='text-9xl' fallback={<h1>Loading</h1>}><Login /></Suspense>},
+            { index: true ,  element: <Register />  },
+            { path:"register" ,  element:<Register />},
+            { path:"login", element:<Login />},
             
   ]
   },
