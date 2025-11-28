@@ -38,9 +38,9 @@ body {
 }
 
 /* global links */
-/* a {
-    color: var(--color-primary);
-} */
+a {
+    color: var(--color-white);
+}
 
 a:hover {
     color: var(--color-text-shadow);

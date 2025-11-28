@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import footerBanner from '../../assets/images/footer.svg'
 import whiteLogo from '../../assets/images/H-white.svg'
 import { NavLink } from 'react-router-dom'
+
+
 export default function Footer() {
 
     let [ Count , SetCount ] = useState()
@@ -9,8 +11,8 @@ export default function Footer() {
       useEffect (() => {}, [])
     
       return <>
-
-    <footer class=" fixed bottom-0 right-0 left-0  h-60 items-center justify-center  ">
+      
+    <footer class=" fixed bottom-0 right-0 left-0  h-60 items-center justify-center text-white ">
 
         <img src={footerBanner} className="h-full w-full absolute inset-0 object-cover " alt="footer background" />
         <div className='h-full w-full absolute inset-0 object-cover bg-black opacity-20'></div>
@@ -112,6 +114,7 @@ export default function Footer() {
         </div>
 
     </footer>
-</>
+
+      </>
   
 }
