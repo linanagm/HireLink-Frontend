@@ -1,12 +1,24 @@
-import { Button } from 'flowbite-react'
 import React, { useState, useEffect } from 'react'
 import signupImage from '../../assets/images/signup.svg'
-import { NavLink } from 'react-router-dom'
-
+import { useFormik } from 'formik';
+//import { handleRegister } from '../../hooks/useForm';
 export default function RegisterForm() {
+  function handleRegister (formValues){ return console.log(formValues) }
 
-    let [ activeTab , SetActiveTab ] = useState('talent')
-    // username
+    let [ activeTab , SetActiveTab ] = useState('talent');
+  
+    
+    let formik = useFormik({
+        initialValues: {
+          name: '',
+          email: '',
+          password: '',
+          rePassword: '',
+        },
+        onSubmit: handleRegister
+    })
+
+    //username
     const nameLabel = activeTab === 'talent' ? 'Username' : 'Company Name';
     const namePlaceholder = activeTab === 'talent' ? 'Enter your name' : 'Enter your company name';
 
@@ -30,8 +42,8 @@ export default function RegisterForm() {
                   <h2 className='text-3xl font-semi-bold text-heading pb-2'>Sign Up</h2>
                                 
                                 {/************* tabs ******************** */}
-                  <div class="text-sm font-medium text-center text-body border-b border-default ">
-                    <ul class="flex flex-wrap -mb-px">
+                  <div className="text-sm font-medium text-center text-body border-b border-default ">
+                    <ul className="flex flex-wrap -mb-px">
 
                         <li className="me-2">
                             <button 
@@ -66,7 +78,7 @@ export default function RegisterForm() {
 
                                    {/* ***************** inputs ****************** */}
 
-                  <form className= " font-sans pt-2">
+                  <form onSubmit={formik.handleSubmit} className= " font-sans pt-2">
                     
                     <div className="mb-5 transition-all duration-300">
                       
@@ -74,7 +86,10 @@ export default function RegisterForm() {
                       
                       <input 
                       type="text" 
-                      name="username" 
+                      value={formik.values.name}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      name="name" 
                       id="username" 
                       className="bg-neutral-secondary-medium border border-default-medium text-heading text-sm  rounded border-slate-300 focus:ring-brand transition  focus:border-brand block w-full px-3 py-3 shadow-xs placeholder:text-body" 
                       placeholder={namePlaceholder} 
@@ -84,21 +99,52 @@ export default function RegisterForm() {
 
                     <div className="mb-5 transition-all duration=300">
                       <label htmlFor="email" className="block mb-2.5 text-sm font-medium  text-heading">{emailLabel}</label>
-                      <input type="email" name="email" id="email" className="bg-neutral-secondary-medium border border-default-medium text-heading text-sm  rounded border-slate-300 focus:ring-brand transition  focus:border-brand block w-full px-3 py-3 shadow-xs placeholder:text-body" placeholder={emailPlaceholder}  />
+                      <input 
+                      type="email" 
+                      value={formik.values.email}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      name="email" 
+                      id="useremail" 
+                      className="bg-neutral-secondary-medium border border-default-medium text-heading text-sm  rounded border-slate-300 focus:ring-brand transition  focus:border-brand block w-full px-3 py-3 shadow-xs placeholder:text-body" 
+                      placeholder={emailPlaceholder} 
+                       />
                     </div>
                     
                     <div className="mb-5">
                       <label htmlFor="password" class="block mb-2.5 text-sm font-medium text-heading">Your password</label>
-                      <input type="password" name="password" id="password" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded border-slate-300 focus:ring-brand transition focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="••••••••"  />
+                      <input 
+                      type="password"
+                      value={formik.values.password} 
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      name="password" 
+                      id="userpassword" 
+                      className="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded border-slate-300 focus:ring-brand transition focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" 
+                      placeholder="••••••••"  
+                      />
                   </div>
 
                   <div className="mb-5">
                       <label htmlFor="password"  class="block mb-2.5 text-sm font-medium text-heading">Confirm Password</label>
-                      <input type="password" name="password" id="password" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded border-slate-300 focus:ring-brand transition focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="••••••••" required />
+                      <input 
+                      type="password" 
+                      value={formik.values.rePassword}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      name="rePassword" 
+                      id="userrePassword" 
+                      className="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded border-slate-300 focus:ring-brand transition focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" 
+                      placeholder="••••••••" 
+                      />
                   </div>
 
                     {/********************* button ************************/}
-                    <button type="submit" className="bg-fuchsia-700  w-full hover:bg-fuchsia-800 text-white box-border border rounded hover:bg-brand-medium focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">Submit</button>
+                    <button 
+                    type="submit" 
+                    className="bg-fuchsia-700  w-full hover:bg-fuchsia-800 text-white box-border border rounded hover:bg-brand-medium focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
+                      Submit
+                    </button>
                   
                   </form>
               </div>
