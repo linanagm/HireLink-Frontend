@@ -5,8 +5,16 @@ import { NavLink } from 'react-router-dom'
 
 export default function RegisterForm() {
 
-    let [ Count , SetCount ] = useState(0)
+    let [ activeTab , SetActiveTab ] = useState('talent')
+    // username
+    const nameLabel = activeTab === 'talent' ? 'Username' : 'Company Name';
+    const namePlaceholder = activeTab === 'talent' ? 'Enter your name' : 'Enter your company name';
 
+    // email
+    const emailLabel = activeTab === 'talent' ? 'Email' : 'Company Email';
+    const emailPlaceholder = activeTab === 'talent' ? 'Enter your email' : 'Enter your company email';  
+     
+    
       useEffect (() => {}, [])
     
       return (<>
@@ -26,37 +34,67 @@ export default function RegisterForm() {
                     <ul class="flex flex-wrap -mb-px">
 
                         <li className="me-2">
-                            <NavLink to={"#talentForm"} className="inline-block p-4 border-b border-transparent rounded-t-base text-gray-900 font-thin hover:text-fuchsia-800 hover:border-fuchsia-800">Talent</NavLink>
+                            <button 
+                              onClick={() => SetActiveTab('talent')}
+                              className={`inline-block p-4  rounded-t-base font-thin transition-colors duration-300 
+                                ${
+                                  activeTab === 'talent'
+                                  ? 'text-fuchsia-800 border-b-2 border-fuchsia-800'
+                                  : ' text-gray-900 border-b border-transparent hover:text-fuchsia-800 hover:border-fuchsia-800 '
+                                }`}
+                              >
+                              Talent
+                            </button>
                         </li>
                       
                         <li class="me-2">
-                            <NavLink to={"#employerForm"} class="inline-block p-4 border-b border-transparent rounded-t-base text-gray-900 font-thin hover:text-fuchsia-800   hover:border-fuchsia-800 " aria-current="page">Employer</NavLink>
+                            <button 
+                              onClick={() => SetActiveTab("employer")} 
+                              className={`inline-block p-4 rounded-t-base 
+                                 ${
+                                  activeTab === 'employer'
+                                  ? 'text-fuchsia-800 border-b-2 border-fuchsia-800'
+                                  : ' text-gray-900 border-b border-transparent hover:text-fuchsia-800 hover:border-fuchsia-800 '
+                                }`} 
+                              aria-current="page"
+                              >
+                                Employer
+                            </button>
                         </li>
                     </ul>
                   </div>
 
                                    {/* ***************** inputs ****************** */}
 
-                  <form className= " font-sans">
+                  <form className= " font-sans pt-2">
                     
-                    <div className="mb-5">
-                      <label htmlFor="username" className="block mb-2.5 text-sm font-medium  text-heading">Username</label>
-                      <input type="email" id="email" className="bg-neutral-secondary-medium border border-default-medium text-heading text-sm  rounded border-slate-300 focus:ring-brand transition  focus:border-brand block w-full px-3 py-3 shadow-xs placeholder:text-body" placeholder="Username"  />
+                    <div className="mb-5 transition-all duration-300">
+                      
+                      <label htmlFor="username" className="block mb-2.5 text-sm font-medium  text-heading">{nameLabel}</label>
+                      
+                      <input 
+                      type="text" 
+                      name="username" 
+                      id="username" 
+                      className="bg-neutral-secondary-medium border border-default-medium text-heading text-sm  rounded border-slate-300 focus:ring-brand transition  focus:border-brand block w-full px-3 py-3 shadow-xs placeholder:text-body" 
+                      placeholder={namePlaceholder} 
+                       />
+
                     </div>
 
-                    <div className="mb-5">
-                      <label htmlFor="email" className="block mb-2.5 text-sm font-medium  text-heading">Email</label>
-                      <input type="email" id="email" className="bg-neutral-secondary-medium border border-default-medium text-heading text-sm  rounded border-slate-300 focus:ring-brand transition  focus:border-brand block w-full px-3 py-3 shadow-xs placeholder:text-body" placeholder="Username@email.com"  />
+                    <div className="mb-5 transition-all duration=300">
+                      <label htmlFor="email" className="block mb-2.5 text-sm font-medium  text-heading">{emailLabel}</label>
+                      <input type="email" name="email" id="email" className="bg-neutral-secondary-medium border border-default-medium text-heading text-sm  rounded border-slate-300 focus:ring-brand transition  focus:border-brand block w-full px-3 py-3 shadow-xs placeholder:text-body" placeholder={emailPlaceholder}  />
                     </div>
                     
                     <div className="mb-5">
                       <label htmlFor="password" class="block mb-2.5 text-sm font-medium text-heading">Your password</label>
-                      <input type="password" id="password" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded border-slate-300 focus:ring-brand transition focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="••••••••"  />
+                      <input type="password" name="password" id="password" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded border-slate-300 focus:ring-brand transition focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="••••••••"  />
                   </div>
 
                   <div className="mb-5">
-                      <label htmlFor="password" class="block mb-2.5 text-sm font-medium text-heading">Confirm Password</label>
-                      <input type="confirm-password" id="password" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded border-slate-300 focus:ring-brand transition focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="••••••••" required />
+                      <label htmlFor="password"  class="block mb-2.5 text-sm font-medium text-heading">Confirm Password</label>
+                      <input type="password" name="password" id="password" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded border-slate-300 focus:ring-brand transition focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="••••••••" required />
                   </div>
 
                     {/********************* button ************************/}
