@@ -37,7 +37,7 @@ const SearchTalents = lazy(()=>import('../pages/Main/Employer/SearchTalents'))
 const EditJob = lazy(()=>import('../pages/Main/employer/EditJob'))
 
 //layouts
-const MainLayOut = lazy(()=>import('../components/Layouts/MainLayout'))
+const MainLayOut = lazy(()=>import('../components/layouts/MainLayout'))
 const AuthLayOut = lazy(()=>import('../components/Layouts/AuthLayout'))
 
 
