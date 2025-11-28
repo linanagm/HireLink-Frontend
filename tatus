@@ -1,0 +1,24 @@
+[33m79bdd1b[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/development[m[33m, [m[1;31morigin/HEAD[m[33m)[m Merge pull request #24 from linanagm/feature-basic-navbar-lina
+[33m3e3c66d[m fix: resolve merge conflicts in navbar, layouts, home, approutes
+[33m7ee118f[m feat(ui): implement basic navbar and global styles in index.css
+[33md082823[m Merge pull request #23 from linanagm/feature-helmet-react-lina
+[33m2c5f003[m feat(helmet): Install helmet-react.
+[33m049bc60[m feat(lazyload): Add lazy load in AppRoutes.jsx.
+[33m3138f3f[m Merge pull request #21 from linanagm/feature-routes-lina
+[33m1704a08[m Merge pull request #20 from linanagm/feature-folder-structure-reset-lina
+[33m4615dff[m Merge pull request #19 from linanagm/feature-auth-routes-lina
+[33m8798395[m Merge pull request #18 from linanagm/feature-public-routes-config-lina
+[33m2686042[m feat(routes): navigate routes
+[33m92be1d4[m feat(folderstructure): Reorganise folders
+[33m96222b2[m feat(routes): add auth routes (Register , Login).
+[33mad1abca[m feat(routes): add public routes (Home, About, Contact, JobList, JobPublicDetails, TalentList, TalentPublicDetails)
+[33m0c00eab[m Merge pull request #17 from linanagm/feature-add-pages-lina
+[33m6e9408a[m Merge pull request #15 from linanagm/feature-migrate-to-blome-json-lina
+[33m473910c[m Merge pull request #14 from linanagm/feature-packages-install
+[33m38cad1a[m Merge pull request #13 from linanagm/feature-add-components-folders
+[33m8b88ea9[m Merge pull request #12 from linanagm/feature-react-generate-cli-lina
+[33mb95c2ca[m feat(folders): Add pages - utils - hooks -routes folders
+[33m67beb58[m feat(blome-json): Add blome.json & migrate from Eslint to Blome.json.
+[33mcdf6e94[m feat(pkgs): Add needed packages
+[33m7ac4cd3[m feat(components): add components folders
+[33mdbaa7eb[m feat(cli): add react-generate-cli setup and component template
