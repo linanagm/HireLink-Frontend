@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Helmet } from 'react-helmet'
 
+
 export default function About() {
 
     let [ Count , SetCount ] = useState()
@@ -10,11 +11,14 @@ export default function About() {
       return (
     <div>
       <Helmet>
-        <title>Aboutt</title>
+        <title>About</title>
         <meta name="description" content="Helmet application" />
     </Helmet>
+    <div className='h-lvh w-full'>
+          About
+    </div>
  
-      about
+      
     </div>
   )
 }

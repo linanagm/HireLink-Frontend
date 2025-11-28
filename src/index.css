@@ -110,12 +110,12 @@ a:hover {
 }
 
 /******************************* active navlink ****************************/
-
+/* 
 .active {
     font-weight: 700;
-    /* padding-bottom: 2px; */
-    color: var(--color-primary)
+     padding-bottom: 2px; 
+    color: var(--color-primary) 
     
-    
-}
+     
+}*/
 

@@ -112,7 +112,7 @@ export default function RegisterForm() {
                     </div>
                     
                     <div className="mb-5">
-                      <label htmlFor="password" class="block mb-2.5 text-sm font-medium text-heading">Your password</label>
+                      <label htmlFor="password" className="block mb-2.5 text-sm font-medium text-heading">Your password</label>
                       <input 
                       type="password"
                       value={formik.values.password} 
@@ -126,7 +126,7 @@ export default function RegisterForm() {
                   </div>
 
                   <div className="mb-5">
-                      <label htmlFor="password"  class="block mb-2.5 text-sm font-medium text-heading">Confirm Password</label>
+                      <label htmlFor="password"  className="block mb-2.5 text-sm font-medium text-heading">Confirm Password</label>
                       <input 
                       type="password" 
                       value={formik.values.rePassword}

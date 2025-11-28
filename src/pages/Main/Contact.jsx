@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet'
 
 export default function Contact() {
 
-    let [ Count , SetCount ] = useState()
+    let [ Count , SetCount ] = useState(0)
 
       useEffect (() => {}, [])
     
@@ -13,8 +13,10 @@ export default function Contact() {
         <title>Contact Us</title>
         <meta name="description" content="Helmet application" />
     </Helmet>
- 
-      contact
+        <div className='h-lvh w-full'>
+          Contacr Us
+        </div>
+      
     </div>
   )
 }
