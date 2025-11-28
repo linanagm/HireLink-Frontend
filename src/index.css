@@ -32,18 +32,18 @@
 }
 
 body {
-    background-color: var(--color-bg);
+    background-color: var(--color-white);
     color: var(--color-text);
     font-family: "Inter" , sans-serif;
 }
 
 /* global links */
 a {
-    color: var(--color-primary);
+    color: var(--color-white);
 }
 
 a:hover {
-    color: var(--color-secondary);
+    color: var(--color-text-shadow);
 }
 
 
@@ -107,5 +107,15 @@ a:hover {
 .subtitle {
     font-size: 1.125rem;
     color: var(--color-text-secondary);
+}
+
+/******************************* active navlink ****************************/
+
+.active {
+    font-weight: 700;
+    /* padding-bottom: 2px; */
+    color: var(--color-primary)
+    
+    
 }
 
