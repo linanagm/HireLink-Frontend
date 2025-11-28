@@ -56,7 +56,7 @@ export default function AppRoutes() {
     children: [
             //public routes
             { index: true ,   element:  <Home /> },
-            { path:"home" ,  element:<Home />},
+            
             { path:"about" ,  element:<About />},
             { path:"contact", element:<Contact />},
 
@@ -72,11 +72,11 @@ export default function AppRoutes() {
 
 
   //2-auth routes
-  { path: "/auth" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><AuthLayOut /></Suspense>, 
+  { path: "/" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><AuthLayOut /></Suspense>, 
     children: [
             //auth routes
             { index: true ,  element: <Register />  },
-            { path:"register" ,  element:<Register />},
+            { path:"register", element:<Register />},
             { path:"login", element:<Login />},
             
   ]

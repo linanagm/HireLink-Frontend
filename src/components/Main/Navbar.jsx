@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import logo from '../../assets/images/HL.svg'
-import { NavbarLink } from 'flowbite-react'
 import { NavLink } from 'react-router-dom'
 
 
@@ -14,7 +13,7 @@ export default function NavbarComponent() {
 
     
 
-<nav className="bg-neutral-primary static w-full z-20 top-0 start-0 border-b border-default mx-auto p-4 justify-center items-center">
+<NavLink className="bg-neutral-primary static w-full z-20 top-0 start-0 border-b border-default mx-auto p-4 justify-center items-center">
 
   <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto px-4 ">
   
@@ -65,14 +64,14 @@ export default function NavbarComponent() {
           <ul className='flex flex-col lg:flex-row gap-2 item-center'>
           
           <li>
-            <NavLink to='auth/login' className='my-btn-outline box-border border border-col  focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none'>Login
+            <NavLink to={'login'} className='my-btn-outline box-border border border-col  focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none'>Login
                 {/* <button  type="button" className=" my-btn-outline bg-brand box-border border border-col hover:bg-var rounded focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">Login</button> */}
             </NavLink>
             
           </li>
       
           <li>
-            <NavLink to='auth/register' className='my-btn-solid  focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none'> Sign up
+            <NavLink to={'register'} className='my-btn-solid  focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none'> Sign up
                 {/* <button type="button" className=" btn-solid hover:text-black rounded focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">Signup</button>             */}
             </NavLink>
             
@@ -86,7 +85,7 @@ export default function NavbarComponent() {
       
   </div>
 
-</nav>
+</NavLink>
 
     
   )
