@@ -113,6 +113,9 @@ a:hover {
 
 .active {
     font-weight: 700;
-    padding-bottom: 2px;
+    /* padding-bottom: 2px; */
+    color: var(--color-primary)
+    
     
 }
+
