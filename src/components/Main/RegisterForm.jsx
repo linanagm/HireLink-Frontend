@@ -1,14 +1,23 @@
-import React, { useState, useEffect } from 'react'
-import signupImage from '../../assets/images/signup.svg'
+import React, {  useEffect } from 'react'
 import { useFormik } from 'formik';
 //import { handleRegister } from '../../hooks/useForm';
-export default function RegisterForm() {
-  function handleRegister (formValues){ return console.log(formValues) }
 
-    let [ activeTab , SetActiveTab ] = useState('talent');
+
+export default function RegisterForm({ role }) {
+      
+      useEffect (() => {}, [])
+
+      function handleRegister (formValues){ console.log('form Value: ', formValues, userData) } 
+      //username
+      const nameLabel = role === 'talent' ? 'Username' : 'Company Name';
+      const namePlaceholder = role === 'talent' ? 'Enter your name' : 'Enter your company name';
   
-    
-    let formik = useFormik({
+      // email
+      const emailLabel = role === 'talent' ? 'Email' : 'Company Email';
+      const emailPlaceholder = role === 'talent' ? 'Enter your email' : 'Enter your company email';  
+        
+  
+  let formik = useFormik({
         initialValues: {
           name: '',
           email: '',
@@ -18,65 +27,16 @@ export default function RegisterForm() {
         onSubmit: handleRegister
     })
 
-    //username
-    const nameLabel = activeTab === 'talent' ? 'Username' : 'Company Name';
-    const namePlaceholder = activeTab === 'talent' ? 'Enter your name' : 'Enter your company name';
 
-    // email
-    const emailLabel = activeTab === 'talent' ? 'Email' : 'Company Email';
-    const emailPlaceholder = activeTab === 'talent' ? 'Enter your email' : 'Enter your company email';  
-     
-    
-      useEffect (() => {}, [])
+    if (formik.password !== formik.rePassword) {
+        alert('Passwords do not match');
+        return;
+      };
+      
+      // Final user data  
+      const userData = {...formik.values, role};    
     
       return (<>
-
-          <div className=' flex flex-wrap flex-col md:flex-row max-w-screen-xl mx-auto items-center justify-center py-64 md:py-7  gap-3'>
-              <div className=' bg-slate-500'>
-                  <img src={signupImage} className=''/>
-              </div>
-
-            
-              <div className='w-11/12 md:w-1/2'>
-            
-                  <h2 className='text-3xl font-semi-bold text-heading pb-2'>Sign Up</h2>
-                                
-                                {/************* tabs ******************** */}
-                  <div className="text-sm font-medium text-center text-body border-b border-default ">
-                    <ul className="flex flex-wrap -mb-px">
-
-                        <li className="me-2">
-                            <button 
-                              onClick={() => SetActiveTab('talent')}
-                              className={`inline-block p-4  rounded-t-base font-thin transition-colors duration-300 
-                                ${
-                                  activeTab === 'talent'
-                                  ? 'text-fuchsia-800 border-b-2 border-fuchsia-800'
-                                  : ' text-gray-900 border-b border-transparent hover:text-fuchsia-800 hover:border-fuchsia-800 '
-                                }`}
-                              >
-                              Talent
-                            </button>
-                        </li>
-                      
-                        <li class="me-2">
-                            <button 
-                              onClick={() => SetActiveTab("employer")} 
-                              className={`inline-block p-4 rounded-t-base 
-                                 ${
-                                  activeTab === 'employer'
-                                  ? 'text-fuchsia-800 border-b-2 border-fuchsia-800'
-                                  : ' text-gray-900 border-b border-transparent hover:text-fuchsia-800 hover:border-fuchsia-800 '
-                                }`} 
-                              aria-current="page"
-                              >
-                                Employer
-                            </button>
-                        </li>
-                    </ul>
-                  </div>
-
-                                   {/* ***************** inputs ****************** */}
 
                   <form onSubmit={formik.handleSubmit} className= " font-sans pt-2">
                     
@@ -147,10 +107,6 @@ export default function RegisterForm() {
                     </button>
                   
                   </form>
-              </div>
-
-        
-          </div>
-</>
+              </>
   )
 }
