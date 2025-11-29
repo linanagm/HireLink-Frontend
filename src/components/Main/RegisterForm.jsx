@@ -1,13 +1,46 @@
-import React, {  useEffect } from 'react'
+import React, {  useEffect, useState } from 'react'
 import { useFormik } from 'formik';
+import { signup } from '../../fakeData/fakeApi';
 //import { handleRegister } from '../../hooks/useForm';
-
+import { useAuth } from '../../hooks/useAuth';
+import { NavLink } from 'react-router-dom';
 
 export default function RegisterForm({ role }) {
+
+      const { loginUser } = useAuth(""); //to store user has logged in
+
+      const [ message , setMessage ] = useState("");
+
       
       useEffect (() => {}, [])
 
-      function handleRegister (formValues){ console.log('form Value: ', formValues, userData) } 
+      function handleRegister (formValues){
+
+        const values = {...formValues , role};
+
+          if (values.password !== values.rePassword) {
+            setMessage( "Error : Passwords do not match");
+            
+            
+            return
+          }  
+
+          const res = signup(values);
+
+          if (res.success === false) {
+            console.log('sign up error message: ', res.message);
+            res.error = true;
+            setMessage(`${res.message}`);
+
+          } else {
+            setMessage("signup successfull check console for verification link");
+            res.error = false;
+            loginUser ({ user: {...values}, accessToken: res.accessToken, refreshToken: res.refreshToken });
+            
+          }
+      } 
+
+
       //username
       const nameLabel = role === 'talent' ? 'Username' : 'Company Name';
       const namePlaceholder = role === 'talent' ? 'Enter your name' : 'Enter your company name';
@@ -34,7 +67,7 @@ export default function RegisterForm({ role }) {
       };
       
       // Final user data  
-      const userData = {...formik.values, role};    
+      //const userData = {...formik.values, role};    
     
       return (<>
 
@@ -105,6 +138,24 @@ export default function RegisterForm({ role }) {
                     className="bg-fuchsia-700  w-full hover:bg-fuchsia-800 text-white box-border border rounded hover:bg-brand-medium focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
                       Submit
                     </button>
+
+
+                    {/* ********************* login link ************************ */}
+                    <div className='w-full flex  items-center justify-center '>
+                          <NavLink to="/login" className="text-sm font-medium text-blue-600 hover:underline hover:text-blue-400 ">
+                              Already have an account? Login
+                          </NavLink>
+
+                    </div>
+
+                    
+                    {/* ****************** error or success message *************/}
+                    {message && (
+                    <p className={`mt-2 text-sm ${message.includes("Error") ? "text-red-600" : "text-green-600"}`}>
+                      {message}
+                    </p>
+                        )}
+
                   
                   </form>
               </>
