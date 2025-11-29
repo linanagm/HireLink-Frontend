@@ -20,10 +20,14 @@ const TalentProfile = lazy(()=>import('../pages/Main/talent/TalentProfile'))
 const EditTalentProfile = lazy(()=>import('../pages/Main/talent/EditTalentProfile'))
 const ProfileAvatar = lazy(()=>import('../pages/Main/talent/ProfileAvatar'))
 const FindJob = lazy(()=>import('../pages/Main/talent/FindJob'))
+
 const MyApplications = lazy(()=>import('../pages/Main/talent/MyApplications'))
 const ApplicationDetails = lazy(()=>import('../pages/Main/talent/ApplicationDetails'))
+
 const EditApplication = lazy(()=>import('../pages/Main/talent/EditApplication'))
+
 const JobProposal = lazy(()=>import('../pages/Main/talent/JobProposal'))
+
 const TalentAccountSettings = lazy(()=>import('../pages/Main/talent/TalentAccountSettings'))
 
 //employer routes
