@@ -6,24 +6,28 @@ export default function JobList() {
 
   const jobs = [
     {
+      id: "0",
       title: "UI/UX Designer for Mobile App",
       desc: "Looking for a creative UI/UX Designer to enhance user experience for our mobile application.",
       tags: ["Figma", "User Research", "Wireframing", "Prototyping"],
       location: "Addis Ababa",
     },
     {
+      id: "1",
       title: "Data Analyst for Marketing Team",
       desc: "We need a Data Analyst to help drive insights for marketing efforts.",
       tags: ["SQL", "Tableau", "Data Mining", "Predictive Analytics"],
       location: "London",
     },
     {
+      id: "2",
       title: "SEO Specialist for Website Optimization",
       desc: "An experienced SEO Specialist is required to optimize our website.",
       tags: ["SEO", "Backlinking", "Analytics"],
       location: "New York",
     },
     {
+      id: "3",
       title: "Content Writer for Blog Development",
       desc: "Looking for a talented Content Writer to create engaging blog posts.",
       tags: ["Writing", "Blogging", "Content Strategy"],
@@ -61,7 +65,7 @@ export default function JobList() {
   return (
     <div className="bg-gray-50 min-h-screen">
 
-      {/* BANNER (FULL BACKGROUND IMAGE) */}
+      {/* BANNER */}
       <div
         className="w-full h-96 bg-cover bg-center"
         style={{ backgroundImage: "url(/images/talent-findjob.svg)" }}
@@ -85,8 +89,8 @@ export default function JobList() {
 
       {/* JOB LIST */}
       <div className="px-10 mt-6 space-y-6">
-        {displayedJobs.map((job, index) => (
-          <Link key={index} to={`/jobs/${index}`}>
+        {displayedJobs.map((job) => (
+          <Link key={job.id} to={`/jobs/${job.id}`}>
             <div className="bg-white p-6 rounded-xl shadow-sm border hover:shadow-md cursor-pointer">
               <h2 className="text-xl font-semibold mb-2">{job.title}</h2>
               <p className="text-gray-600 mb-4">{job.desc}</p>
@@ -109,9 +113,7 @@ export default function JobList() {
         {[1, 2, 3, 4, 5].map((num) => (
           <button
             key={num}
-            className={`w-8 h-8 flex items-center justify-center rounded-full ${
-              num === 1 ? "bg-purple-600 text-white" : "bg-white border"
-            }`}
+            className={`w-8 h-8 flex items-center justify-center rounded-full ${num === 1 ? "bg-purple-600 text-white" : "bg-white border"}`}
           >
             {num}
           </button>
