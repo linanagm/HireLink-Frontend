@@ -118,12 +118,17 @@ export default function JobDetail() {
             ))}
           </div>
 
-          {/* APPLY BUTTON */}
-          <div className="text-center">
-            <button className="px-8 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 duration-200">
-              Apply Now
-            </button>
-          </div>
+         <div className="text-center">
+  <Link
+    to={`/talent/jobs/${job.id}/proposal`}
+    state={job} // ← هنا بنبعت كل بيانات الوظيفة
+    className="px-8 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 duration-200 inline-block"
+  >
+    Apply Now
+  </Link>
+</div>
+
+
 
         </div>
       </div>
