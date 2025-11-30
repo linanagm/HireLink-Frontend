@@ -1,18 +1,30 @@
 import React, { useState, useEffect } from 'react'
 import RegisterForm from '../../components/Main/RegisterForm'
 import signupImage from '../../assets/images/signup.svg'
+import { Outlet, useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
+
+
 
 export default function Register() {
-
+    // const location = useLocation();
+    // const isVerifyPage = location.pathname.includes('verify-email');
     
     const [role , setRole] = useState('talent');
-        
+   
+    useEffect(() => {});
     
-      useEffect (() => {}, [])
     
-      return (
+
     
-      <div className=' flex  flex-col lg:flex-row items-center max-w-screen-xl mx-auto justify-between md:px-5 lg:px-0  py-64 md:py-7 px-7  gap-3'>
+    return (<>
+        <Helmet>
+          <title>Sign Up</title>  
+        </Helmet>
+    
+    <div>
+      
+        <div className = {`  flex-col lg:flex-row items-center max-w-screen-xl mx-auto justify-between md:px-5 lg:px-0  py-64 md:py-7 px-7  gap-3 `}>
              
              {/* /*******************   image   ******************** */}
               <div className=' w-1/2 bg-blue-600'>
@@ -60,15 +72,20 @@ export default function Register() {
                   </div >
 
                   {/* ************* register form ******************** */}
-                      <RegisterForm role={role} />
-                  
-                      
+
+              <RegisterForm role={role}  />
+
+                    
+                <Outlet />
               </div>
+             
 
       </div>
 
+    </div>
+      
 
 
-    
+    </>
   )
 }

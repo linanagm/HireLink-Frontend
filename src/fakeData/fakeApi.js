@@ -29,7 +29,7 @@ export function signup({ name, email, password, role }) {
 
   users.push(newUser);
   saveUsers(users);
-  console.log("Verify link: http://localhost:3000/verify-email?email=" + email);
+  console.log("Verify link: http://localhost:5173/verify-email?email=" + email);
   console.log(getUsers());
   
 
