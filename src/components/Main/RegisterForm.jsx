@@ -4,7 +4,8 @@ import { signup } from '../../fakeData/fakeApi';
 //import { handleRegister } from '../../hooks/useForm';
 import { useAuth } from '../../hooks/useAuth';
 import { NavLink, useNavigate } from 'react-router-dom';
-import  VerifyemailComponent  from '../../components/Main/VerifyemailComponent';
+import { SignUpSchema } from '../../utils/validation/SignUpSchema';
+
 export default function RegisterForm({ role }) {
 
       let navigate = useNavigate();
@@ -24,16 +25,7 @@ export default function RegisterForm({ role }) {
         
         const values = {...formValues , role};
 
-          if (values.password !== values.rePassword) {
-
-            setMessage( "Error : Passwords do not match");
-            setIsLoading(false);
-            
-            setError(true);
-            
-            return;
-          }  
-
+          
           const res = signup(values);
 
           if (res.success === false) {
@@ -83,6 +75,7 @@ export default function RegisterForm({ role }) {
           password: '',
           rePassword: '',
         },
+        validationSchema: SignUpSchema,
         onSubmit: handleRegister
     })
 
@@ -103,6 +96,7 @@ export default function RegisterForm({ role }) {
                       
                       <label htmlFor="username" className="block mb-2.5 text-sm font-medium  text-heading">{nameLabel}</label>
                       
+                      {/* name input */}
                       <input 
                       type="text" 
                       value={formik.values.name}
@@ -114,8 +108,18 @@ export default function RegisterForm({ role }) {
                       placeholder={namePlaceholder} 
                        />
 
+                        {/* name error alert */}
+                        {formik.errors.name? <div class="flex items-start sm:items-center p-2 mb-2 mt-2 text-xs text-red-700 bg-red-50 rounded" role="alert">
+                        <svg className="w-4 h-4 me-2 shrink-0 mt-0.5 sm:mt-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+                        <p><span className="font-medium me-1">alert!</span>{formik.errors.name}</p>
+                      </div>
+                      : null}
+                      
+        
+
                     </div>
 
+                    {/* email input */}
                     <div className="mb-5 transition-all duration=300">
                       <label htmlFor="email" className="block mb-2.5 text-sm font-medium  text-heading">{emailLabel}</label>
                       <input 
@@ -128,8 +132,18 @@ export default function RegisterForm({ role }) {
                       className="bg-neutral-secondary-medium border border-default-medium text-heading text-sm  rounded border-slate-300 focus:ring-brand transition  focus:border-brand block w-full px-3 py-3 shadow-xs placeholder:text-body" 
                       placeholder={emailPlaceholder} 
                        />
+                      
+                      {/* email error alert */}
+                       {formik.errors.email? <div class="flex items-start sm:items-center p-2 mb-2 mt-2 text-xs text-red-700 bg-red-50 rounded" role="alert">
+                        <svg className="w-4 h-4 me-2 shrink-0 mt-0.5 sm:mt-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+                        <p><span className="font-medium me-1">alert!</span>{formik.errors.email}</p>
+                      </div>
+                      : null}
+                      
+                       
                     </div>
-                    
+
+                    {/* password input */}
                     <div className="mb-5">
                       <label htmlFor="password" className="block mb-2.5 text-sm font-medium text-heading">Your password</label>
                       <input 
@@ -142,8 +156,18 @@ export default function RegisterForm({ role }) {
                       className="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded border-slate-300 focus:ring-brand transition focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" 
                       placeholder="••••••••"  
                       />
-                  </div>
+                      {/* password error aler */}
+                      {formik.errors.password? <div class="flex items-start sm:items-center p-2 mb-2 mt-2 text-xs text-red-700 bg-red-50 rounded" role="alert">
+                        <svg className="w-4 h-4 me-2 shrink-0 mt-0.5 sm:mt-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+                        <p><span className="font-medium me-1">alert!</span>{formik.errors.password}</p>
+                      </div>
+                      : null}
+                      
 
+                      
+                    </div>
+
+                    {/* confirm password input */}
                   <div className="mb-5">
                       <label htmlFor="password"  className="block mb-2.5 text-sm font-medium text-heading">Confirm Password</label>
                       <input 
@@ -156,6 +180,15 @@ export default function RegisterForm({ role }) {
                       className="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded border-slate-300 focus:ring-brand transition focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" 
                       placeholder="••••••••" 
                       />
+
+                    {/* password error aler */}
+                      {formik.errors.rePassword? <div class="flex items-start sm:items-center p-2 mb-2 mt-2 text-xs text-red-700 bg-red-50 rounded" role="alert">
+                        <svg className="w-4 h-4 me-2 shrink-0 mt-0.5 sm:mt-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+                        <p><span className="font-medium me-1">alert!</span>{formik.errors.rePassword}</p>
+                      </div>
+                      : null}
+                      
+                    
                   </div>
 
                     {/********************* button ************************/}
@@ -169,20 +202,24 @@ export default function RegisterForm({ role }) {
 
 
                     {/* ********************* login link ************************ */}
-                    <div className='w-full flex  items-center justify-center '>
+                    <div className='w-full flex  items-center justify-center pt-2 '>
                           <NavLink to="/login" className="text-sm font-medium text-blue-600 hover:underline hover:text-blue-400 ">
                               Already have an account? Login
                           </NavLink>
 
                     </div>
-
-                    {/* ****************** error or success message *************/}
-                    {message && (
-                    <div className={`mt-2 text-sm ${error? "text-red-600": "text-green-600"}`}>
-                      { message}
-                    </div>
-                        )}
  
+                    {/* ****************** error or success message *************/}
+                     { message? 
+
+                     <div class="flex items-start sm:items-center p-2 mb-2 mt-2 text-xs text-red-700 bg-red-50 rounded" role="alert">
+                        <svg className="w-4 h-4 me-2 shrink-0 mt-0.5 sm:mt-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+                        <p><span className="font-medium me-1">alert!</span>{ message }</p>
+                      </div>
+                      : null}
+                    
+
+                    
                   
                   </form>
               </>

@@ -24,7 +24,7 @@ export default function Register() {
     
     <div>
       
-        <div className = {`  flex-col lg:flex-row items-center max-w-screen-xl mx-auto justify-between md:px-5 lg:px-0  py-64 md:py-7 px-7  gap-3 `}>
+        <div className = {` flex flex-col lg:flex-row items-center max-w-screen-xl mx-auto justify-between md:px-5 lg:px-0  py-64 md:py-7 px-7  gap-3 `}>
              
              {/* /*******************   image   ******************** */}
               <div className=' w-1/2 bg-blue-600'>
