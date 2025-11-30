@@ -11,6 +11,9 @@ const TalentList = lazy(()=> import ('../pages/Main/TalentList'));
 const TalentPublicDetails = lazy(()=>import('../pages/Main/TalentPublicDetails'));
 const NotFound = lazy(()=>import('../pages/Main/NotFound'))
 
+//loading component
+const Loading = lazy (()=>import('../components/UI/Loading'))
+
 //Auth Pages
 const Register = lazy(()=>import('../pages/Auth/Register'));
 const Login = lazy(()=>import('../pages/Auth/Login'))
@@ -18,6 +21,7 @@ const Login = lazy(()=>import('../pages/Auth/Login'))
 
 //verify email
 const VerifyEmail = lazy(()=>import('../pages/Auth/VerifyEmail'))
+
 //talent pages
 const TalentProfile = lazy(()=>import('../pages/Main/talent/TalentProfile'))
 const EditTalentProfile = lazy(()=>import('../pages/Main/talent/EditTalentProfile'))
@@ -60,73 +64,73 @@ export default function AppRoutes() {
 
     //1-public routes
   { path: "/" ,
-    element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><MainLayOut /></Suspense> , 
+    element: <Suspense className='text-9xl' fallback={<Loading />}><MainLayOut /></Suspense> , 
     
     children: [
             //public routes
-            { index: true ,   element:  <Home /> },
+            { index: true ,   element:  <Suspense fallback={<Loading />}><Home /></Suspense>},
             
-            { path:"about" ,  element:<About />},
-            { path:"contact", element:<Contact />},
+            { path:"about" ,  element:<Suspense fallback={<Loading />}> <About /></Suspense>},
+            { path:"contact", element:<Suspense fallback={<Loading />}> <Contact /></Suspense>},
 
             //Public Jobs
-            { path:"jobs" , element:<Suspense className='text-9xl' fallback={<h1>Loading</h1>}><JobList /></Suspense>},
-            { path:"jobs/:jobId" , element:<Suspense className='text-9xl' fallback={<h1>Loading</h1>}><JobPublicDetails /></Suspense>},
+            { path:"jobs" , element:<Suspense  fallback={<Loading />}><JobList /></Suspense>},
+            { path:"jobs/:jobId" , element:<Suspense  fallback={<Loading />}><JobPublicDetails /></Suspense>},
             
             //Public Talents list
-            { path:"talents" , element:<Suspense className='text-9xl' fallback={<h1>Loading</h1>}><TalentList /></Suspense>},
-            { path:"talents/:talentId" ,element:<Suspense className='text-9xl' fallback={<h1>Loading</h1>}><TalentPublicDetails /></Suspense>}
+            { path:"talents" , element:<Suspense fallback={<Loading />}><TalentList /></Suspense>},
+            { path:"talents/:talentId" ,element:<Suspense className='text-9xl' fallback={<Loading />}><TalentPublicDetails /></Suspense>}
   ]
 },
 
 
   //2-auth routes
-  { path: "/" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><AuthLayOut /></Suspense>, 
+  { path: "/" , element: <Suspense  fallback={<Loading />}><AuthLayOut /></Suspense>, 
     children: [
             //auth routes
-            { index: true ,  element: <Register />},
-            { path:"register", element:<Register />}, 
-            { path:"login", element:<Login />},
+            
+            { path:"register", element:<Suspense  fallback={<Loading />}><Register /> </Suspense>}, 
+            { path:"login", element:<Suspense  fallback={<Loading />}><Login /></Suspense>},
             
   ]
   },
-  { path: 'register/verify-email' ,  element: <VerifyEmail /> },
+  { path: 'register/verify-email' ,  element: <Suspense fallback={<Loading />}><VerifyEmail /></Suspense>},
   
   //3-talent routes
-  { path: "talent", element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><MainLayOut /></Suspense> ,
+  { path: "talent", element: <Suspense className='text-9xl' fallback={<Loading />}><MainLayOut /></Suspense> ,
     children: [
-      { path: "findjob" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><FindJob /></Suspense>}, //recommenditionjobs
-      { path: "profile" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><TalentProfile /></Suspense>},
-      { path: "profile/edit" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><EditTalentProfile /></Suspense>},
-      { path: "profile/avatar" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><ProfileAvatar /></Suspense>},
+      { path: "findjob" , element: <Suspense className='text-9xl' fallback={<Loading />}><FindJob /></Suspense>}, //recommenditionjobs
+      { path: "profile" , element: <Suspense className='text-9xl' fallback={<Loading />}><TalentProfile /></Suspense>},
+      { path: "profile/edit" , element: <Suspense className='text-9xl' fallback={<Loading />}><EditTalentProfile /></Suspense>},
+      { path: "profile/avatar" , element: <Suspense className='text-9xl' fallback={<Loading />}><ProfileAvatar /></Suspense>},
 
-      { path: "applications" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><MyApplications /></Suspense>},
-      { path: "applications/:applicationId" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><ApplicationDetails /></Suspense>},
-      { path: "applications/:applicationId/edit" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><EditApplication /></Suspense>},
+      { path: "applications" , element: <Suspense className='text-9xl' fallback={<Loading />}><MyApplications /></Suspense>},
+      { path: "applications/:applicationId" , element: <Suspense className='text-9xl' fallback={<Loading />}><ApplicationDetails /></Suspense>},
+      { path: "applications/:applicationId/edit" , element: <Suspense className='text-9xl' fallback={<Loading />}><EditApplication /></Suspense>},
      
-      { path: "jobs/:jobId/proposal" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><JobProposal /></Suspense>},
-      { path: "profile/settings" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><TalentAccountSettings /></Suspense>}
+      { path: "jobs/:jobId/proposal" , element: <Suspense className='text-9xl' fallback={<Loading />}><JobProposal /></Suspense>},
+      { path: "profile/settings" , element: <Suspense className='text-9xl' fallback={<Loading />}><TalentAccountSettings /></Suspense>}
 
   ]},
 
   //4-empolyer routes
-  { path: "employer", element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><MainLayOut /></Suspense> ,
+  { path: "employer", element: <Suspense className='text-9xl' fallback={<Loading />}><MainLayOut /></Suspense> ,
     children: [
-      { path : "profile" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><EmployerProfile /></Suspense>},
-      { path : "profile/edit" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><EditProfile /></Suspense>},
-      { path : "jobs" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><JobsList /></Suspense>},
-      { path : "jobs/new" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><PostAJob /></Suspense>},
-      { path : "jobs/:jobId" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><EditJob /></Suspense>},
-      { path : "jobs/:jobId/applicants" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><MyApplicants /></Suspense>},
-      { path : "jobs/:jobId/applicants/search" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><SearchTalents /></Suspense>},
-      { path : "jobs/:jobId" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><JobDetails /></Suspense>},
+      { path : "profile" , element: <Suspense className='text-9xl' fallback={<Loading />}><EmployerProfile /></Suspense>},
+      { path : "profile/edit" , element: <Suspense className='text-9xl' fallback={<Loading />}><EditProfile /></Suspense>},
+      { path : "jobs" , element: <Suspense className='text-9xl' fallback={<Loading />}><JobsList /></Suspense>},
+      { path : "jobs/new" , element: <Suspense className='text-9xl' fallback={<Loading />}><PostAJob /></Suspense>},
+      { path : "jobs/:jobId" , element: <Suspense className='text-9xl' fallback={<Loading />}><EditJob /></Suspense>},
+      { path : "jobs/:jobId/applicants" , element: <Suspense className='text-9xl' fallback={<Loading />}><MyApplicants /></Suspense>},
+      { path : "jobs/:jobId/applicants/search" , element: <Suspense className='text-9xl' fallback={<Loading />}><SearchTalents /></Suspense>},
+      { path : "jobs/:jobId" , element: <Suspense className='text-9xl' fallback={<Loading />}><JobDetails /></Suspense>},
 
       
     ]},
 
 
   //Not Found route
-  { path: "*" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><NotFound /></Suspense>}
+  { path: "*" , element: <Suspense className='text-9xl' fallback={<Loading />}><NotFound /></Suspense>}
 
 ]);
 

@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import RegisterForm from '../../components/Main/RegisterForm'
 import signupImage from '../../assets/images/signup.svg'
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 
 
 
 export default function Register() {
-    // const location = useLocation();
-    // const isVerifyPage = location.pathname.includes('verify-email');
     
     const [role , setRole] = useState('talent');
    

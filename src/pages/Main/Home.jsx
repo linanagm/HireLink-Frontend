@@ -19,7 +19,7 @@ export default function Home() {
       <div className='hero-section flex  max-w-screen-xl justify-between items-center mx-auto py-7 '>
         
         <div className='flex-col  py-11 gap-5  '>
-            <div clasName='text-2xl font-bold '>        
+            <div className='text-2xl font-bold '>        
         
               <h1 className='text-7xl py-4 font-bold text-black'><span className='text-fuchsia-800'>Connecting</span>
               You to the World’s <span className='text-fuchsia-800'>

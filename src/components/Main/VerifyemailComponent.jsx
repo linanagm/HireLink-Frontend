@@ -26,10 +26,6 @@ export default function VerifyemailComponent() {
                     <br/>
                     </Link>
                
-                {/* <NavLink to= {""}>
-                    <h5 className="mt-3 mb-6 text-lg font-normal text-blue-700 hover:underline hover:text-blue-500">Check Your Email</h5>
-                </NavLink>
-                */}
                 
                 <Button to= {"profile/edit"}  className="inline-flex items-center my-3 text-white bg-fuchsia-700 box-border border border-transparent hover:bg-fuchsia-600 focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
                     Complete My Profile

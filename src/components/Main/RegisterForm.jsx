@@ -12,7 +12,7 @@ export default function RegisterForm({ role }) {
 
       const { loginUser } = useAuth(""); //to store user has logged in
       const [ message , setMessage ] = useState("");
-      const [ error , setError ] = useState(false);
+      //const [ error , setError ] = useState(false);
       const [ isLoading , setIsLoading ] = useState(false);
 
       
@@ -31,15 +31,16 @@ export default function RegisterForm({ role }) {
           if (res.success === false) {
 
             console.log('sign up error message: ', res.message);
+            
             setIsLoading(false);
             
-            setError(true);
+        //    setError(true);
             
             setMessage(`${res.message}`);
 
           } else {
 
-            setError(false);
+          //  setError(false);
            
             setIsLoading(false);
            
@@ -109,7 +110,7 @@ export default function RegisterForm({ role }) {
                        />
 
                         {/* name error alert */}
-                        {formik.errors.name? <div class="flex items-start sm:items-center p-2 mb-2 mt-2 text-xs text-red-700 bg-red-50 rounded" role="alert">
+                        {formik.errors.name && formik.touched.name? <div class="flex items-start sm:items-center p-2 mb-2 mt-2 text-xs text-red-700 bg-red-50 rounded" role="alert">
                         <svg className="w-4 h-4 me-2 shrink-0 mt-0.5 sm:mt-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
                         <p><span className="font-medium me-1">alert!</span>{formik.errors.name}</p>
                       </div>
@@ -134,7 +135,7 @@ export default function RegisterForm({ role }) {
                        />
                       
                       {/* email error alert */}
-                       {formik.errors.email? <div class="flex items-start sm:items-center p-2 mb-2 mt-2 text-xs text-red-700 bg-red-50 rounded" role="alert">
+                       {formik.errors.email && formik.touched.email? <div class="flex items-start sm:items-center p-2 mb-2 mt-2 text-xs text-red-700 bg-red-50 rounded" role="alert">
                         <svg className="w-4 h-4 me-2 shrink-0 mt-0.5 sm:mt-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
                         <p><span className="font-medium me-1">alert!</span>{formik.errors.email}</p>
                       </div>
@@ -156,8 +157,9 @@ export default function RegisterForm({ role }) {
                       className="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded border-slate-300 focus:ring-brand transition focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" 
                       placeholder="••••••••"  
                       />
+
                       {/* password error aler */}
-                      {formik.errors.password? <div class="flex items-start sm:items-center p-2 mb-2 mt-2 text-xs text-red-700 bg-red-50 rounded" role="alert">
+                      {formik.errors.password && formik.touched.password? <div class="flex items-start sm:items-center p-2 mb-2 mt-2 text-xs text-red-700 bg-red-50 rounded" role="alert">
                         <svg className="w-4 h-4 me-2 shrink-0 mt-0.5 sm:mt-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
                         <p><span className="font-medium me-1">alert!</span>{formik.errors.password}</p>
                       </div>
@@ -182,7 +184,7 @@ export default function RegisterForm({ role }) {
                       />
 
                     {/* password error aler */}
-                      {formik.errors.rePassword? <div class="flex items-start sm:items-center p-2 mb-2 mt-2 text-xs text-red-700 bg-red-50 rounded" role="alert">
+                      {formik.errors.rePassword && formik.touched.rePassword? <div class="flex items-start sm:items-center p-2 mb-2 mt-2 text-xs text-red-700 bg-red-50 rounded" role="alert">
                         <svg className="w-4 h-4 me-2 shrink-0 mt-0.5 sm:mt-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
                         <p><span className="font-medium me-1">alert!</span>{formik.errors.rePassword}</p>
                       </div>
