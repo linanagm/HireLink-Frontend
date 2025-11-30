@@ -3,39 +3,65 @@ import { useFormik } from 'formik';
 import { signup } from '../../fakeData/fakeApi';
 //import { handleRegister } from '../../hooks/useForm';
 import { useAuth } from '../../hooks/useAuth';
-import { NavLink } from 'react-router-dom';
-
+import { NavLink, useNavigate } from 'react-router-dom';
+import  VerifyemailComponent  from '../../components/Main/VerifyemailComponent';
 export default function RegisterForm({ role }) {
 
+      let navigate = useNavigate();
+
       const { loginUser } = useAuth(""); //to store user has logged in
-
       const [ message , setMessage ] = useState("");
+      const [ error , setError ] = useState(false);
+      const [ isLoading , setIsLoading ] = useState(false);
 
+      
       
       useEffect (() => {}, [])
 
       function handleRegister (formValues){
 
+        setIsLoading(true);
+        
         const values = {...formValues , role};
 
           if (values.password !== values.rePassword) {
+
             setMessage( "Error : Passwords do not match");
+            setIsLoading(false);
             
+            setError(true);
             
-            return
+            return;
           }  
 
           const res = signup(values);
 
           if (res.success === false) {
+
             console.log('sign up error message: ', res.message);
-            res.error = true;
+            setIsLoading(false);
+            
+            setError(true);
+            
             setMessage(`${res.message}`);
 
           } else {
+
+            setError(false);
+           
+            setIsLoading(false);
+           
             setMessage("signup successfull check console for verification link");
-            res.error = false;
-            loginUser ({ user: {...values}, accessToken: res.accessToken, refreshToken: res.refreshToken });
+            
+            console.log('success' . res);
+            
+            loginUser ({ 
+              user: {...values}, 
+              accessToken: res.accessToken, 
+              refreshToken: res.refreshToken
+             });
+            
+            navigate('/register/verify-email');
             
           }
       } 
@@ -136,7 +162,9 @@ export default function RegisterForm({ role }) {
                     <button 
                     type="submit" 
                     className="bg-fuchsia-700  w-full hover:bg-fuchsia-800 text-white box-border border rounded hover:bg-brand-medium focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
-                      Submit
+                        {isLoading? <i class="fa-solid fa-spinner fa-spin"></i>: 'Submit' }
+                        
+                      
                     </button>
 
 
@@ -148,14 +176,13 @@ export default function RegisterForm({ role }) {
 
                     </div>
 
-                    
                     {/* ****************** error or success message *************/}
                     {message && (
-                    <p className={`mt-2 text-sm ${message.includes("Error") ? "text-red-600" : "text-green-600"}`}>
-                      {message}
-                    </p>
+                    <div className={`mt-2 text-sm ${error? "text-red-600": "text-green-600"}`}>
+                      { message}
+                    </div>
                         )}
-
+ 
                   
                   </form>
               </>
