@@ -1,3 +1,4 @@
+import axiosClient from "./axiosClient";
 
 
 export const getData = ( key )=>
@@ -10,5 +11,16 @@ export const saveTokens = () => {
         const saved = localStorage.getItem("tokens");
         return saved ? JSON.parse(saved) : null;
         
+
+}
+
+
+// -------------------------------------------------
+
+export async function register(values) {
+
+        const res = await axiosClient.post('/auth/register', values);
+
+        return res;
 
 }

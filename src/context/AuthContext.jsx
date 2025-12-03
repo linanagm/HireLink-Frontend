@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from 'react';
-import { getData, saveTokens } from '../services/auth.js';
+import { getData, saveTokens } from '../services/authService.js';
  
 
 export const AuthContext = createContext();
@@ -10,8 +10,8 @@ export const AuthContext = createContext();
 export function AuthProvider ({ children }) {
 
     const[ user , setUser ] = useState( getData("users") );
-    
     const[ tokens , setTokens ] = useState(saveTokens());
+    const [ verificationToken, setVerificationToken ] = useState(null);
 
 
    useEffect(() => {
@@ -42,8 +42,18 @@ export function AuthProvider ({ children }) {
 
     return (
         <AuthContext.Provider 
-        value={{ user, tokens, loginUser, logoutUser}}>
+        
+        value={{ 
+            user, 
+            tokens, 
+            loginUser, 
+            logoutUser,
+            verificationToken,
+            setVerificationToken
+            }}>
+
             {children}
+
         </AuthContext.Provider>
     )
 
