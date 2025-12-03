@@ -1,11 +1,15 @@
-import React, { useState, useEffect } from 'react'
+import React, {  useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import correctImage from '../../assets/images/correct.svg'
-import { Button } from 'flowbite-react'
+//import { Button } from 'flowbite-react'
 
 export default function SuccessCard({
     
     to,
+    isError,
+    //isLoading = false,
+   // countdownSeconds = 3,
+    //onCountdownEnds = 0,
     message,
     routeText,
     buttonText,
@@ -13,17 +17,25 @@ export default function SuccessCard({
     
 }) {
 
-    let [ Count , SetCount ] = useState()
+   // const [ Count , SetCount ] = useState(countdownSeconds)
 
       useEffect (() => {}, [])
     
       return (
     
+        
       <div className='w-full h-full bg-red-500'>
+
             <div className="absolute   top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-neutral-primary-soft max-w-md h-auto border item-center justify-center border-default rounded-base shadow-xs p-7 rounded-t-3xl">
            
-             <img className="fixed top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-t-base w-1/5  right-1/2 py-2" src={correctImage}  alt="Success" />
-          
+           { isError ? (
+            
+                      <span className='fixed top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-t-base w-1/5  right-1/2 py-2'><i className="fa-regular fa-circle-xmark text-fuchsia-600 text-7xl"></i></span>  
+           ) : (
+                    <img className="fixed top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-t-base w-1/5  right-1/2 py-2" src={correctImage}  alt="Success" />
+           
+           )}
+             
 
             <div className="p-6 text-center ">
                 {/* You've successfully signed up! */}

@@ -1,5 +1,6 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import React, { lazy, Suspense } from 'react'
+import Loading from '../pages/Main/Loading'
 //Public Pages
 
 const Home = lazy (()=>import ('../pages/Main/Home'));
@@ -64,44 +65,44 @@ export default function AppRoutes() {
 
     //1-public routes
   { path: "/" ,
-    element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><MainLayOut /></Suspense> , 
+    element: <Suspense  fallback={<Loading />}><MainLayOut /></Suspense> , 
     
     children: [
             //public routes
-            { index: true ,   element:  <Home /> },
+            { index: true ,   element:<Suspense fallback={<Loading />}>  <Home /></Suspense> },
             
-            { path:"about" ,  element:<About />},
-            { path:"contact", element:<Contact />},
+            { path:"about" ,  element:<Suspense fallback={<Loading />} > <About /></Suspense>},
+            { path:"contact", element:<Suspense fallback={<Loading />}><Contact /></Suspense>},
 
             //Public Jobs
-            { path:"jobs" , element:<Suspense className='text-9xl' fallback={<h1>Loading</h1>}><JobList /></Suspense>},
-            { path:"jobs/:jobId" , element:<Suspense className='text-9xl' fallback={<h1>Loading</h1>}><JobPublicDetails /></Suspense>},
+            { path:"jobs" , element:<Suspense fallback={<Loading />}> <JobList /></Suspense>},
+            { path:"jobs/:jobId" , element:<Suspense  fallback={<h1>Loading</h1>}><JobPublicDetails /></Suspense>},
             
             //Public Talents list
-            { path:"talents" , element:<Suspense className='text-9xl' fallback={<h1>Loading</h1>}><TalentList /></Suspense>},
-            { path:"talents/:talentId" ,element:<Suspense className='text-9xl' fallback={<h1>Loading</h1>}><TalentPublicDetails /></Suspense>}
+            { path:"talents" , element:<Suspense  fallback={<Loading />}><TalentList /></Suspense>},
+            { path:"talents/:talentId" ,element:<Suspense  fallback={<Loading />}><TalentPublicDetails /></Suspense>}
   ]
 },
 
 
   //2-auth routes
-  { path: "/" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><AuthLayOut /></Suspense>, 
+  { path: "/" , element: <Suspense  fallback={<Loading />}><AuthLayOut /></Suspense>, 
     children: [
             //auth routes
-            { index: true ,  element: <Register />},
-            { path:"register", element:<Register />}, 
-            { path:"login", element:<Login />},
+            { index: true ,  element: <Suspense fallback={<Loading />}><Register /></Suspense> },
+            { path:"register", element: <Suspense fallback={<Loading />}><Register /></Suspense> }, 
+            { path:"login", element: <Suspense fallback={<Loading />}><Login /></Suspense> },
             
   ]
   },
 
-  { path: 'register/signup-success' ,  element: <SignupSuccess /> },
-  { path: '/verify/' ,  element: <VerifyEmail /> },
+  { path: 'register/signup-success' ,  element: <Suspense fallback={<Loading />}><SignupSuccess /></Suspense>  },
+  { path: '/verify/' ,  element: <Suspense fallback={<Loading />}><VerifyEmail /></Suspense> },
   
 
 
   //3-talent routes
-  { path: "talent", element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><MainLayOut /></Suspense> ,
+  { path: "talent", element: <Suspense className='text-9xl' fallback={<Loading />}><MainLayOut /></Suspense> ,
     children: [
       { path: "findjob" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><FindJob /></Suspense>}, //recommenditionjobs
       { path: "profile" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><TalentProfile /></Suspense>},
@@ -118,7 +119,7 @@ export default function AppRoutes() {
   ]},
 
   //4-empolyer routes
-  { path: "employer", element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><MainLayOut /></Suspense> ,
+  { path: "employer", element: <Suspense className='text-9xl' fallback={<Loading />}><MainLayOut /></Suspense> ,
     children: [
       { path : "profile" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><EmployerProfile /></Suspense>},
       { path : "profile/edit" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><EditProfile /></Suspense>},
@@ -134,7 +135,7 @@ export default function AppRoutes() {
 
 
   //Not Found route
-  { path: "*" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><NotFound /></Suspense>}
+  { path: "*" , element: <Suspense className='text-9xl' fallback={<Loading />}><NotFound /></Suspense>}
 
 ]);
 

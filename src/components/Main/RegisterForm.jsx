@@ -14,34 +14,35 @@ import { register } from '../../services/authService.js';
 
 export default function RegisterForm({ role }) {
 
-      let navigate = useNavigate();
-      // const { loginUser } = useAuth(""); //to store user has logged in    
+      const navigate = useNavigate();
       const [ apiError, setApiError] = useState('');
       const [ isLoading , setIsLoading ] = useState(false);
       const [showPassword, setShowPassword] = useState(false);
-
-      
       
       useEffect (() => {}, [])
 
       async function  handleRegister (formValues){
         
-        // eslint-disable-next-line no-unused-vars
-        const {rePassword , ...rest} = formValues;
-        
         setIsLoading(true);
-        
-        const values = {
-          ...rest , 
-          role: role.toUpperCase(),
-          profileData: {
-            firstName: splitName(formValues.name).firstName,
-            lastName: splitName(formValues.name).lastName || ' ',
+              // eslint-disable-next-line no-unused-vars
+              const {rePassword , ...rest} = formValues;
+
+        let valuesToSubmit = {
+                    ...rest , 
+                    role: role.toUpperCase(),
+                    profileData: {
+                      firstName: splitName(formValues.name).firstName,
+                      lastName: splitName(formValues.name).lastName,
+                   }
+                
+              }
+
+          
             
-          }}
-        
+        try {
+
           //send request to backend to register user
-          const { data } = await register(JSON.stringify(values));
+          const {data} = await register(JSON.stringify(valuesToSubmit));
           console.log( 'data : ', data );
           
           if (data.success===false) {
@@ -58,8 +59,12 @@ export default function RegisterForm({ role }) {
             navigate('/register/signup-success');
             
           }
-      } 
-    
+      
+        } catch (error) {
+          setApiError(`${error.response?.data?.message || error.message}`);
+        }
+          
+      }
       
       //username
       const nameLabel = role === 'talent' ? 'Username' : 'Company Name';
@@ -69,7 +74,7 @@ export default function RegisterForm({ role }) {
       const emailLabel = role === 'talent' ? 'Email' : 'Company Email';
       const emailPlaceholder = role === 'talent' ? 'Enter your email' : 'Enter your company email';  
         
-  
+      
       let formik = useFormik({
             initialValues: {
               name: '',
@@ -212,7 +217,7 @@ export default function RegisterForm({ role }) {
                                
                     {apiError && (
                       <p className="font-small text-red-600 mt-2">
-                        Alert! {apiError}
+                        Error! {apiError}
                       </p>
                     )}
 

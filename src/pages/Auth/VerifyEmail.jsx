@@ -1,50 +1,54 @@
 import React, { useState, useEffect } from 'react'
 import { Helmet } from 'react-helmet'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import axiosClient from '../../services/axiosClient'
 import SuccessCard from '../../components/Main/SuccessCard'
 
 export default function VaerifyEmail() {
-
-    let [ Count , SetCount ] = useState()
+    const [ isLoading , setIsLoading ] = useState(true);
+    const [ isError , setIsError ] = useState(false)
     const [ searchParams ] = useSearchParams();
     const [message, setMessage] = useState('verifying...');   
-
+   // const navigate = useNavigate();
     
       useEffect(() => {
 
-    const vt = searchParams.get("vt"); // هيرجع قيمة التوكن
-    if (!vt) {
-      setMessage("Expired verification url.");
-      return;
-    }
-    
-    
-    const verifyUser = async () => {
-      try {
-
-        const response = await axiosClient.post("/auth/verify", { verificationToken: vt });
-        
-        
-        if (response.data.success) {
-
-          setMessage("Your email has been verified!");
-        } else {
-          
-          setMessage("Error: " + response.data.message);
+        const vt = searchParams.get("vt"); 
+        if (!vt) {
+          setMessage("Expired verification url.");
+          setIsError(true);
+          setIsLoading(false);
+          return;
         }
-
-      } catch (error) {
-        console.log('error: ', error );
         
-        setMessage("Some thing went wrong.!!!!");
+        const verifyUser = async () => {
+          try {
+
+            const res = await axiosClient.post("/auth/verify", { verificationToken: decodeURIComponent(vt) } )
+            if (res.data.statusCode === 200 || res.data.success === true) {
+
+              setMessage(res.data.message || "Email verified successfully");
+              setIsError(false);
+        
+            }else{
+              setMessage(res.data.message || 'Verification failed');
+              setIsError(true);
+            }
+          
+
+          } catch (error) {
+            console.log('varification error: ', error );
+            
+        }finally{
+          setIsLoading(false);
+        }
+        setIsError(false);
       }
-    };
 
-    verifyUser();
-  }, [searchParams]);
+        verifyUser();
+      }, [searchParams ]);
 
-
+    
 
     
       return (
@@ -54,16 +58,14 @@ export default function VaerifyEmail() {
             
         </Helmet>
         <SuccessCard 
-        
+        isError={isError}
         message={message}
-        buttonText={"Login now"}
-        buttonLink={'/login'}
+        buttonText={isLoading ? 'Verifying...' : 'Login now'}
+        buttonLink={isLoading ? null : '/login'}
 
         
         />
 
-
-        {/* <VerifyemailComponent message={message} /> */}
     </div>
 
   )
