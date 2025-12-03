@@ -72,10 +72,10 @@ export default function Register() {
                   </div >
 
                   {/* ************* register form ******************** */}
-
-              <RegisterForm role={role}  />
-
-                    
+                   <RegisterForm role={role} />
+                                
+              
+      
                 <Outlet />
               </div>
              
