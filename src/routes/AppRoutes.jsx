@@ -15,16 +15,29 @@ const NotFound = lazy(()=>import('../pages/Main/NotFound'))
 const Register = lazy(()=>import('../pages/Auth/Register'));
 const Login = lazy(()=>import('../pages/Auth/Login'))
 
+//register-success
+const SignupSuccess = lazy(()=>import('../pages/Auth/SignupSuccess')) 
+
+//verify email
+const VerifyEmail = lazy(()=>import('../pages/Auth/VerifyEmail'))
+
+
 //talent pages
 const TalentProfile = lazy(()=>import('../pages/Main/talent/TalentProfile'))
 const EditTalentProfile = lazy(()=>import('../pages/Main/talent/EditTalentProfile'))
 const ProfileAvatar = lazy(()=>import('../pages/Main/talent/ProfileAvatar'))
 const FindJob = lazy(()=>import('../pages/Main/talent/FindJob'))
+
 const MyApplications = lazy(()=>import('../pages/Main/talent/MyApplications'))
 const ApplicationDetails = lazy(()=>import('../pages/Main/talent/ApplicationDetails'))
+
 const EditApplication = lazy(()=>import('../pages/Main/talent/EditApplication'))
+
 const JobProposal = lazy(()=>import('../pages/Main/talent/JobProposal'))
+
 const TalentAccountSettings = lazy(()=>import('../pages/Main/talent/TalentAccountSettings'))
+
+
 
 //employer routes
 const EmployerProfile = lazy(()=>import('../pages/Main/employer/EmployerProfile'))
@@ -75,13 +88,18 @@ export default function AppRoutes() {
   { path: "/" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><AuthLayOut /></Suspense>, 
     children: [
             //auth routes
-            { index: true ,  element: <Register />  },
-            { path:"register", element:<Register />},
+            { index: true ,  element: <Register />},
+            { path:"register", element:<Register />}, 
             { path:"login", element:<Login />},
             
   ]
   },
+
+  { path: 'register/signup-success' ,  element: <SignupSuccess /> },
+  { path: '/verify/' ,  element: <VerifyEmail /> },
   
+
+
   //3-talent routes
   { path: "talent", element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><MainLayOut /></Suspense> ,
     children: [
