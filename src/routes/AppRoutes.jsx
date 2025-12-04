@@ -37,7 +37,7 @@ const SearchTalents = lazy(()=>import('../pages/Main/Employer/SearchTalents'))
 const EditJob = lazy(()=>import('../pages/Main/employer/EditJob'))
 
 //layouts
-const MainLayOut = lazy(()=>import('../components/Layouts/MainLayout'))
+const MainLayOut = lazy(()=>import('../components/layouts/MainLayout'))
 const AuthLayOut = lazy(()=>import('../components/Layouts/AuthLayout'))
 
 
@@ -56,7 +56,7 @@ export default function AppRoutes() {
     children: [
             //public routes
             { index: true ,   element:  <Home /> },
-            { path:"home" ,  element:<Home />},
+            
             { path:"about" ,  element:<About />},
             { path:"contact", element:<Contact />},
 
@@ -72,11 +72,11 @@ export default function AppRoutes() {
 
 
   //2-auth routes
-  { path: "/auth" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><AuthLayOut /></Suspense>, 
+  { path: "/" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><AuthLayOut /></Suspense>, 
     children: [
             //auth routes
             { index: true ,  element: <Register />  },
-            { path:"register" ,  element:<Register />},
+            { path:"register", element:<Register />},
             { path:"login", element:<Login />},
             
   ]

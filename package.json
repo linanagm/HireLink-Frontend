@@ -4,9 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "format": "biome format --write .",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
+    "check": "biome check .",
+    "check:fix": "biome check --write .",
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -16,6 +20,7 @@
     "@mui/material": "^7.3.5",
     "axios": "^1.13.2",
     "flowbite-react": "^0.12.10",
+    "formik": "^2.4.9",
     "generate-react-cli": "^9.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
