@@ -134,7 +134,6 @@ export default function JobDetail() {
       </div>
 
       {/* Footer */}
-      <Footer />
 
     </div>
   );
