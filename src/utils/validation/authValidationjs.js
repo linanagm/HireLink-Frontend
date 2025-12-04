@@ -44,3 +44,13 @@ export const EmployerRegisterSchema =
     });
 
  
+export const LoginSchema =  
+    
+    Yup.object().shape({
+            email: emailschema.required("Email is required"),
+
+            password: Yup.string()
+            .min( 2 , "Required")
+            .max(32 , "must be at most 64 characters")
+            .required("Password is required"),
+    });
