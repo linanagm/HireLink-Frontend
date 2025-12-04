@@ -19,7 +19,7 @@ export const saveTokens = () => {
 
 export async function register(values) {
 
-        const res = await axiosClient.post('/auth/register', values);
+        const res = await axiosClient.post('/auth/register', values, { timeout: 60000 }); 
 
         return res;
 
@@ -27,5 +27,11 @@ export async function register(values) {
 
 
 //-----------------------------------------------------------
+export async function verifyEmail(verificationToken) {
+  const res = await axiosClient.post("/auth/verify", {
+    verificationToken: verificationToken
+  });
 
+  return res.data;
+}
 

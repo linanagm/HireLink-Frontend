@@ -7,7 +7,7 @@ export default function LoginForm() {
     let [ Count , SetCount ] = useState()
     let [ isLoading, setIsLoading ] = useState(false)
     let [ showPassword, setShowPassword ] = useState(false)   
-
+    
     
     let formik = useFormik({
       initialValues: {
@@ -85,7 +85,7 @@ export default function LoginForm() {
                     
                     className="bg-fuchsia-700  w-full hover:bg-fuchsia-800 text-white box-border border rounded hover:bg-brand-medium focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
                       
-                      {isLoading? <i className="fa-solid fa-spinner fa-spin"></i>: 'Submit' }
+                      {isLoading? <i className="fa-solid fa-spinner fa-spin"></i>: 'Login' }
                       
                     </button>
 
