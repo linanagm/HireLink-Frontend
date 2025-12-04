@@ -21,14 +21,26 @@ const name = Yup
  .string()
   .matches(/^\S+\s+\S+/, "Please enter your full name")
 
-export const registerSchema =  
+
+  
+export const TalentRegisterSchema =  
     
     Yup.object().shape({
             name: name.required("Name is required"),
             email: emailschema.required("Email is required"),
             password: passwordschema.required("Password is required"),
              rePassword: Yup.string().oneOf([Yup.ref("password"), null], "Passwords must match"),
-  //           role: roleSchema.required("Role is required"),
-    })
+
+    });
+
+export const EmployerRegisterSchema =  
+    
+    Yup.object().shape({
+            name: Yup.string().required("Name is required"),
+            email: emailschema.required("Email is required"),
+            password: passwordschema.required("Password is required"),
+             rePassword: Yup.string().oneOf([Yup.ref("password"), null], "Passwords must match"),
+  
+    });
 
  

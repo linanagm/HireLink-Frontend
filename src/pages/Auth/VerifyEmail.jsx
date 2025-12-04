@@ -1,52 +1,59 @@
 import React, { useState, useEffect } from 'react'
 import { Helmet } from 'react-helmet'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import axiosClient from '../../services/axiosClient'
+import {  useNavigate, useSearchParams } from 'react-router-dom'
 import SuccessCard from '../../components/Main/SuccessCard'
+import {  verifyEmail } from '../../services/authService'
 
 export default function VaerifyEmail() {
-    const [ isLoading , setIsLoading ] = useState(true);
-    const [ isError , setIsError ] = useState(false)
-    const [ searchParams ] = useSearchParams();
+    const [ params ] = useSearchParams();
     const [message, setMessage] = useState('verifying...');   
-   // const navigate = useNavigate();
+    const [status , setStatus] = useState('loading');
+    const [isVerified, setIsVerified] = useState(false);
+    const navigate = useNavigate();
     
       useEffect(() => {
-
-        const vt = searchParams.get("vt"); 
-        if (!vt) {
-          setMessage("Expired verification url.");
-          setIsError(true);
-          setIsLoading(false);
-          return;
-        }
-        
-        const verifyUser = async () => {
+        async function doVerify () {
+          if(isVerified) return;
           try {
-
-            const res = await axiosClient.post("/auth/verify", { verificationToken: decodeURIComponent(vt) } )
-            if (res.data.statusCode === 200 || res.data.success === true) {
-
-              setMessage(res.data.message || "Email verified successfully");
-              setIsError(false);
-        
-            }else{
-              setMessage(res.data.message || 'Verification failed');
-              setIsError(true);
+            const verificationToken = params.get("vt");
+            
+            if (!verificationToken) {
+              setStatus('error')
+              setMessage( "Missing verification token.");
+              return;
             }
-          
+
+            //call api
+            const res = await verifyEmail( verificationToken  );
+            console.log('response : \n',res);
+            
+            setStatus('success');
+            setMessage(res.message);
 
           } catch (error) {
+
             console.log('varification error: ', error );
             
-        }finally{
-          setIsLoading(false);
-        }
-        setIsError(false);
-      }
+            setStatus('error');
 
-        verifyUser();
-      }, [searchParams ]);
+            if (error.response.data.message){
+            
+              setMessage(error.response.data.message);
+            
+            }else {
+            
+              setMessage("Network error, Please try again.");
+            
+            }
+          }
+          setIsVerified(true);
+
+          setTimeout(() => { navigate('/login'); }, 3000);
+
+        }
+doVerify();
+
+      },[] );
 
     
 
@@ -58,10 +65,11 @@ export default function VaerifyEmail() {
             
         </Helmet>
         <SuccessCard 
-        isError={isError}
+
+        status={status}
         message={message}
-        buttonText={isLoading ? 'Verifying...' : 'Login now'}
-        buttonLink={isLoading ? null : '/login'}
+        buttonText={status==='loading' ? 'Verifying...' : 'Login now'}
+        buttonLink={status==='loading' ? null : '/login'}
 
         
         />

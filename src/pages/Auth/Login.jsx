@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import loginImage from '../../assets/images/login.svg'
 import { Helmet } from 'react-helmet'
-import LoginForm from '../../components/Main/LoginForm'
+import LoginForm from '../../components/auth/LoginForm'
 
 export default function Login() {
 
@@ -13,6 +13,7 @@ export default function Login() {
         <Helmet>
           <title>Login</title>  
         </Helmet>
+    
     
     <div>
       

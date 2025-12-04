@@ -1,18 +1,12 @@
 import React, {  useEffect, useState } from 'react'
 import { useFormik } from 'formik';
-//import { signup } from '../../fakeData/fakeApi';
-//import { handleRegister } from '../../hooks/useForm';
-//import { useAuth } from '../../hooks/useAuth';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
-//import  VerifyemailComponent  from '../../components/Main/VerifyemailComponent';
-import { splitName } from '../../utils/tools.js';
-//import axiosClient from '../../services/axiosClient.js';
-import { registerSchema } from '../../utils/validation/authValidationjs.js';
+import { Link, useNavigate } from 'react-router-dom';
+import { EmployerRegisterSchema} from '../../utils/validation/authValidationjs.js';
 import { register } from '../../services/authService.js';
-// import { signupSchema } from '../../utils/validation/authValidationjs.js';
 
 
-export default function RegisterForm({ role }) {
+
+export default function EmployerSigupForm({ role }) {
 
       const navigate = useNavigate();
       const [ apiError, setApiError] = useState('');
@@ -28,11 +22,11 @@ export default function RegisterForm({ role }) {
               const {rePassword , ...rest} = formValues;
 
         let valuesToSubmit = {
-                    ...rest , 
+                    email:formValues.email,
+                    password:formValues.password,
                     role: role.toUpperCase(),
                     profileData: {
-                      firstName: splitName(formValues.name).firstName,
-                      lastName: splitName(formValues.name).lastName,
+                      companyName: formValues.name,
                    }
                 
               }
@@ -65,15 +59,7 @@ export default function RegisterForm({ role }) {
         }
           
       }
-      
-      //username
-      const nameLabel = role === 'talent' ? 'Username' : 'Company Name';
-      const namePlaceholder = role === 'talent' ? 'Enter your name' : 'Enter your company name';
-  
-      // email
-      const emailLabel = role === 'talent' ? 'Email' : 'Company Email';
-      const emailPlaceholder = role === 'talent' ? 'Enter your email' : 'Enter your company email';  
-        
+            
       
       let formik = useFormik({
             initialValues: {
@@ -82,7 +68,7 @@ export default function RegisterForm({ role }) {
               password: '',
               rePassword: '',
             },
-            validationSchema: registerSchema,
+            validationSchema: EmployerRegisterSchema,
             onSubmit: handleRegister
         })
 
@@ -94,7 +80,7 @@ export default function RegisterForm({ role }) {
                       
                     <div className="mb-5 transition-all duration-300">
                       
-                      <label htmlFor="username" className="block mb-2.5 text-sm font-medium  text-heading">{nameLabel}</label>
+                      <label htmlFor="username" className="block mb-2.5 text-sm font-medium  text-heading">Company Name</label>
                       
                       <input 
                       type="text" 
@@ -104,7 +90,7 @@ export default function RegisterForm({ role }) {
                       name="name" 
                       id="username" 
                       className="bg-neutral-secondary-medium border border-default-medium text-heading text-sm  rounded border-slate-300 focus:ring-brand transition  focus:border-brand block w-full px-3 py-3 shadow-xs placeholder:text-body" 
-                      placeholder={namePlaceholder} 
+                      placeholder='Company Name'
                        />
                     </div>
 
@@ -116,7 +102,7 @@ export default function RegisterForm({ role }) {
 
 
                     <div className="mb-5 transition-all duration=300">
-                      <label htmlFor="email" className="block mb-2.5 text-sm font-medium  text-heading">{emailLabel}</label>
+                      <label htmlFor="email" className="block mb-2.5 text-sm font-medium  text-heading">Buisness Email Address</label>
                       <input 
                       type="email" 
                       value={formik.values.email}
@@ -125,7 +111,7 @@ export default function RegisterForm({ role }) {
                       name="email" 
                       id="useremail" 
                       className="bg-neutral-secondary-medium border border-default-medium text-heading text-sm  rounded border-slate-300 focus:ring-brand transition  focus:border-brand block w-full px-3 py-3 shadow-xs placeholder:text-body" 
-                      placeholder={emailPlaceholder} 
+                      placeholder='Buisness Email Address'
                        />
 
                     </div>
@@ -167,6 +153,7 @@ export default function RegisterForm({ role }) {
                               <span className="font-medium">Alert!</span> {formik.errors.password}
                           </div>) :null} 
 
+
                   {/* repassword field */}
                   <div className="mb-5">
                       <label htmlFor="password"  className="block mb-2.5 text-sm font-medium text-heading">Confirm Password</label>
@@ -178,7 +165,7 @@ export default function RegisterForm({ role }) {
                       name="rePassword" 
                       id="userrePassword" 
                       className="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded border-slate-300 focus:ring-brand transition focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" 
-                      placeholder="••••••••" 
+                      placeholder="Aa@123456" 
                       />
 
                   </div>
@@ -198,20 +185,10 @@ export default function RegisterForm({ role }) {
                     
                     className="bg-fuchsia-700  w-full hover:bg-fuchsia-800 text-white box-border border rounded hover:bg-brand-medium focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
                       
-                      {isLoading? <i className="fa-solid fa-spinner fa-spin"></i>: 'Submit' }
+                      {isLoading? <i className="fa-solid fa-spinner fa-spin"></i>: 'Sign Up' }
                       
                     </button>
 
-
-                    {/* ********************* login link ************************ */}
-
-                    
-                    <div className='w-full flex  items-center justify-center '>
-                          <Link to="/login" className="text-sm font-medium text-blue-600 hover:underline hover:text-blue-400 ">
-                              Already have an account? Login
-                          </Link>
-
-                    </div>
 
                     {/* ****************** API error *************/}
                                
