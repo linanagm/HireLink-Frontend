@@ -24,11 +24,11 @@ export default function VaerifyEmail() {
             }
 
             //call api
-            const res = await verifyEmail( verificationToken  );
-            console.log('response : \n',res);
+            const data = await verifyEmail( verificationToken  );
+            console.log('response : \n',data);
             
             setStatus('success');
-            setMessage(res.message);
+            setMessage(data.message);
 
           } catch (error) {
 
@@ -48,12 +48,12 @@ export default function VaerifyEmail() {
           }
           setIsVerified(true);
 
-          setTimeout(() => { navigate('/login'); }, 3000);
+         // setTimeout(() => { navigate('/login'); }, 3000);
 
         }
 doVerify();
 
-      },[] );
+      },[isVerified, params, navigate] );
 
     
 

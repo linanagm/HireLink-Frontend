@@ -1,7 +1,7 @@
 import React, {  useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import correctImage from '../../assets/images/correct.svg'
-//import { Button } from 'flowbite-react'
+
 
 export default function SuccessCard({
     
@@ -14,7 +14,7 @@ export default function SuccessCard({
     
 }) {
 
-   // const [ Count , SetCount ] = useState(countdownSeconds)
+
 
       useEffect (() => {}, [])
     

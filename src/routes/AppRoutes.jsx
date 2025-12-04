@@ -21,7 +21,8 @@ const SignupSuccess = lazy(()=>import('../pages/Auth/SignupSuccess'))
 
 //verify email
 const VerifyEmail = lazy(()=>import('../pages/Auth/VerifyEmail'))
-
+//forgot password
+const ForgotPassword = lazy(()=>import('../pages/Auth/ForgotPassword'))
 
 //talent pages
 const TalentProfile = lazy(()=>import('../pages/Main/talent/TalentProfile'))
@@ -98,6 +99,7 @@ export default function AppRoutes() {
 
   { path: 'register/signup-success' ,  element: <Suspense fallback={<Loading />}><SignupSuccess /></Suspense>  },
   { path: '/verify/' ,  element: <Suspense fallback={<Loading />}><VerifyEmail /></Suspense> },
+  { path: '/forgot-password/' ,  element: <Suspense fallback={<Loading />}><ForgotPassword /></Suspense> },
   
 
 

@@ -1,56 +1,70 @@
 import { createContext, useEffect, useState } from 'react';
-import { getData, saveTokens } from '../services/authService.js';
+import { getCurrentUser } from '../services/token.service';
+
  
 
-export const AuthContext = createContext();
+export const AuthContext = createContext(0);
 
 
 
 
-export function AuthProvider ({ children }) {
+export function AuthProvider ({children}) {
 
-    const[ user , setUser ] = useState( getData("users") );
-    const[ tokens , setTokens ] = useState(saveTokens());
-    const [ verificationToken, setVerificationToken ] = useState(null);
+    const[ currentUser , setCurrentUser ] = useState( null );
+    const[ token , setToken ] = useState(null);
+    
 
 
    useEffect(() => {
-        if (user) {
-            localStorage.setItem("user", JSON.stringify(user));
+        //check localstorage first for remember me
+        // const savedUser = localStorage.getItem("user");
+        // if (savedUser) {
+        //     setUser(JSON.parse(savedUser));
+        //     return;
+        // }
+
+
+        //check sessionStorage otherWise
+        // const sessionUser = sessionStorage.getItem("user");
+        // if (sessionUser) {
+        //     setUser(JSON.parse(sessionUser));
+        //     return;
+        // }
+
+
+        
+    }, [] );
+
+
+    
+    const saveLogin = (token, rememberMe) => {
+        //setUser(userData);
+        setCurrentUser(getCurrentUser(token));
+        if (rememberMe) {
+            setToken(token)
+            localStorage.setItem("token", JSON.stringify(token));
+            localStorage.setItem("user", JSON.stringify(getCurrentUser(token)));
+        
         } else {
-            localStorage.removeItem("user");
+            setToken(token)
+            sessionStorage.setItem("token", JSON.stringify(token));
+            sessionStorage.setItem("user", JSON.stringify(getCurrentUser(token)));
+          
         }
-
-        if (tokens) {
-            localStorage.setItem("tokens", JSON.stringify(tokens));
-        } else {
-            localStorage.removeItem("tokens");
-        }
-    }, [ user,tokens]);
+    }  
 
 
-    const loginUser = ({ user, accessToken, refreshToken }) => {
-        setUser(user);
-        setTokens({ accessToken, refreshToken });
+    const logout = () => {
+      //  setUser(null);
+        localStorage.removeItem("user");
+        sessionStorage.removeItem("user");
     }
 
-    const logoutUser = () => {
-        setUser(null);
-        setTokens(null);
-    }
-
-
+        
     return (
         <AuthContext.Provider 
         
-        value={{ 
-            user, 
-            tokens, 
-            loginUser, 
-            logoutUser,
-            verificationToken,
-            setVerificationToken
-            }}>
+        value={ { token, setToken ,saveLogin , logout } }>
 
             {children}
 

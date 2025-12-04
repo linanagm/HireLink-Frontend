@@ -28,10 +28,37 @@ export async function register(values) {
 
 //-----------------------------------------------------------
 export async function verifyEmail(verificationToken) {
-  const res = await axiosClient.post("/auth/verify", {
-    verificationToken: verificationToken
+  try{
+      const res = await axiosClient.post("/auth/verify", {
+      verificationToken: verificationToken
   });
-
   return res.data;
+
+  }catch(error){
+      console.log('verifyemail server error: \n ' , error);
+    return error;   
+  }
+  
+  
 }
 
+// -------------------------------------------------------
+
+export async function login({email, password}) {
+  try{
+      const res = await axiosClient.post("/auth/login", {email, password})
+      console.log('API DATA: \n', res.data);
+      
+      return res.data;
+  } catch(error)
+  
+  {
+      console.log('login server error : \n',error);
+      
+      
+      return error;     
+  }
+  
+
+ 
+}

@@ -1,25 +1,75 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { useFormik } from 'formik';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
+
+import { login } from '../../services/authService';
+import { LoginSchema } from '../../utils/validation/authValidationjs';
+import { AuthContext } from '../../context/AuthContext';
+
 
 export default function LoginForm() {
 
-    let [ Count , SetCount ] = useState()
-    let [ isLoading, setIsLoading ] = useState(false)
-    let [ showPassword, setShowPassword ] = useState(false)   
+    const { saveLogin } = useContext(AuthContext);
+    const [ isLoading, setIsLoading ] = useState(false)
+    const [ showPassword, setShowPassword ] = useState(false)   
+    const [ rememberMeChecked , setRememberMeChecked ] = useState(false)
+    const [isLogedIn, setIsLogedIn] = useState(false);
+    const [ apiError, setApiError] = useState('');
+    const navigate = useNavigate();
+
+
+    useEffect (() => {}, [])
+
+      async function  handleLogin (formValues){
+        
+              setIsLoading(true);
+      
+              try {
+
+                if (isLogedIn) return Navigate('/register/signup-success');
+      
+                //send request to backend to register user
+                const data = await login(formValues);
+                
+                if (data.success===false) {
+                  setIsLoading(false);
+                  setApiError(`${data.message}`);
+                  //console.log('login error: ' , data.message);
+                  setIsLogedIn(false);
+
+                } else {
+      
+                  setIsLoading(false);    
+                  setApiError(`${data.message}`);
+                  setIsLogedIn(true); 
+                  saveLogin(data.data.token, rememberMeChecked);
+                  navigate('/talent/profile/edit');
+                  //***will change according to uder id ***
+                  
+                }
+            
+              } catch (error) {
+                setApiError(`${error.response?.data?.message || error.message}`);
+              }
+                
+            }
     
-    
-    let formik = useFormik({
-      initialValues: {
-        email: '',
-        password: '',
-      }
-    })
-      useEffect (() => {}, [])
-    
+      let formik = useFormik({
+        initialValues: {
+          email: '',
+          password: '',
+        },
+        validationSchema: LoginSchema,
+        onSubmit: handleLogin
+      })
+        useEffect (() => {}, [])
+      
   return (<>
 
-                  <form onSubmit={formik.handleSubmit} className= " font-sans pt-2">
+                  <form 
+                  onSubmit={formik.handleSubmit}
+                  onChange={formik.handleChange}
+                  className= " font-sans pt-2">
                     
               
 
@@ -75,7 +125,21 @@ export default function LoginForm() {
                               <span className="font-medium"></span> {formik.errors.password}
                           </div>) :null} 
 
-                   
+                   {/* remember me  + Forot your password */}
+                   <div className='text-sm flex flex-colitems-center justify-between py-3 mb-3'>
+
+                            <div className='relative flex items-center text-md text-slate-700'>
+                              <span onClick={() => setRememberMeChecked(prev => !prev) }className='absolute left-0'>
+                                {rememberMeChecked ? <i class="fa-regular fa-square-check"></i> :<i class="fa-regular fa-square"></i>}
+                                
+                              </span>
+                              
+                              <p className='mx-3 px-3'>Remember me</p>
+                            </div>
+                            <Link to="/forgot-password" className='text-red-700 hover:underline hover:text-red-600'>Forgot password?</Link>
+
+
+                   </div>
 
                     {/********************* button ************************/}
                     
@@ -89,27 +153,26 @@ export default function LoginForm() {
                       
                     </button>
 
-
+                              
                     {/* ********************* login link ************************ */}
 
                     
                     <div className='w-full flex  items-center justify-center '>
+                      <p className='text-slate-700 text-xs'>Don't have an account
                           <Link to="/login" className="text-sm font-medium text-blue-600 hover:underline hover:text-blue-400 ">
-                               Forget your password.
+                               Sign Up
                           </Link>
+                          </p>
 
                     </div>
 
                     {/* ****************** API error *************/}
                                
-                    {/* {apiError && (
+                    {apiError && (
                       <p className="font-small text-red-600 mt-2">
                         Error! {apiError}
                       </p>
-                    )} */}
-
-                    
-                      
+                    )}
                   
                   </form>
               </>
