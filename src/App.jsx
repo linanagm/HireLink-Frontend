@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import AppRoutes from './routes/AppRoutes'
 import { ThemeInit } from '../.flowbite-react/init'
+import { AuthProvider } from './context/AuthContext'
 
 
 function App() {
@@ -10,7 +11,10 @@ function App() {
   return (
     <>
         <ThemeInit/>
-        <AppRoutes/>
+        <AuthProvider>
+            <AppRoutes/>
+        
+        </AuthProvider>
         
     </>
     
