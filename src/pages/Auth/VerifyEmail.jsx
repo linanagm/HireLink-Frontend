@@ -13,49 +13,55 @@ export default function VaerifyEmail() {
     
       useEffect(() => {
         async function doVerify () {
+
           if(isVerified) return;
-          try {
+          
+          
             const verificationToken = params.get("vt");
             
             if (!verificationToken) {
               setStatus('error')
               setMessage( "Missing verification token.");
+              setIsVerified(true);
               return;
             }
 
+        try {
+
             //call api
             const data = await verifyEmail( verificationToken  );
-            console.log('response : \n',data);
-            
-            setStatus('success');
-            setMessage(data.message);
+            //console.log('response : \n',data);
+    
+            if (data.ok || data.message === "email already verified") {
+              setStatus('success');
+              setMessage('Email verified successfully.');
+            } else {
+              setStatus('error');
+              setMessage(data.message || "Verification failed.");
+            }
+
 
           } catch (error) {
 
             console.log('varification error: ', error );
             
             setStatus('error');
-
-            if (error.response.data.message){
+            setMessage("Network error, Please try again.");
             
-              setMessage(error.response.data.message);
-            
-            }else {
-            
-              setMessage("Network error, Please try again.");
-            
-            }
           }
+          
           setIsVerified(true);
 
-         // setTimeout(() => { navigate('/login'); }, 3000);
-
+          // remove params from url
+        navigate('/verify', { replace: true });
+        setTimeout(() => { navigate('/login'); }, 3000);    
+        
         }
-doVerify();
+        doVerify();
+        
 
-      },[isVerified, params, navigate] );
+      },[] );
 
-    
 
     
       return (

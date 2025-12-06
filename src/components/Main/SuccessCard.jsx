@@ -25,17 +25,21 @@ export default function SuccessCard({
 
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col bg-neutral-primary-soft max-w-md h-auto border item-center justify-center border-default rounded-base shadow-xs p-7 rounded-t-3xl">
            
-                { status ==='success' && (
+                { status  && (
                             <img className="fixed top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-t-base w-1/5  right-1/2 py-2" 
+                            
                             src={correctImage}  
-                            alt="Success" />
+                            alt="success" />
                 
-                )}
+                // ):(
                 
-                { status ==='error' && (
+                 
                     
-                            <span className='fixed top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-t-base w-1/5  right-1/2 py-2'><i className="fa-regular fa-circle-xmark text-fuchsia-600 text-7xl"></i></span>  
-                ) }
+                //             <span className='fixed top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-t-base w-1/5  right-1/2 py-2'>
+                //                 <i className="fa-regular fa-circle-xmark text-fuchsia-600 text-7xl"></i>
+                //             </span>  
+                // ) }
+)}
                 
            
              

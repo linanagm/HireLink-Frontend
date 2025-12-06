@@ -27,7 +27,8 @@ export default function LoginForm() {
               try {
 
                 if (isLogedIn) return Navigate('/register/signup-success');
-      
+                console.log('formValues: \n', JSON.stringify(formValues));
+                
                 //send request to backend to register user
                 const data = await login(formValues);
                 
@@ -43,7 +44,7 @@ export default function LoginForm() {
                   setApiError(`${data.message}`);
                   setIsLogedIn(true); 
                   saveLogin(data.data.token, rememberMeChecked);
-                  navigate('/talent/profile/edit');
+                  navigate('/talent/findjob');
                   //***will change according to uder id ***
                   
                 }
