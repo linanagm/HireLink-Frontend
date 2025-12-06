@@ -243,16 +243,16 @@ export default function NavbarComponent() {
                       </li>
 
                       <li>
-                        <button
+                        <span
                           onClick={() => {
                             logout();
                             navigate("/");
                           }}
-                          className="flex items-center w-full p-2 text-red-600 rounded hover:bg-gray-100"
+                          className="flex items-center w-full p-2 text-red-600 rounded hover:bg-gray-100 cursor-pointer"
                         >
-                          <i class="fa-solid fa-arrow-right-from-bracket text-slate-800 mr-2"></i>
+                          <i className="fa-solid fa-arrow-right-from-bracket text-slate-800 mr-2"></i>
                           Sign out
-                        </button>
+                        </span>
                       </li>
 
 

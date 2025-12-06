@@ -12,22 +12,30 @@ export function AuthProvider ({children}) {
 
     const[ currentUser , setCurrentUser ] = useState( null );
     const[ token , setToken ] = useState(null);
+    const[ isAuthenticated , setIsAuthenticated ] = useState(false);
     
 
 
    useEffect(() => {
         //check localstorage first for remember me
-        const savedUser = localStorage.getItem("user");
-        if (savedUser) {
-            setCurrentUser(JSON.parse(savedUser));
+        
+        const savedToken = localStorage.getItem("token");
+
+        if (savedToken !== null) {
+            setCurrentUser(getCurrentUser(savedToken));
+            setToken(JSON.parse(savedToken));
+            setIsAuthenticated(true);
             return;
         }
 
 
         //check sessionStorage otherWise
-        const sessionUser = sessionStorage.getItem("user");
-        if (sessionUser) {
-            setCurrentUser(JSON.parse(sessionUser));
+        
+        const sessionToken = sessionStorage.getItem("token");
+        if (sessionToken !== null) {
+            setCurrentUser(getCurrentUser(sessionToken));
+            setToken(JSON.parse(sessionToken));
+             setIsAuthenticated(true);
             return;
         }
 
@@ -42,12 +50,14 @@ export function AuthProvider ({children}) {
         const userData  = getCurrentUser(token);
         setToken(token);
         setCurrentUser(userData);
+        setIsAuthenticated(true);
         console.log('User data: \n' , userData );
         
         if (rememberMe) {
             
             localStorage.setItem("token", JSON.stringify(token));
             localStorage.setItem("user", JSON.stringify(userData));
+
         
         } else {
         
@@ -66,6 +76,7 @@ export function AuthProvider ({children}) {
         sessionStorage.removeItem("token");
         setToken(null);
         setCurrentUser(null);
+         setIsAuthenticated(false);
     }
 
         
