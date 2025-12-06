@@ -5,10 +5,10 @@ import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { login } from '../../services/authService';
 import { LoginSchema } from '../../utils/validation/authValidationjs';
 import { AuthContext } from '../../context/AuthContext';
-
+//import { useAuth } from '@/hooks/useAuth';
 
 export default function LoginForm() {
-
+    //const { saveLogin } = useAuth();
     const { saveLogin } = useContext(AuthContext);
     const [ isLoading, setIsLoading ] = useState(false)
     const [ showPassword, setShowPassword ] = useState(false)   
@@ -111,8 +111,8 @@ export default function LoginForm() {
                       <span onClick={() => setShowPassword(prev => !prev)}
                        className="absolute right-3 top-2/3 transform -translate-y-1/2 cursor-pointer text-gray-500">
                         {showPassword ? 
-                        <i class="fa-regular fa-eye"></i> 
-                        : <i class="fa-regular fa-eye-slash"></i>
+                        <i className="fa-regular fa-eye"></i> 
+                        : <i className="fa-regular fa-eye-slash"></i>
 
                       }
                         
@@ -131,7 +131,7 @@ export default function LoginForm() {
 
                             <div className='relative flex items-center text-md text-slate-700'>
                               <span onClick={() => setRememberMeChecked(prev => !prev) }className='absolute left-0'>
-                                {rememberMeChecked ? <i class="fa-regular fa-square-check"></i> :<i class="fa-regular fa-square"></i>}
+                                {rememberMeChecked ? <i className="fa-regular fa-square-check"></i> :<i className="fa-regular fa-square"></i>}
                                 
                               </span>
                               
