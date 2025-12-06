@@ -1,8 +1,7 @@
 import { jwtDecode } from "jwt-decode";
 
 
-export const getCurrentUser = () => {
-    const token = localStorage.getItem("token");
-    
-    return token ? jwtDecode(token) : null;
+export const getCurrentUser = (token) => {
+        const currentUserData = token.data ? token.data : jwtDecode(token) || null;        
+    return currentUserData;
 };

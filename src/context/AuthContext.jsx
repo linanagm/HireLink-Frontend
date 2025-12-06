@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from 'react';
 import { getCurrentUser } from '../services/token.service';
 
- 
+
 
 export const AuthContext = createContext(0);
 
@@ -17,19 +17,19 @@ export function AuthProvider ({children}) {
 
    useEffect(() => {
         //check localstorage first for remember me
-        // const savedUser = localStorage.getItem("user");
-        // if (savedUser) {
-        //     setUser(JSON.parse(savedUser));
-        //     return;
-        // }
+        const savedUser = localStorage.getItem("user");
+        if (savedUser) {
+            setCurrentUser(JSON.parse(savedUser));
+            return;
+        }
 
 
         //check sessionStorage otherWise
-        // const sessionUser = sessionStorage.getItem("user");
-        // if (sessionUser) {
-        //     setUser(JSON.parse(sessionUser));
-        //     return;
-        // }
+        const sessionUser = sessionStorage.getItem("user");
+        if (sessionUser) {
+            setCurrentUser(JSON.parse(sessionUser));
+            return;
+        }
 
 
         
@@ -39,16 +39,20 @@ export function AuthProvider ({children}) {
     
     const saveLogin = (token, rememberMe) => {
         //setUser(userData);
-        setCurrentUser(getCurrentUser(token));
+        const userData  = getCurrentUser(token);
+        setToken(token);
+        setCurrentUser(userData);
+        console.log('User data: \n' , userData );
+        
         if (rememberMe) {
-            setToken(token)
+            
             localStorage.setItem("token", JSON.stringify(token));
-            localStorage.setItem("user", JSON.stringify(getCurrentUser(token)));
+            localStorage.setItem("user", JSON.stringify(userData));
         
         } else {
-            setToken(token)
+        
             sessionStorage.setItem("token", JSON.stringify(token));
-            sessionStorage.setItem("user", JSON.stringify(getCurrentUser(token)));
+            sessionStorage.setItem("user", JSON.stringify(userData));
           
         }
     }  
@@ -57,14 +61,19 @@ export function AuthProvider ({children}) {
     const logout = () => {
       //  setUser(null);
         localStorage.removeItem("user");
+        localStorage.removeItem("token");
         sessionStorage.removeItem("user");
+        sessionStorage.removeItem("token");
+        setToken(null);
+        setCurrentUser(null);
     }
 
         
     return (
         <AuthContext.Provider 
         
-        value={ { token, setToken ,saveLogin , logout } }>
+        value={ { token, setToken ,saveLogin , logout, currentUser } }
+        >
 
             {children}
 
