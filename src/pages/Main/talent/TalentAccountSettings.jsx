@@ -81,12 +81,12 @@ export default function AccountSettings() {
             <div className="text-2xl font-extrabold text-purple-600">H</div>
             <nav className="flex items-center gap-6 text-sm text-gray-600">
              <div className="flex gap-6 items-center">
-                       <Link to="/talent/findjob" className="text-gray-500 hover:text-black">
+                       <Link to="/talent/findjob" className="text-purple-500 hover:text-black">
                          Find Jobs
                        </Link>
-                       <a className="text-purple-600 font-semibold" href="#">
-                         My Applications
-                       </a>
+                       <Link to="/talent/applications" className="text-purple-500 hover:text-black">
+                          My Applications
+                       </Link>
                      </div>
              
             </nav>
