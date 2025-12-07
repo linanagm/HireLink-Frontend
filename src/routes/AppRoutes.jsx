@@ -120,7 +120,7 @@ export default function AppRoutes() {
 
 
   //3-talent routes
-  { path: "talent", element: (<ProtectedRoute><RoleRoute allowed={["TALENT"]}><Suspense  fallback={<Loading />}><MainLayOut /></Suspense></RoleRoute></ProtectedRoute> ),
+  { path: "talent", element: (<ProtectedRoute><Suspense  fallback={<Loading />}><MainLayOut /></Suspense></ProtectedRoute> ),
     children: [
       //{ path: "talent" , element: (<Suspense  fallback={<Loading />}><FindJob /></Suspense>)}, //recommenditionjobs
 
@@ -140,7 +140,8 @@ export default function AppRoutes() {
 
   //4-empolyer routes
   { path: "employer", element: (<ProtectedRoute><RoleRoute allowed={["EMPLOYER"]}> <Suspense  fallback={<Loading />}><MainLayOut /></Suspense></RoleRoute></ProtectedRoute>) ,
-    children: [
+    
+  children: [
       { path : "dashboard" , element: (<Suspense  fallback={<Loading />}><EmployerDashboard /></Suspense>)},
       { path : "profile" , element: (<Suspense  fallback={<Loading />}><EmployerProfile /></Suspense>)},
       { path : "profile/edit" , element: (<Suspense c fallback={<Loading />}><EditProfile /></Suspense>)},
