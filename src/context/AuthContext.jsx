@@ -21,8 +21,8 @@ export function AuthProvider ({children}) {
         
         const savedToken = localStorage.getItem("token");
 
-        if (savedToken !== null) {
-            setCurrentUser(getCurrentUser(savedToken));
+        if ( savedToken ) {
+            setCurrentUser(getCurrentUser(token));
             setToken(JSON.parse(savedToken));
             setIsAuthenticated(true);
             return;
@@ -32,7 +32,7 @@ export function AuthProvider ({children}) {
         //check sessionStorage otherWise
         
         const sessionToken = sessionStorage.getItem("token");
-        if (sessionToken !== null) {
+        if (sessionToken) {
             setCurrentUser(getCurrentUser(sessionToken));
             setToken(JSON.parse(sessionToken));
              setIsAuthenticated(true);
@@ -76,14 +76,23 @@ export function AuthProvider ({children}) {
         sessionStorage.removeItem("token");
         setToken(null);
         setCurrentUser(null);
-         setIsAuthenticated(false);
+        setIsAuthenticated(false);
     }
 
         
     return (
         <AuthContext.Provider 
         
-        value={ { token, setToken ,saveLogin , logout, currentUser } }
+        value={ { 
+            token, 
+            currentUser, 
+            isAuthenticated, 
+            setToken , 
+            setCurrentUser,
+            setIsAuthenticated, 
+            saveLogin,
+            logout
+         } }
         >
 
             {children}

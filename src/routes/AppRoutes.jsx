@@ -3,17 +3,22 @@ import React, { lazy, Suspense } from 'react'
 import Loading from '../pages/Main/Loading'
 
 
-const ProtectedRoute = lazy(()=>import('../routes/ProtectedRoute'))
+const ProtectedRoute = lazy(()=>import('../routes/ProtectedRoute'));
+const RoleRoute = lazy(()=>import('../routes/RoleRoute'));
 
 //Public Pages
 const Home = lazy (()=>import ('../pages/Main/Home'));
 const About = lazy (()=> import('../pages/Main/About'));
 const Contact = lazy(()=> import('../pages/Main/Contact'));
 const JobList = lazy (()=> import('../pages/Main/JobList'));
-const JobPublicDetails = lazy (()=> import('../pages/Main/JobPublicDetails'))
+const JobPublicDetails = lazy (()=> import('../pages/Main/JobPublicDetails'));
 const TalentList = lazy(()=> import ('../pages/Main/TalentList'));
 const TalentPublicDetails = lazy(()=>import('../pages/Main/TalentPublicDetails'));
-const NotFound = lazy(()=>import('../pages/Main/NotFound'))
+
+
+const NotFound = lazy(()=>import('../pages/Main/NotFound'));
+const Unauthorized = lazy(()=>import('../pages/Main/Unauthorized')); 
+
 
 //Auth Pages
 const Register = lazy(()=>import('../pages/Auth/Register'));
@@ -50,6 +55,7 @@ const TalentAccountSettings = lazy(()=>import('../pages/Main/talent/TalentAccoun
 
 
 //employer routes
+const EmployerDashboard = lazy(()=>import('../pages/Main/Employer/Dashboard'))
 const EmployerProfile = lazy(()=>import('../pages/Main/employer/EmployerProfile'))
 const EditProfile = lazy(()=>import('../pages/Main/employer/EditProfile'))
 const PostAJob = lazy(()=>import('../pages/Main/employer/PostAJob'))
@@ -107,14 +113,17 @@ export default function AppRoutes() {
   },
 
   { path: 'register/signup-success' ,  element: (<Suspense fallback={<Loading />}><SignupSuccess /></Suspense>)  },
-  { path: '/verify/' ,  element: (<Suspense fallback={<Loading />}><VerifyEmail /></Suspense>) },
-  { path: '/forgot-password/' ,  element: (<Suspense fallback={<Loading />}><ForgotPassword /></Suspense>) },
-  
+  { path: '/verify' ,  element: (<Suspense fallback={<Loading />}><VerifyEmail /></Suspense>) },
+  { path: '/forgot-password' ,  element: (<Suspense fallback={<Loading />}><ForgotPassword /></Suspense>) },
+  { path: '/unauthorized' ,  element: (<Suspense fallback={<Loading />}><Unauthorized /></Suspense>) },
+
 
 
   //3-talent routes
-  { path: "talent", element: (<ProtectedRoute>  <Suspense  fallback={<Loading />}><MainLayOut /></Suspense></ProtectedRoute> ),
+  { path: "talent", element: (<ProtectedRoute><RoleRoute allowed={["TALENT"]}><Suspense  fallback={<Loading />}><MainLayOut /></Suspense></RoleRoute></ProtectedRoute> ),
     children: [
+      //{ path: "talent" , element: (<Suspense  fallback={<Loading />}><FindJob /></Suspense>)}, //recommenditionjobs
+
       { path: "findjob" , element: (<Suspense  fallback={<Loading />}><FindJob /></Suspense>)}, //recommenditionjobs
       { path: "profile" , element: (<Suspense fallback={<Loading />}><TalentProfile /></Suspense>)},
       { path: "profile/edit" , element: (<Suspense  fallback={<Loading />}><EditTalentProfile /></Suspense>)},
@@ -130,8 +139,9 @@ export default function AppRoutes() {
   ]},
 
   //4-empolyer routes
-  { path: "employer", element: (<ProtectedRoute> <Suspense  fallback={<Loading />}><MainLayOut /></Suspense></ProtectedRoute>) ,
+  { path: "employer", element: (<ProtectedRoute><RoleRoute allowed={["EMPLOYER"]}> <Suspense  fallback={<Loading />}><MainLayOut /></Suspense></RoleRoute></ProtectedRoute>) ,
     children: [
+      { path : "dashboard" , element: (<Suspense  fallback={<Loading />}><EmployerDashboard /></Suspense>)},
       { path : "profile" , element: (<Suspense  fallback={<Loading />}><EmployerProfile /></Suspense>)},
       { path : "profile/edit" , element: (<Suspense c fallback={<Loading />}><EditProfile /></Suspense>)},
       { path : "jobs" , element: (<Suspense  fallback={<Loading />}><JobsList /></Suspense>)},
@@ -145,7 +155,7 @@ export default function AppRoutes() {
     ]},
 
     //4-admin
-  { path: "employer", element: (<ProtectedRoute> <Suspense  fallback={<Loading />}><DashboardLayout /></Suspense></ProtectedRoute>),
+  { path: "employer", element: (<ProtectedRoute><RoleRoute allowed={['ADMIN']}> <Suspense  fallback={<Loading />}><DashboardLayout /></Suspense></RoleRoute></ProtectedRoute>),
     children: [
       { path : "dashboard" , element: (<Suspense  fallback={<Loading />}><ModeratorDashboard /></Suspense>)},
       
