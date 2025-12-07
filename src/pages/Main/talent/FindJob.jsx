@@ -92,11 +92,11 @@ export default function JobList() {
         {displayedJobs.map((job) => (
           <Link key={job.id} to={`/jobs/${job.id}`}>
             <div className="bg-white p-6 rounded-xl shadow-sm border hover:shadow-md cursor-pointer">
-              <h2 className="text-xl font-semibold mb-2">{job.title}</h2>
+              <h2 className="text-black font-semibold mb-2">{job.title}</h2>
               <p className="text-gray-600 mb-4">{job.desc}</p>
               <div className="flex flex-wrap gap-2 mb-4">
                 {job.tags.map((tag, i) => (
-                  <span key={i} className="px-3 py-1 text-sm bg-gray-100 rounded-full">{tag}</span>
+                  <span key={i} className="px-3 py-1 text-black bg-gray-100 rounded-full">{tag}</span>
                 ))}
               </div>
               <p className="text-gray-500 text-sm">{job.location}</p>

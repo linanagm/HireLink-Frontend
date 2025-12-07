@@ -51,11 +51,11 @@ export default function EditableProfile() {
         <div className="flex items-center gap-3">
           <h1 className="text-purple-600 font-bold text-2xl">H</h1>
 
-          <Link to="/find-jobs" className="text-gray-700">
+          <Link to="/talent/findjob" className="text-gray-700">
             Find Jobs
           </Link>
 
-          <Link to="/my-applications" className="text-gray-700">
+          <Link to="/talent/applications" className="text-gray-700">
             My Applications
           </Link>
         </div>
