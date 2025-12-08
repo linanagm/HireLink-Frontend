@@ -2,9 +2,9 @@ import * as  Yup from 'yup';
 
 // // Base validation schema
 
- const emailschema = Yup.string().email("Invalid email")
+export const emailschema = Yup.string().email("Invalid email").required("Email is required");
 
-const passwordschema = Yup
+export const passwordschema = Yup
 .string()
 .min(8, "Password must be at least 8 characters")
 .max(32, "Password must be at most 32 characters")
@@ -27,7 +27,7 @@ export const TalentRegisterSchema =
     
     Yup.object().shape({
             name: name.required("Name is required"),
-            email: emailschema.required("Email is required"),
+            email: emailschema,
             password: passwordschema.required("Password is required"),
              rePassword: Yup.string().oneOf([Yup.ref("password"), null], "Passwords must match"),
 
@@ -37,7 +37,7 @@ export const EmployerRegisterSchema =
     
     Yup.object().shape({
             name: Yup.string().required("Name is required"),
-            email: emailschema.required("Email is required"),
+            email: emailschema,
             password: passwordschema.required("Password is required"),
              rePassword: Yup.string().oneOf([Yup.ref("password"), null], "Passwords must match"),
   
@@ -47,7 +47,7 @@ export const EmployerRegisterSchema =
 export const LoginSchema =  
     
     Yup.object().shape({
-            email: emailschema.required("Email is required"),
+            email: emailschema,
 
             password: Yup.string()
             .min( 2 , "Required")
