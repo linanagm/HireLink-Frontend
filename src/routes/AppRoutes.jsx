@@ -1,6 +1,6 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import React, { lazy, Suspense } from 'react'
-import Loading from '../pages/Main/Loading'
+import Loading from '../pages/Main/Public/Loading'
 
 
 const ProtectedRoute = lazy(()=>import('../routes/ProtectedRoute'));
@@ -8,17 +8,16 @@ const RoleRoute = lazy(()=>import('../routes/RoleRoute'));
 
 //Public Pages
 const GuestRoutes = lazy(()=>import('./GuestRoutes'));
-const Home = lazy (()=>import ('../pages/Main/Home'));
-const About = lazy (()=> import('../pages/Main/About'));
-const Contact = lazy(()=> import('../pages/Main/Contact'));
-const JobList = lazy (()=> import('../pages/Main/JobList'));
-const JobPublicDetails = lazy (()=> import('../pages/Main/JobPublicDetails'));
-const TalentList = lazy(()=> import ('../pages/Main/TalentList'));
-const TalentPublicDetails = lazy(()=>import('../pages/Main/TalentPublicDetails'));
+const Home = lazy (()=>import ('../pages/Main/Public/Home'));
+const About = lazy (()=> import('../pages/Main/Public/About'));
+const Contact = lazy(()=> import('../pages/Main/Public/Contact'));
+const JobList = lazy (()=> import('../pages/Main/Public/JobList'));
+const TalentList = lazy(()=> import ('../pages/Main/Public/TalentList'));
+const TalentPublicDetails = lazy(()=>import('../pages/Main/Public/TalentPublicDetails'));
 
 
-const NotFound = lazy(()=>import('../pages/Main/NotFound'));
-const Unauthorized = lazy(()=>import('../pages/Main/Unauthorized')); 
+const NotFound = lazy(()=>import('../pages/Main/Public/NotFound'));
+const Unauthorized = lazy(()=>import('../pages/Main/Public/Unauthorized')); 
 
 
 //Auth Pages
@@ -90,14 +89,10 @@ export default function AppRoutes() {
     children: [
             //public routes
             { index: true ,   element:(<Suspense fallback={<Loading />}>  <Home /></Suspense>) },
-            
             { path:"about" ,  element:(<Suspense fallback={<Loading />} > <About /></Suspense>)},
             { path:"contact", element:(<Suspense fallback={<Loading />}><Contact /></Suspense>)},
-
             //Public Jobs
-            { path:"jobs" , element:(<Suspense fallback={<Loading />}> <JobList /></Suspense>)},
-            { path:"jobs/:jobId" , element:(<Suspense  fallback={<Loading />}><JobPublicDetails /></Suspense>)},
-            
+            { path:"jobs" , element:(<Suspense fallback={<Loading />}> <JobList /></Suspense>)},          
             //Public Talents list
             { path:"talents" , element:(<Suspense  fallback={<Loading />}><TalentList /></Suspense>)},
             { path:"talents/:talentId" ,element:(<Suspense  fallback={<Loading />}><TalentPublicDetails /></Suspense>)}
@@ -105,7 +100,7 @@ export default function AppRoutes() {
 },
     
 {
-  path: "/",
+  path: "",
   element: (
     <Suspense fallback={<Loading />}>
       <GuestRoutes>
@@ -114,10 +109,8 @@ export default function AppRoutes() {
     </Suspense>
   ),
   children: [
-    { index: true, element: <Register /> },
     { path: "register", element: <Register /> },
     { path: "login", element: <Login /> },
-
     { path: "register/signup-success", element: <SignupSuccess /> },
     { path: "verify", element: <VerifyEmail /> },
     { path: "forgot-password", element: <ForgotPassword /> },
@@ -170,7 +163,6 @@ export default function AppRoutes() {
   children: [
       { index: true , element: (<Suspense  fallback={<Loading />}><EmployerDashboard /></Suspense>)},
       { path : "dashboard" , element: (<Suspense  fallback={<Loading />}><EmployerDashboard /></Suspense>)},
-
       { path : "profile" , element: (<Suspense  fallback={<Loading />}><EmployerProfile /></Suspense>)},
       { path : "profile/edit" , element: (<Suspense c fallback={<Loading />}><EditProfile /></Suspense>)},
       { path : "jobs" , element: (<Suspense  fallback={<Loading />}><JobsList /></Suspense>)},

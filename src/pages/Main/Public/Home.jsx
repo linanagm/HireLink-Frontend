@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Helmet } from 'react-helmet'
-import heroImage from '../../assets/images/home.svg'
 import { NavLink } from 'react-router-dom'
+import heroImage from '../../../assets/images/home.svg'
 
 export default function Home() {
 
@@ -9,10 +9,10 @@ export default function Home() {
 
   useEffect(() => {}, [])
 
-  const linkClass = ({ isActive }) =>
-    `px-4 py-2 rounded-md text-black ${
-      isActive ? "bg-gray-200 font-semibold" : "bg-white hover:bg-gray-100"
-    }`
+  // const linkClass = ({ isActive }) =>
+  //   `px-4 py-2 rounded-md text-black ${
+  //     isActive ? "bg-gray-200 font-semibold" : "bg-white hover:bg-gray-100"
+  //   }`
 
   return (
     <div className='container'>
@@ -49,6 +49,10 @@ export default function Home() {
 
         <img src={heroImage} alt="" />
       </div>
+    </div>
+
+    </div>
+
     </div>
   )
 }
