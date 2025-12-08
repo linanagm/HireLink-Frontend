@@ -31,11 +31,11 @@ export default function NavbarComponent() {
   // Role-based tabs
   const roleTabs = {
     TALENT: [
-      { to: '/talent/', label: 'Find Job' },
+      { to: '/talent/findjob', label: 'Find Job' },
       { to: '/talent/applications', label: 'My Applications' },
     ],
     EMPLOYER: [
-      { to: '/employer/', label: 'Dashboard' },
+      { to: '/employer/dashboard', label: 'Dashboard' },
       { to: '/employer/jobs/new', label: 'Post a Job' },
       { to: '/employer/jobs/:jobId/applicants/search', label: 'Search Talents' },
       { to: '/employer/jobs', label: 'Manage Listings' },
@@ -51,10 +51,14 @@ export default function NavbarComponent() {
         { to: '/contact', label: 'Contact' },
       ];
     }
+    
+    
     return roleTabs[currentUser?.role] || [];
   };
 
   const tabs = renderTabs();
+  console.log('navbar tabs: \n', tabs);
+  
 
   // Profile path based on role (assuming standard paths; adjust if needed)
   const profilePath = currentUser?.role === 'TALENT' ? '/talent/profile' : '/employer/profile';
@@ -76,6 +80,7 @@ export default function NavbarComponent() {
               <li key={tab.to}>
                 <NavLink
                   to={tab.to}
+                  end
                   className={({ isActive }) =>
                     `block py-2 text-neutral-800 hover:text-fuchsia-800 ${
                       isActive ? 'text-fg-brand' : ''

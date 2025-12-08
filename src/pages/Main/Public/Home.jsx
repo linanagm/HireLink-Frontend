@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Helmet } from 'react-helmet'
-import heroImage from '../../assets/images/home.svg'
 import { NavLink } from 'react-router-dom'
+import heroImage from '../../../assets/images/home.svg'
 
 export default function Home() {
 
