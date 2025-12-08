@@ -27,14 +27,14 @@ const JobProposal = lazy(()=>import('../pages/Main/talent/JobProposal'))
 const TalentAccountSettings = lazy(()=>import('../pages/Main/talent/TalentAccountSettings'))
 
 //employer routes
-const EmployerProfile = lazy(()=>import('../pages/Main/employer/EmployerProfile'))
-const EditProfile = lazy(()=>import('../pages/Main/employer/EditProfile'))
-const PostAJob = lazy(()=>import('../pages/Main/employer/PostAJob'))
-const JobsList = lazy(()=>import('../pages/Main/employer/JobsList'))
-const JobDetails = lazy(()=>import('../pages/Main/employer/JobDetails'))
-const MyApplicants = lazy(()=>import('../pages/Main/employer/MyApplicants'))  
-const SearchTalents = lazy(()=>import('../pages/Main/Employer/SearchTalents'))
-const EditJob = lazy(()=>import('../pages/Main/employer/EditJob'))
+const EmployerProfile = lazy(()=>import('../pages/Main/Employer/EmployerProfile'))
+const EditProfile = lazy(()=>import('../pages/Main/Employer/EditProfile'))
+const PostAJob = lazy(()=>import('../pages/Main/Employer/PostAJob'))
+const Dashboard = lazy(()=>import('../pages/Main/Employer/Dashboard'))
+const JobDetails = lazy(()=>import('../pages/Main/Employer/JobDetails'))
+const MyApplicants = lazy(()=>import('../pages/Main/Employer/MyApplicants'))  
+const AccountSettings = lazy(()=>import('../pages/Main/Employer/AccountSettings'))
+const EditJob = lazy(()=>import('../pages/Main/Employer/EditJob'))
 
 //layouts
 const MainLayOut = lazy(()=>import('../components/layouts/MainLayout'))
@@ -104,11 +104,11 @@ export default function AppRoutes() {
     children: [
       { path : "profile" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><EmployerProfile /></Suspense>},
       { path : "profile/edit" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><EditProfile /></Suspense>},
-      { path : "jobs" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><JobsList /></Suspense>},
+      { path : "jobs" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><Dashboard /></Suspense>},
       { path : "jobs/new" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><PostAJob /></Suspense>},
       { path : "jobs/:jobId" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><EditJob /></Suspense>},
       { path : "jobs/:jobId/applicants" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><MyApplicants /></Suspense>},
-      { path : "jobs/:jobId/applicants/search" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><SearchTalents /></Suspense>},
+      { path : "profile/settings" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><AccountSettings /></Suspense>},
       { path : "jobs/:jobId" , element: <Suspense className='text-9xl' fallback={<h1>Loading</h1>}><JobDetails /></Suspense>},
 
       
