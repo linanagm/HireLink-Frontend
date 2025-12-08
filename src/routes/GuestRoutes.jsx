@@ -1,12 +1,13 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { getCurrentUser } from "@/services/token.service";
+import { useAuth } from "../hooks/useAuth";
 
 export default function GuestRoute({ redirect = "/" }) {
-  const token = localStorage.getItem("token");
-  const user = token ? getCurrentUser(token) : null;
+  
+  const { currentUser } = useAuth();
+  
 
   // if user exists, block access to guest pages
-  if (user) {
+  if (currentUser) {
     return <Navigate to={redirect} replace />;
   }
 

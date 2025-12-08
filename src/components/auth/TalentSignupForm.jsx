@@ -1,213 +1,158 @@
-import React, {  useEffect, useState } from 'react'
-import { useFormik } from 'formik';
-import { Link, useNavigate } from 'react-router-dom';
-import { splitName } from '../../utils/tools.js';
-import { TalentRegisterSchema } from '../../utils/validation/authValidationjs.js';
-import { register } from '../../services/authService.js';
+import React, { useState } from "react";
+import { useFormik } from "formik";
+import { useNavigate } from "react-router-dom";
+import { splitName } from "../../utils/tools";
+import { TalentRegisterSchema } from "../../utils/validation/authValidationjs";
+import { register } from "../../services/authService";
 
+export default function TalentSignupForm({ role }) {
+  const navigate = useNavigate();
+  const [apiError, setApiError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
+  async function handleRegister(values) {
+    setApiError("");
+    setIsLoading(true);
 
-export default function TalentSigupForm({ role }) {
+    // eslint-disable-next-line no-unused-vars
+    const { rePassword, ...rest } = values;
 
-      const navigate = useNavigate();
-      const [ apiError, setApiError] = useState('');
-      const [ isLoading , setIsLoading ] = useState(false);
-      const [showPassword, setShowPassword] = useState(false);
-      
-      useEffect (() => {}, [])
+    const payload = {
+      ...rest,
+      role,
+      profileData: {
+        firstName: splitName(values.name).firstName,
+        lastName: splitName(values.name).lastName,
+      },
+    };
 
-      async function  handleRegister (formValues){
-        
-        setIsLoading(true);
-              // eslint-disable-next-line no-unused-vars
-              const {rePassword , ...rest} = formValues;
+    const response = await register(payload);
+    setIsLoading(false);
 
-        let valuesToSubmit = {
-                    ...rest , 
-                    role: role,
-                    profileData: {
-                      firstName: splitName(formValues.name).firstName,
-                      lastName: splitName(formValues.name).lastName,
-                   }
-                
-              }
+    if (!response.ok) {
+      setApiError(response.message);
+      return;
+    }
 
-          
-            console.log('valuestoSubmit : ',  valuesToSubmit);
-            
-        try {
+    navigate("/register/signup-success");
+  }
 
-          //send request to backend to register user
-          const {data} = await register(JSON.stringify(valuesToSubmit));
-          console.log( 'data : ', data );
-          
-          if (data.success===false) {
-            
-            setIsLoading(false);
-            setApiError(`${data.message}`);
-            console.log('api error: ' , data.message);
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      email: "",
+      password: "",
+      rePassword: "",
+    },
+    validationSchema: TalentRegisterSchema,
+    onSubmit: handleRegister,
+  });
 
-          } else {
+  return (
+    <form onSubmit={formik.handleSubmit} className="font-sans pt-2">
+      {/* Name */}
+      <div className="mb-5">
+        <label className="block mb-2.5 text-sm font-medium text-heading">
+          Your Name
+        </label>
 
-            setIsLoading(true);           
-            setApiError(`${data.message}`);
-            console.log('data' , data);      
-            navigate('/register/signup-success');
-            
-          }
-      
-        } catch (error) {
-          setApiError(`${error.response?.data?.message || error.message}`);
-          setIsLoading(false);
-        }
-          
-      }
-      
-        
-      
-      let formik = useFormik({
-            initialValues: {
-              name: '',
-              email: '',
-              password: '',
-              rePassword: '',
-            },
-            validationSchema: TalentRegisterSchema,
-            onSubmit: handleRegister
-        })
+        <input
+          type="text"
+          {...formik.getFieldProps("name")}
+          className="bg-neutral-secondary-medium border border-default-medium rounded w-full px-3 py-3"
+          placeholder="Your Name"
+        />
 
-   
-      return (<>
+        {formik.touched.name && formik.errors.name && (
+          <div className="text-red-600 bg-red-50 p-2 mt-1 rounded">
+            {formik.errors.name}
+          </div>
+        )}
+      </div>
 
-                  <form onSubmit={formik.handleSubmit} className= " font-sans pt-2">
-                    
-                      
-                    <div className="mb-5 transition-all duration-300">
-                      
-                      <label htmlFor="username" className="block mb-2.5 text-sm font-medium  text-heading"> Your name </label>
-                      
-                      <input 
-                      type="text" 
-                      value={formik.values.name}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      name="name" 
-                      id="username" 
-                      className="bg-neutral-secondary-medium border border-default-medium text-heading text-sm  rounded border-slate-300 focus:ring-brand transition  focus:border-brand block w-full px-3 py-3 shadow-xs placeholder:text-body" 
-                      placeholder='Username' 
-                       />
-                    </div>
+      {/* Email */}
+      <div className="mb-5">
+        <label className="block mb-2.5 text-sm font-medium text-heading">
+          Email
+        </label>
 
-                    {/* name error */}
-                           {formik.errors.name && formik.touched.name?  ( 
-                          <div className="p-4 mt-2 mb-4 text-sm bg-red-50 text-red-800 rounded-lg" >
-                              <span className="font-medium">Alert!</span> {formik.errors.name}
-                          </div>) :null}  
+        <input
+          type="email"
+          {...formik.getFieldProps("email")}
+          className="bg-neutral-secondary-medium border border-default-medium rounded w-full px-3 py-3"
+          placeholder="Email"
+        />
 
+        {formik.touched.email && formik.errors.email && (
+          <div className="text-red-600 bg-red-50 p-2 mt-1 rounded">
+            {formik.errors.email}
+          </div>
+        )}
+      </div>
 
-                    <div className="mb-5 transition-all duration=300">
-                      <label htmlFor="email" className="block mb-2.5 text-sm font-medium  text-heading">Email Address</label>
-                      <input 
-                      type="email" 
-                      value={formik.values.email}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      name="email" 
-                      id="useremail" 
-                      className="bg-neutral-secondary-medium border border-default-medium text-heading text-sm  rounded border-slate-300 focus:ring-brand transition  focus:border-brand block w-full px-3 py-3 shadow-xs placeholder:text-body" 
-                      placeholder='Email' 
-                       />
+      {/* Password */}
+      <div className="mb-5 relative">
+        <label className="block mb-2.5 text-sm font-medium text-heading">
+          Password
+        </label>
 
-                    </div>
-                          {/* email error */}
-                           {formik.errors.email && formik.touched.email?  ( 
-                          <div className="p-4 -mt-2 mb-4 text-sm bg-red-50 text-red-800 rounded-lg" >
-                              <span className="font-medium"></span> {formik.errors.email}
-                          </div>) :null} 
+        <input
+          type={showPassword ? "text" : "password"}
+          {...formik.getFieldProps("password")}
+          className="bg-neutral-secondary-medium border border-default-medium rounded w-full px-3 py-2.5"
+          placeholder="••••••••"
+        />
 
-                            {/* password field */}
-                    <div className="relative  mb-5">
-                      <label htmlFor="password" className="block mb-2.5 text-sm font-medium text-heading">Your password</label>
-                      <input 
-                      type={showPassword ? "text" : "password"}
+        <span
+          onClick={() => setShowPassword((p) => !p)}
+          className="absolute right-3 top-2/3 -translate-y-1/2 cursor-pointer"
+        >
+          {showPassword ? (
+            <i className="fa-regular fa-eye"></i>
+          ) : (
+            <i className="fa-regular fa-eye-slash"></i>
+          )}
+        </span>
 
-                      value={formik.values.password} 
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      name="password" 
-                      id="userpassword" 
-                      className=" bg-neutral-secondary-medium  border border-default-medium text-heading text-sm rounded border-slate-300 focus:ring-brand transition focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" 
-                      placeholder="••••••••"  
-                      />
-                      <span onClick={() => setShowPassword(prev => !prev)}
-                       className="absolute right-3 top-2/3 transform -translate-y-1/2 cursor-pointer text-gray-500">
-                        {showPassword ? 
-                        <i className="fa-regular fa-eye"></i> 
-                        : <i className="fa-regular fa-eye-slash"></i>
+        {formik.touched.password && formik.errors.password && (
+          <div className="text-red-600 bg-red-50 p-2 mt-1 rounded">
+            {formik.errors.password}
+          </div>
+        )}
+      </div>
 
-                      }
-                        
-                        
-                        </span>
-                       
-                  </div>
-                  {/*  password error */} 
-                           {formik.errors.password && formik.touched.password?  ( 
-                          <div className="p-4 mb-4 mt-2 text-sm bg-red-50 text-red-800 rounded-lg" >
-                              <span className="font-medium">Alert!</span> {formik.errors.password}
-                          </div>) :null} 
+      {/* Confirm Password */}
+      <div className="mb-5">
+        <label className="block mb-2.5 text-sm font-medium text-heading">
+          Confirm Password
+        </label>
 
-                  {/* repassword field */}
-                  <div className="mb-5">
-                      <label htmlFor="password"  className="block mb-2.5 text-sm font-medium text-heading">Confirm Password</label>
-                      <input 
-                      type="password" 
-                      value={formik.values.rePassword}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      name="rePassword" 
-                      id="userrePassword" 
-                      className="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded border-slate-300 focus:ring-brand transition focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" 
-                      placeholder="••••••••" 
-                      />
+        <input
+          type="password"
+          {...formik.getFieldProps("rePassword")}
+          className="bg-neutral-secondary-medium border border-default-medium rounded w-full px-3 py-2.5"
+          placeholder="Confirm Password"
+        />
 
-                  </div>
-                      {/* repassword error */}
-                      {formik.errors.rePassword && formik.touched.rePassword?  ( 
-                    <div className="p-4 mt-2 mb-4 text-sm bg-red-50 text-red-800 rounded-lg" >
+        {formik.touched.rePassword && formik.errors.rePassword && (
+          <div className="text-red-600 bg-red-50 p-2 mt-1 rounded">
+            {formik.errors.rePassword}
+          </div>
+        )}
+      </div>
 
-                        <span className="font-medium">Alert!</span> {formik.errors.rePassword}
+      {/* Submit */}
+      <button
+        type="submit"
+        className="bg-fuchsia-700 w-full text-white py-2.5 rounded hover:bg-fuchsia-800"
+      >
+        {isLoading ? <i className="fa-solid fa-spinner fa-spin"></i> : "Sign Up"}
+      </button>
 
-                    </div>) :null} 
-
-                    {/********************* button ************************/}
-                    
-                    <button 
-                    
-                    type="submit" 
-                    
-                    className="bg-fuchsia-700  w-full hover:bg-fuchsia-800 text-white box-border border rounded hover:bg-brand-medium focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
-                      
-                      {isLoading? <i className="fa-solid fa-spinner fa-spin"></i>: 'Sign Up' }
-                      
-                    </button>
-
-
-                   
-
-                    {/* ****************** API error *************/}
-                               
-                    {apiError && (
-                      <p className="font-small text-red-600 mt-2">
-                        Alert! {apiError}
-                      </p>
-                    )}
-
-                    
-                      
-                  
-                  </form>
-              </>
-  )
-
+      {apiError && (
+        <p className="text-red-600 mt-3 text-sm">Error: {apiError}</p>
+      )}
+    </form>
+  );
 }

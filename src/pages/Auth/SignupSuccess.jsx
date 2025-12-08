@@ -1,29 +1,19 @@
-import React, { useState, useEffect } from 'react'
-import { Helmet } from 'react-helmet'
-import SuccessCard from '../../components/Main/SuccessCard';
-
+import { Helmet } from "react-helmet";
+import SuccessCard from "../../components/Main/SuccessCard";
 
 export default function SignupSuccess() {
-  
-  let [ Count , SetCount ] = useState()
-
-    
-    useEffect (() => {}, []);
-    
-      return (
+  return (
     <div>
-        <Helmet>
-            <title>Sign up Successfully</title>
-        </Helmet>
+      <Helmet>
+        <title>Account Created</title>
+      </Helmet>
 
-        <SuccessCard
-        to={'https://mail.google.com/mail/u/0/#inbox'}
-        status='success'
-        message={'sign up successfully!!!'}
-        routeText={"Check your email to verify your account"}
-     />
-     
+      <SuccessCard
+        status="success"
+        message="Signed up successfully!"
+        buttonText="Go to Gmail"
+        buttonLink="https://mail.google.com/mail/u/0/#inbox"
+      />
     </div>
-
-  )
+  );
 }
