@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { useFormik } from 'formik';
-import { login } from '../../services/authService';
-import { LoginSchema } from '../../utils/validation/authValidationjs';
-import { useAuth } from '../../hooks/useAuth';
-import { getCurrentUser } from '../../services/token.service';
+
+//**************************1 refactor ******************** */
+import React, { useState } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import { getUser, login } from "../../services/authService";
+import { LoginSchema } from "../../utils/validation/authValidationjs";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function LoginForm() {
   const { saveLogin } = useAuth();
@@ -13,102 +14,108 @@ export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMeChecked, setRememberMeChecked] = useState(false);
-  const [apiError, setApiError] = useState('');
+  const [apiError, setApiError] = useState("");
 
-  // Function to navigate based on role
   const navigateByRole = (role) => {
-    if (role === 'TALENT') {
-      navigate('/talent/findjob');
-    } else if (role === 'EMPLOYER') {
-      navigate('/employer/dashboard');
-    } else {
-      navigate('/');
+    switch (role) {
+      case "TALENT":
+        navigate("/talent/findjob");
+        break;
+      case "EMPLOYER":
+        navigate("/employer/dashboard");
+        break;
+      default:
+        navigate("/");
     }
   };
 
 
-  
-  // Handle login submission
-  const handleLogin = async (formValues) => {
-    setIsLoading(true);
-    setApiError('');
+const handleLogin = async (formValues) => {
+  setIsLoading(true);
+  setApiError("");
 
-    try {
-      const data = await login(formValues);
+  try {
+    const response = await login(formValues);
 
-      if (!data.success) {
-        setApiError(data.message || 'Login failed. Please try again.');
-        setIsLoading(false);
-        return;
-      }
-
-      // Successful login
-      saveLogin(data.data.token, rememberMeChecked);
-      navigateByRole(getCurrentUser( data.data.token).role);
-    } catch (error) {
-      console.error('Login error:', error);
-      setApiError('Something went wrong. Please try again.');
-    } finally {
+    if (!response.ok) {
+      setApiError(response.message || "Login failed.");
       setIsLoading(false);
+      return;
     }
-  };
 
-  // Formik configuration
+    const token = response.data.token;
+    if (!token) {
+      setApiError("Unexpected server response.");
+      setIsLoading(false);
+      return;
+    }
+
+    // Save token first
+    saveLogin(token, rememberMeChecked);
+
+    // Fetch full user info including role
+    const me = await getUser();
+
+    if (me.ok) {
+      saveLogin(token, rememberMeChecked, me.data);
+
+      navigateByRole(me.data.role);
+    } else {
+      navigate("/");
+    }
+  } catch (error) {
+    console.log('loginform : ', error);
+    
+    setApiError("Something went wrong. Try again.");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
   const formik = useFormik({
-    initialValues: {
-      email: '',
-      password: '',
-    },
+    initialValues: { email: "", password: "" },
     validationSchema: LoginSchema,
     onSubmit: handleLogin,
   });
 
   return (
     <form onSubmit={formik.handleSubmit} className="font-sans pt-2">
-      {/* Email Field */}
+      {/* Email */}
       <div className="mb-5">
-        <label htmlFor="email" className="block mb-2.5 text-sm font-medium text-heading">
+        <label className="block mb-2.5 text-sm font-medium text-heading">
           Your email
         </label>
         <input
           type="email"
-          id="email"
-          name="email"
-          value={formik.values.email}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          className="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded border-slate-300 focus:ring-brand focus:border-brand block w-full px-3 py-3 shadow-xs placeholder:text-body"
+          {...formik.getFieldProps("email")}
+          className="bg-neutral-secondary-medium border border-default-medium text-sm rounded w-full px-3 py-3"
           placeholder="Enter your email"
-          aria-describedby={formik.errors.email && formik.touched.email ? 'email-error' : undefined}
         />
-        {formik.errors.email && formik.touched.email && (
-          <div id="email-error" className="p-4 -mt-2 mb-4 text-sm bg-red-50 text-red-800 rounded-lg">
-            <span className="font-medium">Alert!</span> {formik.errors.email}
+        {formik.touched.email && formik.errors.email && (
+          <div className="p-3 mt-1 bg-red-50 text-red-800 rounded">
+            {formik.errors.email}
           </div>
         )}
       </div>
 
-      {/* Password Field */}
+      {/* Password */}
       <div className="relative mb-5">
-        <label htmlFor="password" className="block mb-2.5 text-sm font-medium text-heading">
+        <label className="block mb-2.5 text-sm font-medium text-heading">
           Your password
         </label>
+
         <input
-          type={showPassword ? 'text' : 'password'}
-          id="password"
-          name="password"
-          value={formik.values.password}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          className="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded border-slate-300 focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body"
+          type={showPassword ? "text" : "password"}
+          {...formik.getFieldProps("password")}
+          className="bg-neutral-secondary-medium border text-sm rounded w-full px-3 py-2.5"
           placeholder="••••••••"
-          aria-describedby={formik.errors.password && formik.touched.password ? 'password-error' : undefined}
         />
+
         <button
           type="button"
           onClick={() => setShowPassword((prev) => !prev)}
-          className="absolute right-3 top-2/3 transform -translate-y-1/2 cursor-pointer text-gray-500 focus:outline-none"
-          aria-label={showPassword ? 'Hide password' : 'Show password'}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
         >
           {showPassword ? (
             <i className="fa-regular fa-eye"></i>
@@ -116,44 +123,48 @@ export default function LoginForm() {
             <i className="fa-regular fa-eye-slash"></i>
           )}
         </button>
-        {formik.errors.password && formik.touched.password && (
-          <div id="password-error" className="p-4 mb-4 mt-2 text-sm bg-red-50 text-red-800 rounded-lg">
+
+        {formik.touched.password && formik.errors.password && (
+          <div className="p-3 mt-1 bg-red-50 text-red-800 rounded">
             {formik.errors.password}
           </div>
         )}
       </div>
 
-      {/* Remember Me and Forgot Password */}
-      <div className="text-sm flex items-center justify-between py-3 mb-3">
-        <label className="flex items-center text-md text-slate-700 cursor-pointer">
+      {/* Remember + Forgot */}
+      <div className="flex items-center justify-between text-sm mb-3">
+        <label className="flex items-center text-slate-700 cursor-pointer">
           <input
             type="checkbox"
             checked={rememberMeChecked}
             onChange={() => setRememberMeChecked((prev) => !prev)}
             className="mr-2"
-            aria-label="Remember me"
           />
           Remember me
         </label>
-        <NavLink to="/forgot-password" className="text-red-700 hover:underline hover:text-red-600">
+
+        <NavLink
+          to="/forgot-password"
+          className="text-red-700 hover:underline"
+        >
           Forgot password?
         </NavLink>
       </div>
 
-      {/* Submit Button */}
+      {/* Submit */}
       <button
         type="submit"
         disabled={isLoading}
-        className="bg-fuchsia-700 w-full hover:bg-fuchsia-800 text-white border rounded focus:ring-4 focus:ring-brand-medium shadow-xs font-medium text-sm px-4 py-2.5 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+        className="bg-fuchsia-700 w-full text-white rounded py-2.5 hover:bg-fuchsia-800 disabled:opacity-50"
       >
-        {isLoading ? <i className="fa-solid fa-spinner fa-spin"></i> : 'Login'}
+        {isLoading ? <i className="fa-solid fa-spinner fa-spin"></i> : "Login"}
       </button>
 
-      {/* Sign Up Link */}
-      <div className="w-full flex items-center justify-center mt-4">
-        <p className="text-slate-700 text-xs">
-          Don't have an account?{' '}
-          <Link to="/register" className="text-sm font-medium text-blue-600 hover:underline hover:text-blue-400">
+      {/* Signup link */}
+      <div className="text-center mt-4">
+        <p className="text-xs text-slate-700">
+          Don't have an account?{" "}
+          <Link to="/register" className="text-blue-600 hover:underline">
             Sign Up
           </Link>
         </p>
@@ -161,8 +172,8 @@ export default function LoginForm() {
 
       {/* API Error */}
       {apiError && (
-        <p className="font-small text-red-600 mt-2" role="alert">
-          Error! {apiError}
+        <p className="text-red-600 mt-3 text-sm" role="alert">
+          Error: {apiError}
         </p>
       )}
     </form>

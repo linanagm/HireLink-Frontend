@@ -2,15 +2,10 @@ import React, {  useEffect } from 'react'
 import loginImage from '../../assets/images/login.svg'
 import { Helmet } from 'react-helmet'
 import LoginForm from '../../components/auth/LoginForm'
-//import { AuthContext } from '../../context/AuthContext'
 
 export default function Login() {
 
-  //  let [count , setCount ]= useState();
-
-//    console.log('context object: \n',useAuth);
     
-
       useEffect (() => {}, [])
     
      return (<>

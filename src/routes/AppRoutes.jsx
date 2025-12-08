@@ -102,30 +102,28 @@ export default function AppRoutes() {
             { path:"talents/:talentId" ,element:(<Suspense  fallback={<Loading />}><TalentPublicDetails /></Suspense>)}
   ]
 },
-
-
-  //2-auth routes
-  { path: "/" , element: (<Suspense  fallback={<Loading />}><GuestRoutes><AuthLayOut /></GuestRoutes></Suspense>), 
-    children: [
-            //auth routes
-            { index: true ,  element: (<Suspense fallback={<Loading />}><Register /></Suspense>) },
-            { path:"register", element: (<Suspense fallback={<Loading />}><Register /></Suspense>) }, 
-            { path:"login", element: (<Suspense fallback={<Loading />}><Login /></Suspense>) },
-            
-  ]
-  },
-
-  { path: "/" , element: (<Suspense  fallback={<Loading />}><GuestRoutes><AuthLayOut /></GuestRoutes></Suspense>),
-    children: [
-  { path: 'register/signup-success' ,  element: (<Suspense fallback={<Loading />}><SignupSuccess /></Suspense>)  },
-  { path: '/verify' ,  element: (<Suspense fallback={<Loading />}><VerifyEmail /></Suspense>) },
-  { path: '/forgot-password' ,  element: (<Suspense fallback={<Loading />}><ForgotPassword /></Suspense>) },
-  { path: '/reset' ,  element: (<Suspense fallback={<Loading />}><ResetPassword /></Suspense>) },
-  { path: '/unauthorized' ,  element: (<Suspense fallback={<Loading />}><Unauthorized /></Suspense>) },
     
-    ] 
+{
+  path: "/",
+  element: (
+    <Suspense fallback={<Loading />}>
+      <GuestRoutes>
+        <AuthLayOut />
+      </GuestRoutes>
+    </Suspense>
+  ),
+  children: [
+    { index: true, element: <Register /> },
+    { path: "register", element: <Register /> },
+    { path: "login", element: <Login /> },
 
-  },  
+    { path: "register/signup-success", element: <SignupSuccess /> },
+    { path: "verify", element: <VerifyEmail /> },
+    { path: "forgot-password", element: <ForgotPassword /> },
+    { path: "reset", element: <ResetPassword /> },
+    { path: "unauthorized", element: <Unauthorized /> },
+  ],
+},
 
 
   //3-talent routes

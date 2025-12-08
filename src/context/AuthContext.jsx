@@ -1,110 +1,62 @@
-import { createContext} from 'react';
-import { useEffect, useState } from 'react';
-import { getCurrentUser } from '../services/token.service';
+import { createContext, useEffect, useState } from "react";
+//import {  getCurrentUserId } from "../services/token.service";
+//import { getUser } from "../services/authService";
 
+// eslint-disable-next-line react-refresh/only-export-components
+export const AuthContext = createContext(null);
 
-export const AuthContext = createContext(0);
+export function AuthProvider({ children }) {
+  const [token, setToken] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // Load authentication state on app start
+  useEffect(() => {
+    const savedToken =
+      localStorage.getItem("token") || sessionStorage.getItem("token");
+    const savedUser =
+      localStorage.getItem("user") || sessionStorage.getItem("user");
 
-
-
-
-
-export function AuthProvider ({children}) {
-
-    const[ currentUser , setCurrentUser ] = useState( null );
-    const[ token , setToken ] = useState(null);
-    const[ isAuthenticated , setIsAuthenticated ] = useState(false);
-    
-
-
-   useEffect(() => {
-        //check localstorage first for remember me
-        
-        const savedToken = localStorage.getItem("token");
-
-        if ( savedToken ) {
-            setCurrentUser(getCurrentUser(token));
-            setToken(JSON.parse(savedToken));
-            setIsAuthenticated(true);
-            return;
-        }
-
-
-        //check sessionStorage otherWise
-        
-        const sessionToken = sessionStorage.getItem("token");
-        if (sessionToken) {
-            setCurrentUser(getCurrentUser(sessionToken));
-            setToken(JSON.parse(sessionToken));
-             setIsAuthenticated(true);
-            return;
-        }
-
-
-        
-    }, [] );
-
-
-    
-    const saveLogin = (token, rememberMe) => {
-        //setUser(userData);
-        const userData  = getCurrentUser(token);
-        setToken(token);
-        setCurrentUser(userData);
-        setIsAuthenticated(true);
-        console.log('User data: \n' , userData );
-        
-        if (rememberMe) {
-            
-            localStorage.setItem("token", JSON.stringify(token));
-            localStorage.setItem("user", JSON.stringify(userData));
-
-        
-        } else {
-        
-            sessionStorage.setItem("token", JSON.stringify(token));
-            sessionStorage.setItem("user", JSON.stringify(userData));
-          
-        }
-    }  
-
-
-    const logout = () => {
-      //  setUser(null);
-        localStorage.removeItem("user");
-        localStorage.removeItem("token");
-        sessionStorage.removeItem("user");
-        sessionStorage.removeItem("token");
-        setToken(null);
-        setCurrentUser(null);
-        setIsAuthenticated(false);
+    if (savedToken && savedUser) {
+      setToken(savedToken);
+      setCurrentUser(JSON.parse(savedUser));
+      setIsAuthenticated(true);
     }
+  }, []);
 
-        
-    return (
-        <AuthContext.Provider 
-        
-        value={ { 
-            token, 
-            currentUser, 
-            isAuthenticated, 
-            setToken , 
-            setCurrentUser,
-            setIsAuthenticated, 
-            saveLogin,
-            logout
-         } }
-        >
+  // Save login result
+  const saveLogin = async (token, rememberMe, userData = null) => {
+    const storage = rememberMe ? localStorage : sessionStorage;
 
-            {children}
+    setToken(token);
+    storage.setItem("token", token);
+    setIsAuthenticated(true);
 
-        </AuthContext.Provider>
-    )
+    
+    if (userData) {
+      setCurrentUser(userData);
+      storage.setItem("user", JSON.stringify(userData));
+    }
+    
+    
+  };
 
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("user");
 
+    setToken(null);
+    setCurrentUser(null);
+    setIsAuthenticated(false);
+  };
 
-
-
-
+  return (
+    <AuthContext.Provider
+      value={{ token, currentUser, isAuthenticated, saveLogin, logout }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }
