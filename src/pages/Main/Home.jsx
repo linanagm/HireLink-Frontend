@@ -19,22 +19,11 @@ export default function Home() {
       <Helmet>
         <title>Home</title>
       </Helmet>
-
-      {/* EMPLOYER TABS */}
-        <nav className="w-full bg-white shadow px-8 py-4 flex flex-wrap gap-4">
-
-      <NavLink to="/employer/jobs" className={linkClass} title="Employer Dashboard">Dashboard</NavLink>
-      <NavLink to="/talents" className={linkClass} title="Talent List">Talent List</NavLink>
-      <NavLink to="/employer/jobs/new" className={linkClass} title="Post A Job">Post A Job</NavLink>
-      <NavLink to="/employer/profile" className={linkClass} title="Employer Profile">Employer Profile</NavLink>
-      <NavLink to="/employer/profile/edit" className={linkClass} title="Edit Profile">Edit Profile</NavLink>
-      <NavLink to="/employer/jobs/:jobId/applicants" className={linkClass} title="My Applicants">My Applicants</NavLink>
-      <NavLink to="/employer/jobs/:jobId" className={linkClass} title="Job Details">Job Details</NavLink>
-      <NavLink to="/employer/profile/settings" className={linkClass} title="Account Settings">Account Settings</NavLink>
-    </nav>
-
-      {/* HERO SECTION */}
-      <div className='hero-section flex max-w-screen-xl justify-between items-center mx-auto py-7'>
+  
+      <div className='hero-section flex  max-w-screen-xl justify-between items-center mx-auto py-7 '>
+        
+        <div className='flex-col  py-11 gap-5  '>
+            <div className='text-2xl font-bold '>        
         
         <div className='flex-col py-11 gap-5'>
           

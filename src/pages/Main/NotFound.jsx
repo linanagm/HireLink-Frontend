@@ -13,7 +13,7 @@ export default function NotFound() {
         <title>Not Found</title>
         <meta name="description" content="Helmet application" />
      </Helmet>
- 
+        
       notFound
     </div>
   )
