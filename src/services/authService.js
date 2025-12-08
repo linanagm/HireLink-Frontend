@@ -62,3 +62,14 @@ export async function login({email, password}) {
 
  
 }
+//--------------------------------------------------------
+//reser password request & reset
+
+
+export const requestPasswordReset = async (email) => {
+  return axiosClient.post(`auth/reset/request`, { email });
+};
+
+export const resetPassword = async (verificationToken, newPassword, oldPassword) => {
+  return axiosClient.put(`auth/reset`, { verificationToken, newPassword, oldPassword });
+};

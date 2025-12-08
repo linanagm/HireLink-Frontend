@@ -11,12 +11,16 @@ export default function MainLayOut() {
       useEffect (() => {}, [])
     
       return (
-    <div className='relative w-full'>
-      <NavbarComponent/>
+    <div className='flex flex-col min-h-screen w-max-screen'>
+      <div className='w-full h-10 py-7'>
+          <NavbarComponent/>
 
-      <div className='container mx-auto py-4 '>
+      </div>
+      
+      <div className='flex-grow container  mx-auto py-4 '>
         <Outlet/>
       </div>
+      
       
       <Footer/>
     </div>

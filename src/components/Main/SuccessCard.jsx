@@ -30,20 +30,9 @@ export default function SuccessCard({
                             
                             src={correctImage}  
                             alt="success" />
-                
-                // ):(
-                
-                 
-                    
-                //             <span className='fixed top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-t-base w-1/5  right-1/2 py-2'>
-                //                 <i className="fa-regular fa-circle-xmark text-fuchsia-600 text-7xl"></i>
-                //             </span>  
-                // ) }
+              
 )}
                 
-           
-             
-
                 <div className="p-6 text-center ">
 
                     {/* You've successfully signed up! */}
