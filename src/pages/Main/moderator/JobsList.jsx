@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-export default function JobsList() {
+export default function Dashboard() {
 
     let [ Count , SetCount ] = useState()
 

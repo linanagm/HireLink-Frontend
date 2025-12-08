@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react'
-
 export default function JobDetails() {
+  return (
+    <div className="p-4">
+      <h2>Job details</h2>
 
-    let [ Count , SetCount ] = useState()
+      <p>Title</p>
+      <p>employment type</p>
+      <p>Description</p>
+      <p>Salary</p>
+      <p>Location</p>
 
-      useEffect (() => {}, [])
-    
-      return (
-    <div>
-      jobDetails
+      <button>View applicants</button>
     </div>
-  )
+  );
 }

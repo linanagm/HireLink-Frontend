@@ -64,6 +64,7 @@ const PostAJob = lazy(()=>import('../pages/Main/employer/PostAJob'))
 const JobsList = lazy(()=>import('../pages/Main/employer/JobsList'))
 const JobDetails = lazy(()=>import('../pages/Main/employer/JobDetails'))
 const MyApplicants = lazy(()=>import('../pages/Main/employer/MyApplicants'))  
+const AccountSettings = lazy(()=>import('../pages/Main/Employer/AccountSettings'))
 const SearchTalents = lazy(()=>import('../pages/Main/Employer/SearchTalents'))
 const EditJob = lazy(()=>import('../pages/Main/employer/EditJob'))
 
