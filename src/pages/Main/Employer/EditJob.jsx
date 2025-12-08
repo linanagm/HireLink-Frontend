@@ -1,14 +1,20 @@
-import React, { useState, useEffect } from 'react'
 
 export default function EditJob() {
+  return (
+    <div className="p-4">
+      <h2>Edit job</h2>
 
-    let [ Count , SetCount ] = useState()
+      <input placeholder="Title" />
+      <input placeholder="employment type" />
+      <textarea placeholder="Description" />
+      <input placeholder="Salary" />
+      <input placeholder="Location" />
 
-      useEffect (() => {}, [])
-    
-      return (
-    <div>
-      editJob
+      
+      <div display="flex" gap="10px">
+      <button>save</button>
+      <button>cancel</button>
+      </div>
     </div>
-  )
+  );
 }
