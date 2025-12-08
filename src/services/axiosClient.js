@@ -2,16 +2,17 @@ import axios from "axios";
 
 const axiosClient = axios.create({
 
-    baseURL: "http://localhost:3000/api/",
+    baseURL: "http://localhost:5024/api/v1/",
     headers: {
         "Content-type": "application/json",
     },
+
 });
 
 //Request Interceptor
 axiosClient.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("token") || sessionStorage.getItem("token");
         
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
@@ -35,3 +36,4 @@ axiosClient.interceptors.response.use(
 );
 
 export default axiosClient;
+
