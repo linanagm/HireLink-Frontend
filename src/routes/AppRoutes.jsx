@@ -11,7 +11,6 @@ const GuestRoutes = lazy(()=>import('./GuestRoutes'));
 const Home = lazy (()=>import ('../pages/Main/Public/Home'));
 const About = lazy (()=> import('../pages/Main/Public/About'));
 const Contact = lazy(()=> import('../pages/Main/Public/Contact'));
-const JobList = lazy (()=> import('../pages/Main/Public/JobList'));
 const TalentList = lazy(()=> import ('../pages/Main/Public/TalentList'));
 const TalentPublicDetails = lazy(()=>import('../pages/Main/Public/TalentPublicDetails'));
 
@@ -61,11 +60,11 @@ const EmployerDashboard = lazy(()=>import('../pages/Main/Employer/Dashboard'))
 const EmployerProfile = lazy(()=>import('../pages/Main/employer/EmployerProfile'))
 const EditProfile = lazy(()=>import('../pages/Main/employer/EditProfile'))
 const PostAJob = lazy(()=>import('../pages/Main/employer/PostAJob'))
-const JobsList = lazy(()=>import('../pages/Main/employer/JobsList'))
+const JobsList = lazy(()=>import('../pages/Main/Public/JobList'))
 const JobDetails = lazy(()=>import('../pages/Main/employer/JobDetails'))
 const MyApplicants = lazy(()=>import('../pages/Main/employer/MyApplicants'))  
 const AccountSettings = lazy(()=>import('../pages/Main/Employer/AccountSettings'))
-const SearchTalents = lazy(()=>import('../pages/Main/Employer/SearchTalents'))
+//const SearchTalents = lazy(()=>import('../pages/Main/Public/SearchTalents'))
 const EditJob = lazy(()=>import('../pages/Main/employer/EditJob'))
 
 //layouts
@@ -92,7 +91,7 @@ export default function AppRoutes() {
             { path:"about" ,  element:(<Suspense fallback={<Loading />} > <About /></Suspense>)},
             { path:"contact", element:(<Suspense fallback={<Loading />}><Contact /></Suspense>)},
             //Public Jobs
-            { path:"jobs" , element:(<Suspense fallback={<Loading />}> <JobList /></Suspense>)},          
+           // { path:"jobs" , element:(<Suspense fallback={<Loading />}> <JobList /></Suspense>)},          
             //Public Talents list
             { path:"talents" , element:(<Suspense  fallback={<Loading />}><TalentList /></Suspense>)},
             { path:"talents/:talentId" ,element:(<Suspense  fallback={<Loading />}><TalentPublicDetails /></Suspense>)}
@@ -169,7 +168,7 @@ export default function AppRoutes() {
       { path : "jobs/new" , element: (<Suspense  fallback={<Loading />}><PostAJob /></Suspense>)},
       { path : "jobs/:jobId" , element: (<Suspense  fallback={<Loading />}><EditJob /></Suspense>)},
       { path : "jobs/:jobId/applicants" , element: (<Suspense  fallback={<Loading />}><MyApplicants /></Suspense>)},
-      { path : "jobs/:jobId/applicants/search" , element: (<Suspense  fallback={<Loading />}><SearchTalents /></Suspense>)},
+      //{ path : "jobs/:jobId/applicants/search" , element: (<Suspense  fallback={<Loading />}><SearchTalents /></Suspense>)},
       { path : "jobs/:jobId" , element: (<Suspense  fallback={<Loading />}><JobDetails /></Suspense>)},
       
 
