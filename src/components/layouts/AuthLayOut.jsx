@@ -14,6 +14,7 @@ export default function AuthLayOut() {
       <CircleFrame />
       
       <div className='container p-7 '>
+        
                 <Outlet />
 
       </div>
