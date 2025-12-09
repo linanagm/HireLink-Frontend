@@ -34,10 +34,7 @@ const Register = lazy(() => import("../pages/Auth/Register"));
 const Login = lazy(() => import("../pages/Auth/Login"));
 const VerifyEmail = lazy(() => import("../pages/Auth/VerifyEmail"));//modal 
 
-//modal
-// const ForgotPassword = lazy(() =>
-//   import("../components/Modals/ForgotPasswordModal")
-// );
+
 //modal
 const ResetPassword = lazy(() => import("../pages/Auth/ResetPassword"));
 
@@ -123,7 +120,6 @@ export default function AppRoutes() {
         { path: "register", element: <Register /> },
         { path: "login", element: <Login /> },
         { path: "verify", element: <VerifyEmail /> },
-       // { path: "forgot-password", element: <ForgotPassword /> },
         { path: "reset", element: <ResetPassword /> },
         { path: "unauthorized", element: <Unauthorized /> }
       ]
