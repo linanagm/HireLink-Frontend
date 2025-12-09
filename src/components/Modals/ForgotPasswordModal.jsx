@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { requestPasswordReset } from "../../services/auth.service";
-import FormInput from "../Main/FormInput";
+import FormInput from "../UI/FormInput.jsx";
 import Button from "../UI/Button";
 import { useFormik } from "formik";
 import { emailschema } from "../../utils/validation/authValidationjs";

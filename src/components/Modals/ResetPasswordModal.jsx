@@ -1,5 +1,5 @@
 import { useState } from "react";
-import FormInput from "../../components/Main/FormInput";
+import FormInput from "../UI/FormInput";
 import Button from "../../components/UI/Button";
 import { useFormik } from "formik";
 import { passwordschema } from "../../utils/validation/authValidationjs";

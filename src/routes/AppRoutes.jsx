@@ -4,13 +4,13 @@ import React, { lazy, Suspense } from "react";
 import Loading from "../pages/Main/Public/Loading";
 
 // Guards
-const ProtectedRoute = lazy(() => import("./guardRoutes/ProtectedRoute"));
-const RoleRoute = lazy(() => import("./guardRoutes/RoleRoute"));
-const GuestRoutes = lazy(() => import("./guardRoutes/GuestRoutes"));
+const ProtectedRoute = lazy(() => import("./GuardRoutes/ProtectedRoute"));
+const RoleRoute = lazy(() => import("./GuardRoutes/RoleRoute"));
+const GuestRoutes = lazy(() => import("./GuardRoutes/GuestRoutes"));
 
 // Layouts
 const MainLayout = lazy(() => import("../components/layouts/MainLayout"));
-const AuthLayout = lazy(() => import("../components/Layouts/AuthLayout"));
+const AuthLayout = lazy(() => import("../components/layouts/AuthLayOut"));
 const DashboardLayout = lazy(() =>
   import("../components/Layouts/DashboardLayout")
 );
@@ -19,10 +19,6 @@ const DashboardLayout = lazy(() =>
 const Home = lazy(() => import("../pages/Main/Public/Home"));
 const About = lazy(() => import("../pages/Main/Public/About"));
 const Contact = lazy(() => import("../pages/Main/Public/Contact"));
-const TalentList = lazy(() => import("../pages/Main/Public/TalentList"));
-const TalentPublicDetails = lazy(() =>
-  import("../pages/Main/Public/TalentPublicDetails")
-);
 
 const NotFound = lazy(() => import("../pages/Main/Public/NotFound"));
 const Unauthorized = lazy(() =>
@@ -48,25 +44,19 @@ const EditTalentProfile = lazy(() =>
   import("../pages/Main/talent/EditTalentProfile")
 );
 
-const ProfileAvatar = lazy(() =>
-  import("../pages/Main/talent/ProfileAvatar")
-);
 const FindJob = lazy(() => import("../pages/Main/talent/FindJob"));
+
 const MyApplications = lazy(() =>
   import("../pages/Main/talent/MyApplications")
 );
-const ApplicationDetails = lazy(() =>
-  import("../pages/Main/talent/ApplicationDetails")
-);
-const EditApplication = lazy(() =>
-  import("../pages/Main/talent/EditApplication")
-);
+
 const JobProposal = lazy(() =>
   import("../pages/Main/talent/JobProposal")
 );
 const TalentAccountSettings = lazy(() =>
   import("../pages/Main/talent/TalentAccountSettings")
 );
+
 
 // Employer routes
 const EmployerDashboard = lazy(() =>
@@ -78,6 +68,10 @@ const EmployerProfile = lazy(() =>
 const EditProfile = lazy(() =>
   import("../pages/Main/employer/EditProfile")
 );
+
+const EmployerAccountSettings = lazy(() =>
+  import("../pages/Main/Employer/AccountSettings")
+);
 const PostAJob = lazy(() => import("../pages/Main/employer/PostAJob"));
 const JobsList = lazy(() => import("../pages/Main/Public/JobList"));
 const JobDetails = lazy(() =>
@@ -88,10 +82,18 @@ const MyApplicants = lazy(() =>
 );
 const EditJob = lazy(() => import("../pages/Main/employer/EditJob"));
 
+const SearchTalent = lazy(() =>
+  import("../pages/Main/Employer/SearchTalent")
+);
+
+
 // Moderator pages
 const ModeratorDashboard = lazy(() =>
-  import("../pages/Main/moderator/ModeratorDashboard")
+  import("../pages/Main/Moderator/ModeratorDashboard")
 );
+
+
+
 
 export default function AppRoutes() {
   const router = createBrowserRouter([
@@ -103,8 +105,7 @@ export default function AppRoutes() {
         { index: true, element: <Home /> },
         { path: "about", element: <About /> },
         { path: "contact", element: <Contact /> },
-        { path: "talents", element: <TalentList /> },
-        { path: "talents/:talentId", element: <TalentPublicDetails /> }
+        
       ]
     },
 
@@ -140,17 +141,13 @@ export default function AppRoutes() {
         { path: "findjob", element: <FindJob /> },
 
         { path: "profile", element: <TalentProfile /> },
+        // modal
         { path: "profile/edit", element: <EditTalentProfile /> },
-        { path: "profile/avatar", element: <ProfileAvatar /> },
+      
         { path: "profile/settings", element: <TalentAccountSettings /> },
 
         { path: "applications", element: <MyApplications /> },
-        { path: "applications/:applicationId", element: <ApplicationDetails /> },
-        {
-          path: "applications/:applicationId/edit",
-          element: <EditApplication />
-        },
-
+              
         { path: "jobs/:jobId/proposal", element: <JobProposal /> }
       ]
     },
@@ -170,15 +167,20 @@ export default function AppRoutes() {
         { path: "dashboard", element: <EmployerDashboard /> },
 
         { path: "profile", element: <EmployerProfile /> },
+        
+        { path: "profile/settings", element: <EmployerAccountSettings /> },
+        // modal
         { path: "profile/edit", element: <EditProfile /> },
-
+        
         { path: "jobs", element: <JobsList /> },
         { path: "jobs/new", element: <PostAJob /> },
 
      
-        { path: "jobs/:jobId/edit", element: <EditJob /> },
+        
         { path: "jobs/:jobId", element: <JobDetails /> },
-        { path: "jobs/:jobId/applicants", element: <MyApplicants /> }
+        { path: "jobs/:jobId/edit", element: <EditJob /> },
+        { path: "jobs/:jobId/applicants", element: <MyApplicants /> },
+        { path: "jobs/:jobId/applicants/search" , element: <SearchTalent /> },
       ]
     },
 

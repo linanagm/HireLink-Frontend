@@ -38,7 +38,7 @@ export default function NavbarComponent() {
       { to: '/employer/dashboard', label: 'Dashboard' },
       { to: '/employer/jobs/new', label: 'Post a Job' },
       { to: '/employer/jobs/:jobId/applicants/search', label: 'Search Talents' },
-      { to: '/employer/jobs', label: 'Manage Listings' },
+      
     ],
   };
 
@@ -70,7 +70,6 @@ export default function NavbarComponent() {
       <div className="flex items-center gap-7 w-1/2">
         <NavLink to="/" className="flex items-center space-x-2" aria-label="HireLink Home">
           <img src={logo} className="h-7" alt="HireLink Logo" />
-          <span className="text-xl font-semibold text-heading text-slate-600 hover:text-fuchsia-800">HireLink</span>
         </NavLink>
 
         {/* NAV TABS (Desktop) */}

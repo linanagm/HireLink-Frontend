@@ -60,12 +60,7 @@ export default function Register( ) {
             </ul>
           </div>
 
-          {/* Dynamic Form */}
-          {/* {role === "TALENT" ? (
-            <TalentSignupForm role="TALENT" />
-          ) : (
-            <EmployerSignupForm role="EMPLOYER" />
-          )} */}
+          
 
               {role === "TALENT" ? (
               <TalentSignupForm role="TALENT" 
