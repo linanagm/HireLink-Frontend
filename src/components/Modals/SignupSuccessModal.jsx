@@ -1,5 +1,5 @@
 import React from "react";
-import SuccessCard from "../../components/Main/SuccessCard"; 
+import SuccessCard from "../Main/SuccessCard.jsx"; 
 import { getMailProviderUrl } from '../../utils/mail.js'
 
 export default function SignupSuccess({ onClose, email }) {
