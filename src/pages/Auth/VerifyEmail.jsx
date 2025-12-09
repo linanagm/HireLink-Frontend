@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Helmet } from "react-helmet";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import SuccessCard from "../../components/Main/SuccessCard";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import VerifyEmailModal from "../../components/Modals/VerifyEmailModal";
 import { verifyEmail } from "../../services/auth.service";
 
 export default function VerifyEmail() {
   const [params] = useSearchParams();
-  const [status, setStatus] = useState("loading"); 
+  const [status, setStatus] = useState("loading");
   const [message, setMessage] = useState("Verifying your email...");
+  const [showModal, setShowModal] = useState(true);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,35 +26,28 @@ export default function VerifyEmail() {
       if (response.ok) {
         setStatus("success");
         setMessage("Email verified successfully.");
+        setTimeout(() => navigate("/login"), 2000);
       } else if (response.message === "email already verified") {
         setStatus("success");
         setMessage("Email already verified.");
+        setTimeout(() => navigate("/login"), 2000);
       } else {
         setStatus("error");
         setMessage(response.message || "Verification failed.");
-      }
-
-      // Redirect after delay ONLY on success
-      if (status !== "error") {
-        setTimeout(() => navigate("/login"), 2500);
       }
     }
 
     doVerify();
   }, []);
 
-  return (
-    <div>
-      <Helmet>
-        <title>Email Verification</title>
-      </Helmet>
+  if (!showModal) return null;
 
-      <SuccessCard
-        status={status}
-        message={message}
-        buttonText={status === "success" ? "Go to Login" : null}
-        buttonLink={status === "success" ? "/login" : null}
-      />
-    </div>
+  return (
+    <VerifyEmailModal
+      status={status}
+      message={message}
+      buttonLink="/login"
+      onClose={() => setShowModal(false)}
+    />
   );
 }

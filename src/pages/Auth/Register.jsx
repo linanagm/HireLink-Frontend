@@ -4,7 +4,7 @@ import EmployerSignupForm from "../../components/auth/EmployerSignupForm";
 import signupImage from "../../assets/images/signup.svg";
 import { Link, Outlet } from "react-router-dom";
 import { Helmet } from "react-helmet";
-import SignupSuccess from "./SignupSuccess";
+import SignupSuccess from "../../components/Modals/SignupSuccessModal";
 export default function Register( ) {
   const [role, setRole] = useState("TALENT");
 
