@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
-import { getUser, login } from "../../services/authService";
+import { getUser, login } from "../../services/auth.service";
 import { LoginSchema } from "../../utils/validation/authValidationjs";
 import { useAuth } from "../../hooks/useAuth";
 
@@ -115,10 +115,10 @@ const handleLogin = async (formValues) => {
         <button
           type="button"
           onClick={() => setShowPassword((prev) => !prev)}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+          className="absolute right-3 top-2/3 -translate-y-1/2 text-gray-500"
         >
           {showPassword ? (
-            <i className="fa-regular fa-eye"></i>
+            <i className="fa-regular fa-eye "></i>
           ) : (
             <i className="fa-regular fa-eye-slash"></i>
           )}

@@ -47,7 +47,7 @@ export default function EditableProfile() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Navbar */}
-      <nav className="w-full bg-white shadow-sm py-4 px-6 flex justify-between items-center">
+      {/* <nav className="w-full bg-white shadow-sm py-4 px-6 flex justify-between items-center">
         <div className="flex items-center gap-3">
           <h1 className="text-purple-600 font-bold text-2xl">H</h1>
 
@@ -68,7 +68,7 @@ export default function EditableProfile() {
           />
           <span className="w-8 h-8 bg-gray-200 rounded-full"></span>
         </div>
-      </nav>
+      </nav> */}
 
       {/* Main */}
       <main className="flex-grow px-6 py-6 max-w-4xl mx-auto">

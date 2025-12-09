@@ -1,199 +1,209 @@
-import { RouterProvider, createBrowserRouter } from 'react-router-dom'
-import React, { lazy, Suspense } from 'react'
-import Loading from '../pages/Main/Public/Loading'
 
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import React, { lazy, Suspense } from "react";
+import Loading from "../pages/Main/Public/Loading";
 
-const ProtectedRoute = lazy(()=>import('../routes/ProtectedRoute'));
-const RoleRoute = lazy(()=>import('../routes/RoleRoute'));
+// Guards
+const ProtectedRoute = lazy(() => import("./guardRoutes/ProtectedRoute"));
+const RoleRoute = lazy(() => import("./guardRoutes/RoleRoute"));
+const GuestRoutes = lazy(() => import("./guardRoutes/GuestRoutes"));
 
-//Public Pages
-const GuestRoutes = lazy(()=>import('./GuestRoutes'));
-const Home = lazy (()=>import ('../pages/Main/Public/Home'));
-const About = lazy (()=> import('../pages/Main/Public/About'));
-const Contact = lazy(()=> import('../pages/Main/Public/Contact'));
-const TalentList = lazy(()=> import ('../pages/Main/Public/TalentList'));
-const TalentPublicDetails = lazy(()=>import('../pages/Main/Public/TalentPublicDetails'));
+// Layouts
+const MainLayout = lazy(() => import("../components/layouts/MainLayout"));
+const AuthLayout = lazy(() => import("../components/Layouts/AuthLayout"));
+const DashboardLayout = lazy(() =>
+  import("../components/Layouts/DashboardLayout")
+);
 
+// Public Pages
+const Home = lazy(() => import("../pages/Main/Public/Home"));
+const About = lazy(() => import("../pages/Main/Public/About"));
+const Contact = lazy(() => import("../pages/Main/Public/Contact"));
+const TalentList = lazy(() => import("../pages/Main/Public/TalentList"));
+const TalentPublicDetails = lazy(() =>
+  import("../pages/Main/Public/TalentPublicDetails")
+);
 
-const NotFound = lazy(()=>import('../pages/Main/Public/NotFound'));
-const Unauthorized = lazy(()=>import('../pages/Main/Public/Unauthorized')); 
+const NotFound = lazy(() => import("../pages/Main/Public/NotFound"));
+const Unauthorized = lazy(() =>
+  import("../pages/Main/Public/Unauthorized")
+);
 
+// Auth Pages
+const Register = lazy(() => import("../pages/Auth/Register"));
+const Login = lazy(() => import("../pages/Auth/Login"));
+const VerifyEmail = lazy(() => import("../pages/Auth/VerifyEmail"));
+const ForgotPassword = lazy(() =>
+  import("../pages/Auth/ForgotPassword")
+);
+const ResetPassword = lazy(() => import("../pages/Auth/ResetPassword"));
 
-//Auth Pages
-const Register = lazy(()=>import('../pages/Auth/Register'));
-const Login = lazy(()=>import('../pages/Auth/Login'))
+// Talent pages
+const TalentProfile = lazy(() =>
+  import("../pages/Main/talent/TalentProfile")
+);
+const EditTalentProfile = lazy(() =>
+  import("../pages/Main/talent/EditTalentProfile")
+);
+const ProfileAvatar = lazy(() =>
+  import("../pages/Main/talent/ProfileAvatar")
+);
+const FindJob = lazy(() => import("../pages/Main/talent/FindJob"));
+const MyApplications = lazy(() =>
+  import("../pages/Main/talent/MyApplications")
+);
+const ApplicationDetails = lazy(() =>
+  import("../pages/Main/talent/ApplicationDetails")
+);
+const EditApplication = lazy(() =>
+  import("../pages/Main/talent/EditApplication")
+);
+const JobProposal = lazy(() =>
+  import("../pages/Main/talent/JobProposal")
+);
+const TalentAccountSettings = lazy(() =>
+  import("../pages/Main/talent/TalentAccountSettings")
+);
 
-//register-success
-const SignupSuccess = lazy(()=>import('../pages/Auth/SignupSuccess')) 
+// Employer routes
+const EmployerDashboard = lazy(() =>
+  import("../pages/Main/Employer/Dashboard")
+);
+const EmployerProfile = lazy(() =>
+  import("../pages/Main/employer/EmployerProfile")
+);
+const EditProfile = lazy(() =>
+  import("../pages/Main/employer/EditProfile")
+);
+const PostAJob = lazy(() => import("../pages/Main/employer/PostAJob"));
+const JobsList = lazy(() => import("../pages/Main/Public/JobList"));
+const JobDetails = lazy(() =>
+  import("../pages/Main/employer/JobDetails")
+);
+const MyApplicants = lazy(() =>
+  import("../pages/Main/employer/MyApplicants")
+);
+const EditJob = lazy(() => import("../pages/Main/employer/EditJob"));
 
-//verify email
-const VerifyEmail = lazy(()=>import('../pages/Auth/VerifyEmail'))
-
-//forgot password
-const ForgotPassword = lazy(()=>import('../pages/Auth/ForgotPassword'))
-
-//reset password
-const ResetPassword = lazy(()=>import('../pages/Auth/ResetPassword'))
-
-//Moderator pages
-const ModeratorDashboard = lazy(()=>import('../pages/Main/moderator/ModeratorDashboard'))
-
-//talent pages
-const TalentProfile = lazy(()=>import('../pages/Main/talent/TalentProfile'))
-const EditTalentProfile = lazy(()=>import('../pages/Main/talent/EditTalentProfile'))
-const ProfileAvatar = lazy(()=>import('../pages/Main/talent/ProfileAvatar'))
-const FindJob = lazy(()=>import('../pages/Main/talent/FindJob'))
-
-const MyApplications = lazy(()=>import('../pages/Main/talent/MyApplications'))
-const ApplicationDetails = lazy(()=>import('../pages/Main/talent/ApplicationDetails'))
-
-const EditApplication = lazy(()=>import('../pages/Main/talent/EditApplication'))
-
-const JobProposal = lazy(()=>import('../pages/Main/talent/JobProposal'))
-
-const TalentAccountSettings = lazy(()=>import('../pages/Main/talent/TalentAccountSettings'))
-
-
-
-//employer routes
-const EmployerDashboard = lazy(()=>import('../pages/Main/Employer/Dashboard'))
-const EmployerProfile = lazy(()=>import('../pages/Main/employer/EmployerProfile'))
-const EditProfile = lazy(()=>import('../pages/Main/employer/EditProfile'))
-const PostAJob = lazy(()=>import('../pages/Main/employer/PostAJob'))
-const JobsList = lazy(()=>import('../pages/Main/Public/JobList'))
-const JobDetails = lazy(()=>import('../pages/Main/employer/JobDetails'))
-const MyApplicants = lazy(()=>import('../pages/Main/employer/MyApplicants'))  
-const AccountSettings = lazy(()=>import('../pages/Main/Employer/AccountSettings'))
-//const SearchTalents = lazy(()=>import('../pages/Main/Public/SearchTalents'))
-const EditJob = lazy(()=>import('../pages/Main/employer/EditJob'))
-
-//layouts
-const MainLayOut = lazy(()=>import('../components/layouts/MainLayout'))
-const AuthLayOut = lazy(()=>import('../components/Layouts/AuthLayout'))
-const DashboardLayout = lazy(()=>import('../components/Layouts/DashboardLayout'))
-
-
-/******************************************* Routes ******************************************/
-
-
+// Moderator pages
+const ModeratorDashboard = lazy(() =>
+  import("../pages/Main/moderator/ModeratorDashboard")
+);
 
 export default function AppRoutes() {
+  const router = createBrowserRouter([
+    // 1) Public routes
+    {
+      path: "/",
+      element: <MainLayout />,
+      children: [
+        { index: true, element: <Home /> },
+        { path: "about", element: <About /> },
+        { path: "contact", element: <Contact /> },
+        { path: "talents", element: <TalentList /> },
+        { path: "talents/:talentId", element: <TalentPublicDetails /> }
+      ]
+    },
 
-  const routes = createBrowserRouter([
+    // 2) Auth routes (Guest only)
+    {
+      path: "",
+      element: (
+        <GuestRoutes>
+          <AuthLayout />
+        </GuestRoutes>
+      ),
+      children: [
+        { path: "register", element: <Register /> },
+        { path: "login", element: <Login /> },
+        { path: "verify", element: <VerifyEmail /> },
+        { path: "forgot-password", element: <ForgotPassword /> },
+        { path: "reset", element: <ResetPassword /> },
+        { path: "unauthorized", element: <Unauthorized /> }
+      ]
+    },
 
-    //1-public routes
-  { path: "/" ,
-    element: (<Suspense  fallback={<Loading />}><MainLayOut /></Suspense>) , 
-    
-    children: [
-            //public routes
-            { index: true ,   element:(<Suspense fallback={<Loading />}>  <Home /></Suspense>) },
-            { path:"about" ,  element:(<Suspense fallback={<Loading />} > <About /></Suspense>)},
-            { path:"contact", element:(<Suspense fallback={<Loading />}><Contact /></Suspense>)},
-            //Public Jobs
-           // { path:"jobs" , element:(<Suspense fallback={<Loading />}> <JobList /></Suspense>)},          
-            //Public Talents list
-            { path:"talents" , element:(<Suspense  fallback={<Loading />}><TalentList /></Suspense>)},
-            { path:"talents/:talentId" ,element:(<Suspense  fallback={<Loading />}><TalentPublicDetails /></Suspense>)}
-  ]
-},
-    
-{
-  path: "",
-  element: (
-    <Suspense fallback={<Loading />}>
-      <GuestRoutes>
-        <AuthLayOut />
-      </GuestRoutes>
-    </Suspense>
-  ),
-  children: [
-    { path: "register", element: <Register /> },
-    { path: "login", element: <Login /> },
-    { path: "register/signup-success", element: <SignupSuccess /> },
-    { path: "verify", element: <VerifyEmail /> },
-    { path: "forgot-password", element: <ForgotPassword /> },
-    { path: "reset", element: <ResetPassword /> },
-    { path: "unauthorized", element: <Unauthorized /> },
-  ],
-},
+    // 3) Talent routes
+    {
+      path: "talent",
+      element: (
+        <ProtectedRoute>
+          <RoleRoute allowed={["TALENT"]}>
+            <MainLayout />
+          </RoleRoute>
+        </ProtectedRoute>
+      ),
+      children: [
+        { index: true, element: <FindJob /> },
+        { path: "findjob", element: <FindJob /> },
 
+        { path: "profile", element: <TalentProfile /> },
+        { path: "profile/edit", element: <EditTalentProfile /> },
+        { path: "profile/avatar", element: <ProfileAvatar /> },
+        { path: "profile/settings", element: <TalentAccountSettings /> },
 
-  //3-talent routes
-  { path: "talent", element: (
-  <ProtectedRoute>
-    <RoleRoute allowed={['TALENT']}>
-      <Suspense  fallback={<Loading />}>
-        <MainLayOut />
-      </Suspense>
-    </RoleRoute>
-  </ProtectedRoute> 
-  ),
-    children: [
-      //{ path: "talent" , element: (<Suspense  fallback={<Loading />}><FindJob /></Suspense>)}, //recommenditionjobs
+        { path: "applications", element: <MyApplications /> },
+        { path: "applications/:applicationId", element: <ApplicationDetails /> },
+        {
+          path: "applications/:applicationId/edit",
+          element: <EditApplication />
+        },
 
-      { index: true , element: (<Suspense  fallback={<Loading />}><FindJob /></Suspense>)}, //recommenditionjobs
-      { path: 'findjob' , element: (<Suspense  fallback={<Loading />}><FindJob /></Suspense>)}, //recommenditionjobs
+        { path: "jobs/:jobId/proposal", element: <JobProposal /> }
+      ]
+    },
 
-      { path: "profile" , element: (<Suspense fallback={<Loading />}><TalentProfile /></Suspense>)},
-      { path: "profile/edit" , element: (<Suspense  fallback={<Loading />}><EditTalentProfile /></Suspense>)},
-      { path: "profile/avatar" , element: (<Suspense  fallback={<Loading />}><ProfileAvatar /></Suspense>)},
+    // 4) Employer routes
+    {
+      path: "employer",
+      element: (
+        <ProtectedRoute>
+          <RoleRoute allowed={["EMPLOYER"]}>
+            <MainLayout />
+          </RoleRoute>
+        </ProtectedRoute>
+      ),
+      children: [
+        { index: true, element: <EmployerDashboard /> },
+        { path: "dashboard", element: <EmployerDashboard /> },
 
-      { path: "applications" , element: (<Suspense  fallback={<Loading />}><MyApplications /></Suspense>)},
-      { path: "applications/:applicationId" , element: (<Suspense fallback={<Loading />}><ApplicationDetails /></Suspense>)},
-      { path: "applications/:applicationId/edit" , element: (<Suspense fallback={<Loading />}><EditApplication /></Suspense>)},
+        { path: "profile", element: <EmployerProfile /> },
+        { path: "profile/edit", element: <EditProfile /> },
+
+        { path: "jobs", element: <JobsList /> },
+        { path: "jobs/new", element: <PostAJob /> },
+
      
-      { path: "jobs/:jobId/proposal" , element: (<Suspense  fallback={<Loading />}><JobProposal /></Suspense>)},
-      { path: "profile/settings" , element: (<Suspense  fallback={<Loading />}><TalentAccountSettings /></Suspense>)}
+        { path: "jobs/:jobId/edit", element: <EditJob /> },
+        { path: "jobs/:jobId", element: <JobDetails /> },
+        { path: "jobs/:jobId/applicants", element: <MyApplicants /> }
+      ]
+    },
 
-  ]},
+    // 5) Admin / Moderator
+    {
+      path: "admin",
+      element: (
+        <ProtectedRoute>
+          <RoleRoute allowed={["ADMIN"]}>
+            <DashboardLayout />
+          </RoleRoute>
+        </ProtectedRoute>
+      ),
+      children: [{ index: true, element: <ModeratorDashboard /> }]
+    },
 
-  //4-empolyer routes
-  { path: "employer", element: (
-  <ProtectedRoute>
-    <RoleRoute allowed={["EMPLOYER"]}> 
-      <Suspense  fallback={<Loading />}>
-        <MainLayOut />
-      </Suspense>
-    </RoleRoute>
-  </ProtectedRoute>
-    ) ,
-    
-  children: [
-      { index: true , element: (<Suspense  fallback={<Loading />}><EmployerDashboard /></Suspense>)},
-      { path : "dashboard" , element: (<Suspense  fallback={<Loading />}><EmployerDashboard /></Suspense>)},
-      { path : "profile" , element: (<Suspense  fallback={<Loading />}><EmployerProfile /></Suspense>)},
-      { path : "profile/edit" , element: (<Suspense c fallback={<Loading />}><EditProfile /></Suspense>)},
-      { path : "jobs" , element: (<Suspense  fallback={<Loading />}><JobsList /></Suspense>)},
-      { path : "jobs/new" , element: (<Suspense  fallback={<Loading />}><PostAJob /></Suspense>)},
-      { path : "jobs/:jobId" , element: (<Suspense  fallback={<Loading />}><EditJob /></Suspense>)},
-      { path : "jobs/:jobId/applicants" , element: (<Suspense  fallback={<Loading />}><MyApplicants /></Suspense>)},
-      //{ path : "jobs/:jobId/applicants/search" , element: (<Suspense  fallback={<Loading />}><SearchTalents /></Suspense>)},
-      { path : "jobs/:jobId" , element: (<Suspense  fallback={<Loading />}><JobDetails /></Suspense>)},
-      
+    // 6) Not Found
+    {
+      path: "*",
+      element: <NotFound />
+    }
+  ]);
 
-      
-    ]},
-
-    //4-admin
-  { path: "admin", element: (<ProtectedRoute><RoleRoute allowed={['ADMIN']}> <Suspense  fallback={<Loading />}><DashboardLayout /></Suspense></RoleRoute></ProtectedRoute>),
-    children: [
-      { index: true  , element: (<Suspense  fallback={<Loading />}><ModeratorDashboard /></Suspense>)},
-      
-  ]},
-
-    
-
-  //Not Found route
-  { path: "*" , element: (<Suspense  fallback={<Loading />}><NotFound /></Suspense>)}
-
-]);
-
-
-  return <>
-              <RouterProvider router={routes}></RouterProvider>
-        </>
-    
-    
-};
+  return (
+    <Suspense fallback={<Loading />}>
+      <RouterProvider router={router} />
+    </Suspense>
+  );
+}
 

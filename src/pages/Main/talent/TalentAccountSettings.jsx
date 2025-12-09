@@ -75,7 +75,7 @@ export default function AccountSettings() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* HEADER */}
-      <header className="bg-white shadow-sm">
+      {/* <header className="bg-white shadow-sm">
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-6">
             <div className="text-2xl font-extrabold text-purple-600">H</div>
@@ -111,7 +111,7 @@ export default function AccountSettings() {
             </div>
           </div>
         </div>
-      </header>
+      </header> */}
 
       {/* MAIN CONTENT */}
       <main className="flex-1 max-w-6xl mx-auto px-6 py-10">

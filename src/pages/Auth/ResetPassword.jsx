@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { resetPassword } from "../../services/authService";
+import { resetPassword } from "../../services/auth.service";
 import FormInput from "../../components/Main/FormInput";
 import Button from "../../components/UI/Button";
 import { passwordschema } from "../../utils/validation/authValidationjs";

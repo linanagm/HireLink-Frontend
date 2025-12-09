@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 import { EmployerRegisterSchema } from "../../utils/validation/authValidationjs";
-import { register } from "../../services/authService";
+import { register } from "../../services/auth.service";
 
-export default function EmployerSignupForm({ role }) {
-  const navigate = useNavigate();
+export default function EmployerSignupForm({ role , onSuccess}) {
+  //const navigate = useNavigate();
   const [apiError, setApiError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -34,7 +34,8 @@ export default function EmployerSignupForm({ role }) {
       return;
     }
 
-    navigate("/register/signup-success");
+    //navigate("/register/signup-success");
+    if (onSuccess) onSuccess(values.email);
   }
 
   const formik = useFormik({

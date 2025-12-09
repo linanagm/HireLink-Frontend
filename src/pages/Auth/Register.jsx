@@ -4,9 +4,13 @@ import EmployerSignupForm from "../../components/auth/EmployerSignupForm";
 import signupImage from "../../assets/images/signup.svg";
 import { Link, Outlet } from "react-router-dom";
 import { Helmet } from "react-helmet";
-
-export default function Register() {
+import SignupSuccess from "./SignupSuccess";
+export default function Register( ) {
   const [role, setRole] = useState("TALENT");
+
+  const [userEmail , setUserEmail ] = useState("");
+
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   return (
     <>
@@ -57,11 +61,30 @@ export default function Register() {
           </div>
 
           {/* Dynamic Form */}
-          {role === "TALENT" ? (
+          {/* {role === "TALENT" ? (
             <TalentSignupForm role="TALENT" />
           ) : (
             <EmployerSignupForm role="EMPLOYER" />
-          )}
+          )} */}
+
+              {role === "TALENT" ? (
+              <TalentSignupForm role="TALENT" 
+              onSuccess={
+                (email) => {
+                  setUserEmail(email);
+                  setShowSuccessModal(true)
+                }
+              } />
+            ) : (
+              <EmployerSignupForm role="EMPLOYER" 
+              onSuccess={
+                (email) => {
+                  setUserEmail(email);
+                  setShowSuccessModal(true)
+                }
+              } />
+            )}
+
 
           {/* Login Link */}
           <div className="text-center mt-4">
@@ -75,6 +98,9 @@ export default function Register() {
               </Link>
             </p>
           </div>
+            {showSuccessModal && (
+                  <SignupSuccess  email={userEmail} onClose={() => setShowSuccessModal(false)} />
+                )}
 
           <Outlet />
         </div>
