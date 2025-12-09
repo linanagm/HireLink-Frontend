@@ -1,13 +1,15 @@
-import React, {  useEffect } from 'react'
+import React, {  useState } from 'react'
 import loginImage from '../../assets/images/login.svg'
 import { Helmet } from 'react-helmet'
 import LoginForm from '../../components/auth/LoginForm'
+import ForgotPasswordModal from '../../components/Modals/ForgotPasswordModal'
+
 
 export default function Login() {
 
-    
-      useEffect (() => {}, [])
-    
+      const [showForgotModal, setShowForgotModal] = useState(false);
+      
+
      return (<>
         <Helmet>
           <title>Login</title>  
@@ -31,7 +33,15 @@ export default function Login() {
                                 
                   
                   {/* ************* register form ******************** */}
-                   <LoginForm  />
+                   {/* <LoginForm  /> */}
+                   <LoginForm 
+                        onOpenForgot={() => setShowForgotModal(true)}
+                    />
+
+                    {showForgotModal && (
+                        <ForgotPasswordModal onClose={() => setShowForgotModal(false)} />
+                    )}
+
                               
               </div>
              
