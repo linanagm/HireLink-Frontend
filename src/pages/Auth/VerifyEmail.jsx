@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import SuccessCard from "../../components/Main/SuccessCard";
-import { verifyEmail } from "../../services/authService";
+import { verifyEmail } from "../../services/auth.service";
 
 export default function VerifyEmail() {
   const [params] = useSearchParams();

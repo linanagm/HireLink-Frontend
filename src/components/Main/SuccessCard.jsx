@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import correctImage from "../../assets/images/correct.svg";
 
+
 export default function SuccessCard({
   status,
   message,
@@ -10,7 +11,7 @@ export default function SuccessCard({
 }) {
   return (
     <div className="w-full flex justify-center mt-32">
-      <div className="flex flex-col bg-neutral-primary-soft max-w-md border border-default rounded-base shadow-xs p-7 items-center text-center">
+      <div className="flex flex-col bg-white max-w-md border  rounded-xl shadow-xs p-12 items-center text-center">
 
         {status === "success" && (
           <img

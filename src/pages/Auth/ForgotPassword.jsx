@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { requestPasswordReset } from "../../services/authService";
+import { requestPasswordReset } from "../../services/auth.service";
 import FormInput from "../../components/Main/FormInput";
 import Button from "../../components/UI/Button";
 import { useFormik } from "formik";

@@ -1,4 +1,4 @@
-import axiosClient from "./axiosClient";
+import axiosClient from "../config/axiosClient";
 import { handleError } from "../utils/helpers";
 
 const endpoints = {

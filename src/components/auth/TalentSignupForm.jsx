@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 import { splitName } from "../../utils/tools";
 import { TalentRegisterSchema } from "../../utils/validation/authValidationjs";
-import { register } from "../../services/authService";
+import { register } from "../../services/auth.service";
 
-export default function TalentSignupForm({ role }) {
-  const navigate = useNavigate();
+export default function TalentSignupForm({ role, onSuccess }) {
+  //const navigate = useNavigate();
   const [apiError, setApiError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -35,7 +35,9 @@ export default function TalentSignupForm({ role }) {
       return;
     }
 
-    navigate("/register/signup-success");
+    //navigate("/register/signup-success");
+      if (onSuccess) onSuccess(values.email);  //open success model
+
   }
 
   const formik = useFormik({
