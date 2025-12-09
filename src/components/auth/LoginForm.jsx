@@ -7,7 +7,7 @@ import { getUser, login } from "../../services/auth.service";
 import { LoginSchema } from "../../utils/validation/authValidationjs";
 import { useAuth } from "../../hooks/useAuth";
 
-export default function LoginForm() {
+export default function LoginForm({onOpenForgot}) {
   const { saveLogin } = useAuth();
   const navigate = useNavigate();
 
@@ -143,13 +143,22 @@ const handleLogin = async (formValues) => {
           Remember me
         </label>
 
-        <NavLink
+        {/* <NavLink
           to="/forgot-password"
           className="text-red-700 hover:underline"
         >
           Forgot password?
-        </NavLink>
-      </div>
+        </NavLink> */}
+
+        <button
+            type="button"
+            onClick={onOpenForgot}
+            className="text-red-700 hover:underline"
+          >
+            Forgot password?
+          </button>
+
+        </div>
 
       {/* Submit */}
       <button

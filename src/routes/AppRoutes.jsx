@@ -32,19 +32,25 @@ const Unauthorized = lazy(() =>
 // Auth Pages
 const Register = lazy(() => import("../pages/Auth/Register"));
 const Login = lazy(() => import("../pages/Auth/Login"));
-const VerifyEmail = lazy(() => import("../pages/Auth/VerifyEmail"));
-const ForgotPassword = lazy(() =>
-  import("../pages/Auth/ForgotPassword")
-);
+const VerifyEmail = lazy(() => import("../pages/Auth/VerifyEmail"));//modal 
+
+//modal
+// const ForgotPassword = lazy(() =>
+//   import("../components/Modals/ForgotPasswordModal")
+// );
+//modal
 const ResetPassword = lazy(() => import("../pages/Auth/ResetPassword"));
+
 
 // Talent pages
 const TalentProfile = lazy(() =>
   import("../pages/Main/talent/TalentProfile")
 );
+
 const EditTalentProfile = lazy(() =>
   import("../pages/Main/talent/EditTalentProfile")
 );
+
 const ProfileAvatar = lazy(() =>
   import("../pages/Main/talent/ProfileAvatar")
 );
@@ -117,7 +123,7 @@ export default function AppRoutes() {
         { path: "register", element: <Register /> },
         { path: "login", element: <Login /> },
         { path: "verify", element: <VerifyEmail /> },
-        { path: "forgot-password", element: <ForgotPassword /> },
+       // { path: "forgot-password", element: <ForgotPassword /> },
         { path: "reset", element: <ResetPassword /> },
         { path: "unauthorized", element: <Unauthorized /> }
       ]

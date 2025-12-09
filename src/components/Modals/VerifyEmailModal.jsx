@@ -4,7 +4,7 @@ import SuccessCard from "../Main/SuccessCard";
 export default function VerifyEmailModal({ status, message, onClose, buttonLink }) {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[99999]">
-      <div className="relative w-full max-w-md bg-white rounded-xl shadow-lg p-0">
+      <div className="relative w-full max-w-md bg-white rounded-xl shadow-lg p-0 mb-10">
 
         {/* Success / Loading / Error Card */}
         <SuccessCard
