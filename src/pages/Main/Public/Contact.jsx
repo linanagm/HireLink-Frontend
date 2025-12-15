@@ -13,7 +13,8 @@ export default function Contact() {
     const handleContactUs = async (values ,  { resetForm }) => {
 
       //هتتغير لما نربط الباك اند
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+      //fake request 
+      await new Promise((resolve) => setTimeout(resolve, 1000));
         console.log(values);
         //---------------------
 
