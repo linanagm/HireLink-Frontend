@@ -14,7 +14,7 @@ export default function FormInput({ label, name, type = "text", value, onChange,
         onBlur={onBlur}
         placeholder={placeholder}
         required={required}
-        className="border p-2 rounded focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
+        className="border p-2 rounded-xl focus:outline-none focus:ring-1 focus:ring-fuchsia-500"
       />
     </div>
   );

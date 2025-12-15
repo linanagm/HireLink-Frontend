@@ -17,7 +17,7 @@ export const passwordschema = Yup
 
 //const roleSchema = Yup.string().oneOf(["TALENT", "EMPLOYER"], "Role must be either TALENT or EMPLOYER");
 
-const name = Yup
+export const name = Yup
  .string()
   .matches(/^\S+\s+\S+/, "Please enter your full name")
 
