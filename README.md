@@ -21,11 +21,11 @@ It uses modern tooling for fast development, hot module replacement, and consist
 ### Install dependencies
 ```bash
 npm install
-
+```
 #### Run the development server
 ```bash
 npm run dev
-
+```
 ##### Code Quality & Formatting:
 
 This project uses Biome as a single tool for:
@@ -37,19 +37,20 @@ This project uses Biome as a single tool for:
 ```bash
 npm run check
 npm run check:write
+```
 
----
-######## Notes:
+###### Notes:
 ESLint and Prettier have been fully removed in favor of Biome.
 
 The Admin section UI (Login & Dashboard) is implemented before backend integration.
 
 Backend integration for Talent and Employer roles will be added incrementally.
 
-Build
+# Build
 ```bash
 npm run build
-
-Preview production build
+```
+# Preview production build
 ```bash
 npm run preview
+```
