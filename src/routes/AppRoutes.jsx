@@ -88,8 +88,9 @@ const SearchTalent = lazy(() =>
 
 
 // Moderator pages
-const ModeratorDashboard = lazy(() =>
-  import("../pages/Main/Moderator/ModeratorDashboard")
+const AdminLogin = lazy(() => import("../pages/Main/Admin/AdminLogin"));
+const AdminDashboard = lazy(() =>
+  import("../pages/Main/Admin/AdminDashboard")
 );
 
 
@@ -113,15 +114,20 @@ export default function AppRoutes() {
     {
       path: "",
       element: (
-        <GuestRoutes>
-          <AuthLayout />
-        </GuestRoutes>
+        <GuestRoutes />
+          
+        
       ),
       children: [
+        { 
+          element: <AuthLayout />,
+          children: [
         { path: "register", element: <Register /> },
         { path: "login", element: <Login /> },
         { path: "verify", element: <VerifyEmail /> },
         { path: "reset", element: <ResetPassword /> },
+      ]},
+
         { path: "unauthorized", element: <Unauthorized /> }
       ]
     },
@@ -185,17 +191,21 @@ export default function AppRoutes() {
     },
 
     // 5) Admin / Moderator
+   {
+       path: "admin/login", element: <AdminLogin /> ,
+
+   },
+    
     {
-      path: "admin",
+      path: "admin/dashboard",
       element: (
-        <ProtectedRoute>
-          <RoleRoute allowed={["ADMIN"]}>
-            <DashboardLayout />
-          </RoleRoute>
-        </ProtectedRoute>
+        <RoleRoute allowed={["MODERATOR"]} redirect="/admin/login" forbidden="/unauthorized">
+          <DashboardLayout />
+        </RoleRoute>
       ),
-      children: [{ index: true, element: <ModeratorDashboard /> }]
-    },
+      children: [{ index: true, element: <AdminDashboard /> }],
+  },
+
 
     // 6) Not Found
     {

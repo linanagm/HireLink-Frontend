@@ -12,3 +12,7 @@ export function handleError(error) {
     status: error?.response?.status || 500
   };
 }
+
+export function cx(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
