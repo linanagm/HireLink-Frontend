@@ -1,20 +1,18 @@
-import React, { useState, useEffect } from 'react'
-import { Helmet } from 'react-helmet'
+import React, { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
 
 export default function NotFound() {
+	const [Count, SetCount] = useState();
 
-    let [ Count , SetCount ] = useState()
+	useEffect(() => {}, []);
 
-      useEffect (() => {}, [])
-    
-      return (
-    <div>
-      <Helmet>
-        <title>Not Found</title>
-        <meta name="description" content="Helmet application" />
-     </Helmet>
-        
-      notFound
-    </div>
-  )
+	return (
+		<div>
+			<Helmet>
+				<title>Not Found</title>
+				<meta name="description" content="Helmet application" />
+			</Helmet>
+			notFound
+		</div>
+	);
 }

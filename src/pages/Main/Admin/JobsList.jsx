@@ -1,14 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from "react";
 
 export default function Dashboard() {
+	const [Count, SetCount] = useState();
 
-    let [ Count , SetCount ] = useState()
+	useEffect(() => {}, []);
 
-      useEffect (() => {}, [])
-    
-      return (
-    <div>
-      jobManaging
-    </div>
-  )
+	return <div>jobManaging</div>;
 }
