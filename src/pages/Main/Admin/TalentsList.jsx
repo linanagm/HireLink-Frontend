@@ -1,14 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from "react";
 
 export default function TalentsList() {
+	const [Count, SetCount] = useState();
 
-    let [ Count , SetCount ] = useState()
+	useEffect(() => {}, []);
 
-      useEffect (() => {}, [])
-    
-      return (
-    <div>
-      talentManaging
-    </div>
-  )
+	return <div>talentManaging</div>;
 }

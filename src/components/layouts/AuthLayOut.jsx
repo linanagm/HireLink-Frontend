@@ -1,25 +1,20 @@
-import React, { useState, useEffect } from 'react'
-import { Outlet } from 'react-router-dom'
-import Footer from '../Main/Footer'
-import CircleFrame from '../Main/CircleFrame'
+import React, { useEffect, useState } from "react";
+import { Outlet } from "react-router-dom";
+import CircleFrame from "../Main/CircleFrame";
+import Footer from "../Main/Footer";
 
 export default function AuthLayOut() {
+	const [Count, SetCount] = useState();
 
-    let [ Count , SetCount ] = useState()
+	useEffect(() => {}, []);
 
-      useEffect (() => {}, [])
-    
-      return (
-    <div>
-      <CircleFrame />
-      
-      <div className='container p-7 '>
-        
-                <Outlet />
+	return (
+		<div>
+			<CircleFrame />
 
-      </div>
-      
-      
-    </div>
-  )
+			<div className="container p-7 ">
+				<Outlet />
+			</div>
+		</div>
+	);
 }

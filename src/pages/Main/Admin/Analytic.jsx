@@ -1,14 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from "react";
 
 export default function Analytic() {
+	const [Count, SetCount] = useState();
 
-    let [ Count , SetCount ] = useState()
+	useEffect(() => {}, []);
 
-      useEffect (() => {}, [])
-    
-      return (
-    <div>
-      analytic
-    </div>
-  )
+	return <div>analytic</div>;
 }
