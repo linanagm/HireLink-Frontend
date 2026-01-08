@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
-// import NavbarComponent from '../Main/Navbar'
 
 export default function DashboardLayout() {
 	const [Count, SetCount] = useState();
@@ -9,8 +8,6 @@ export default function DashboardLayout() {
 
 	return (
 		<div>
-			{/* <NavbarComponent /> */}
-
 			<main>
 				<Outlet />
 			</main>

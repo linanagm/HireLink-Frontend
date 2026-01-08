@@ -1,8 +1,6 @@
 import { createContext, useEffect, useState } from "react";
-//import {  getCurrentUserId } from "../services/token.service";
-//import { getUser } from "../services/authService";
 
-// eslint-disable-next-line react-refresh/only-export-components
+// Create context
 export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {

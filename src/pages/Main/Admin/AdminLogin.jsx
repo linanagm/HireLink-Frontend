@@ -1,10 +1,10 @@
 import { useFormik } from "formik";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Helmet } from "react-helmet";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AdminLogo from "../../../components/Admin/AdminLogo";
 import { useAuth } from "../../../hooks/useAuth";
-import { adminLogin, getAdminMe } from "../../../services/admin.service";
+import { getUser, login } from "../../../services/auth.service";
 import { LoginSchema } from "../../../utils/validation/authValidationjs";
 
 export default function AdminLogin() {
@@ -21,7 +21,7 @@ export default function AdminLogin() {
 		if (role === "MODERATOR" || role === "ADMIN") {
 			navigate("/admin/dashboard");
 		} else {
-			navigate("/forbidden");
+			navigate("/unauthorized");
 		}
 	};
 
@@ -30,37 +30,40 @@ export default function AdminLogin() {
 		setApiError("");
 
 		try {
-			const res = await adminLogin(formValues);
+			const res = await login(formValues);
 
-			if (!res.ok) {
-				setApiError(res.message || "Admin login failed.");
+			console.log("res: ", res);
+
+			if (!res?.ok) {
+				setApiError(res?.message || "Admin login failed.");
 				return;
 			}
 
-			const token = res.data?.token;
+			const token = res?.data?.token;
 			if (!token) {
 				setApiError("Unexpected response (missing token).");
 				return;
 			}
 
-			const storage = rememberMeChecked ? localStorage : sessionStorage;
-			storage.setItem("admin_token", token);
+			// Save token first
+			await saveLogin(token, rememberMeChecked, null);
 
-			const me = await getAdminMe(token);
+			// Fetch full user info including role
+			const me = await getUser();
 
-			if (!me.ok) {
-				setApiError(me.message || "Could not load admin profile.");
+			//console.log("me :", me);
+
+			if (!me?.ok) {
+				setApiError(me?.message || "Could not load admin profile.");
 				return;
 			}
 
-			storage.setItem("admin_user", JSON.stringify(me.data));
-			saveLogin(token, rememberMeChecked);
+			// Save full user info
+			await saveLogin(token, rememberMeChecked, me.data);
 
-			if (me.ok) {
-				saveLogin(token, rememberMeChecked, me.data);
-				console.log("role: ", me.data);
-				navigateAdmin(me.data);
-			}
+			//console.log("admin me:", me.data);
+
+			navigateAdmin(me.data);
 		} catch (err) {
 			console.log("admin login error:", err);
 			setApiError("Something went wrong. Try again.");
@@ -74,6 +77,7 @@ export default function AdminLogin() {
 		validationSchema: LoginSchema,
 		onSubmit: handleAdminLogin,
 	});
+	console.log("formik : ", formik);
 
 	return (
 		<>
@@ -92,10 +96,14 @@ export default function AdminLogin() {
 
 				{/* Email */}
 				<div className="mb-5">
-					<label className="block mb-2.5 text-sm font-medium text-heading">
+					<label
+						htmlFor="email"
+						className="block mb-2.5 text-sm font-medium text-heading"
+					>
 						Your email
 					</label>
 					<input
+						id="email"
 						type="email"
 						{...formik.getFieldProps("email")}
 						className="bg-neutral-secondary-medium border border-default-medium text-sm rounded w-full px-3 py-3"
@@ -110,11 +118,15 @@ export default function AdminLogin() {
 
 				{/* Password */}
 				<div className="relative mb-5">
-					<label className="block mb-2.5 text-sm font-medium text-heading">
+					<label
+						htmlFor="password"
+						className="block mb-2.5 text-sm font-medium text-heading"
+					>
 						Your password
 					</label>
 
 					<input
+						id="password"
 						type={showPassword ? "text" : "password"}
 						{...formik.getFieldProps("password")}
 						className="bg-neutral-secondary-medium border text-sm rounded w-full px-3 py-2.5"
