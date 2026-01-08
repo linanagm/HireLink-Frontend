@@ -52,7 +52,7 @@ export default function TalentSignupForm({ role, onSuccess }) {
 			{/* Name */}
 			<div className="mb-5">
 				<label
-					for="name"
+					htmlFor="name"
 					className="block mb-2.5 text-sm font-medium text-heading"
 				>
 					Your Name
@@ -76,7 +76,7 @@ export default function TalentSignupForm({ role, onSuccess }) {
 			{/* Email */}
 			<div className="mb-5">
 				<label
-					for="email"
+					htmlFor="email"
 					className="block mb-2.5 text-sm font-medium text-heading"
 				>
 					Email
@@ -100,7 +100,7 @@ export default function TalentSignupForm({ role, onSuccess }) {
 			{/* Password */}
 			<div className="mb-5 relative">
 				<label
-					for="password"
+					htmlFor="password"
 					className="block mb-2.5 text-sm font-medium text-heading"
 				>
 					Password
@@ -136,7 +136,7 @@ export default function TalentSignupForm({ role, onSuccess }) {
 			{/* Confirm Password */}
 			<div className="mb-5">
 				<label
-					for="rePassword"
+					htmlFor="rePassword"
 					className="block mb-2.5 text-sm font-medium text-heading"
 				>
 					Confirm Password

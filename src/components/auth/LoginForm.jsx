@@ -80,7 +80,7 @@ export default function LoginForm({ onOpenForgot }) {
 			{/* Email */}
 			<div className="mb-5">
 				<label
-					for="email"
+					htmlFor="email"
 					className="block mb-2.5 text-sm font-medium text-heading"
 				>
 					Your email
@@ -102,7 +102,7 @@ export default function LoginForm({ onOpenForgot }) {
 			{/* Password */}
 			<div className="relative mb-5">
 				<label
-					for="password"
+					htmlFor="password"
 					className="block mb-2.5 text-sm font-medium text-heading"
 				>
 					Your password

@@ -1,6 +1,6 @@
 import Icon from "./Icon";
 
-export default function Topbar({ search, setSearch }) {
+export default function Topbar({ search, setSearch, logout }) {
 	return (
 		<div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 			<div>
@@ -36,6 +36,7 @@ export default function Topbar({ search, setSearch }) {
 
 				<button
 					type="button"
+					onClick={logout}
 					className="hidden sm:inline-flex items-center rounded-2xl bg-fuchsia-800  px-2 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-fuchsia-700"
 				>
 					Log out

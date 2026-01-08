@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from "react";
+import { lazy, Suspense } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Loading from "../pages/Main/Public/Loading";
 
@@ -169,13 +169,15 @@ export default function AppRoutes() {
 		{
 			path: "admin/dashboard",
 			element: (
-				<RoleRoute
-					allowed={["MODERATOR"]}
-					redirect="/admin/login"
-					forbidden="/unauthorized"
-				>
-					<DashboardLayout />
-				</RoleRoute>
+				<ProtectedRoute redirect="/admin/login">
+					<RoleRoute
+						allowed={["MODERATOR"]}
+						redirect="/admin/login"
+						forbidden="/unauthorized"
+					>
+						<DashboardLayout />
+					</RoleRoute>
+				</ProtectedRoute>
 			),
 			children: [{ index: true, element: <AdminDashboard /> }],
 		},

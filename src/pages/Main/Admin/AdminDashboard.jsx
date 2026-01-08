@@ -1,19 +1,20 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Badge from "../../../components/Admin/Dashboard/Badge.jsx";
 import { Card } from "../../../components/Admin/Dashboard/Card";
 import {
 	ActivityStateChart,
 	UsersGrowthChart,
 } from "../../../components/Admin/Dashboard/Charts.jsx";
-import PlaceholderChart from "../../../components/Admin/Dashboard/PlacholderChart";
 import Sidebar from "../../../components/Admin/Dashboard/Sidebar";
 import StatsGrid from "../../../components/Admin/Dashboard/StatsGrid";
 import Tabs from "../../../components/Admin/Dashboard/Tabs";
 import Topbar from "../../../components/Admin/Dashboard/Topbar";
 import UsersTable from "../../../components/Admin/Dashboard/UsersTable";
+import { useAuth } from "../../../hooks/useAuth.jsx";
 import { MOCK_USERS, TABS } from "../../../services/adminMockData.js";
 
 export default function AdminDashboard() {
+	const { logout } = useAuth();
 	const [activeTab, setActiveTab] = useState("ALL");
 	const [search, setSearch] = useState("");
 	const [selectedIds, setSelectedIds] = useState(() => new Set());
@@ -59,8 +60,14 @@ export default function AdminDashboard() {
 			const next = new Set(prev);
 			const ids = filteredUsers.map((u) => u.id);
 			const allSelected = ids.every((id) => next.has(id));
-			if (allSelected) ids.forEach((id) => next.delete(id));
-			else ids.forEach((id) => next.add(id));
+			if (allSelected)
+				ids.forEach((id) => {
+					next.delete(id);
+				});
+			else
+				ids.forEach((id) => {
+					next.add(id);
+				});
 			return next;
 		});
 	};
@@ -81,7 +88,7 @@ export default function AdminDashboard() {
 				/>
 
 				<main className="flex-1 p-4 sm:p-6 lg:p-8">
-					<Topbar search={search} setSearch={setSearch} />
+					<Topbar search={search} setSearch={setSearch} logout={logout} />
 
 					<div className="mt-6">
 						<StatsGrid counts={counts} />

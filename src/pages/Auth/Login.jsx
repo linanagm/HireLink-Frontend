@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Helmet } from "react-helmet";
 import loginImage from "../../assets/images/login.svg";
 import LoginForm from "../../components/auth/LoginForm";
