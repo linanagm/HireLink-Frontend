@@ -1,4 +1,3 @@
-import React from "react";
 import SuccessCard from "../Main/SuccessCard";
 
 export default function VerifyEmailModal({

@@ -27,6 +27,14 @@ const Register = lazy(() => import("../pages/Auth/Register"));
 const Login = lazy(() => import("../pages/Auth/Login"));
 const VerifyEmail = lazy(() => import("../pages/Auth/VerifyEmail")); //modal
 
+const TalentOnboardingProfile = lazy(
+	() => import("../pages/Auth/Onboarding/TalentOnboarding"),
+);
+
+const CompanyOnboardingProfile = lazy(
+	() => import("../pages/Auth/Onboarding/CompanyOnboarding"),
+);
+
 //modal
 const ResetPassword = lazy(() => import("../pages/Auth/ResetPassword"));
 
@@ -97,6 +105,11 @@ export default function AppRoutes() {
 						{ path: "login", element: <Login /> },
 						{ path: "verify", element: <VerifyEmail /> },
 						{ path: "reset", element: <ResetPassword /> },
+						{ path: "onboarding/talent", element: <TalentOnboardingProfile /> },
+						{
+							path: "onboarding/company",
+							element: <CompanyOnboardingProfile />,
+						},
 					],
 				},
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 export default function OnboardingProfileSetup() {
 	const [socialLinks, setSocialLinks] = useState([""]);
@@ -58,10 +58,17 @@ export default function OnboardingProfileSetup() {
 				<form className="space-y-6">
 					{/* Profile Picture Upload */}
 					<div>
-						<label className="block text-sm font-medium mb-2">
+						<label
+							htmlFor="profileImageUpload"
+							className="block text-sm font-medium mb-2"
+						>
 							Profile Picture Upload
 						</label>
-						<label className="flex items-center justify-center w-32 h-32 border rounded-full cursor-pointer overflow-hidden bg-gray-100 hover:bg-gray-200">
+
+						<label
+							htmlFor="profileImage"
+							className="flex items-center justify-center w-32 h-32 border rounded-full cursor-pointer overflow-hidden bg-gray-100 hover:bg-gray-200"
+						>
 							{profileImage ? (
 								<img
 									src={profileImage}
@@ -72,6 +79,7 @@ export default function OnboardingProfileSetup() {
 								<span className="text-3xl text-purple-600">＋</span>
 							)}
 							<input
+								id="profileImage"
 								type="file"
 								accept="image/*"
 								className="hidden"
@@ -82,10 +90,14 @@ export default function OnboardingProfileSetup() {
 
 					{/* Headline */}
 					<div>
-						<label className="block text-sm font-medium mb-1">
+						<label
+							htmlFor="job-title"
+							className="block text-sm font-medium mb-1"
+						>
 							Headline / Job Title
 						</label>
 						<input
+							id="job-title"
 							type="text"
 							placeholder="e.g., UI/UX Designer"
 							className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -94,8 +106,14 @@ export default function OnboardingProfileSetup() {
 
 					{/* Location */}
 					<div>
-						<label className="block text-sm font-medium mb-1">Location</label>
+						<label
+							htmlFor="location"
+							className="block text-sm font-medium mb-1"
+						>
+							Location
+						</label>
 						<input
+							id="location"
 							type="text"
 							placeholder="Current Location"
 							className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-500"
@@ -104,18 +122,25 @@ export default function OnboardingProfileSetup() {
 
 					{/* Upload Resume */}
 					<div>
-						<label className="block text-sm font-medium mb-1">
+						<label
+							htmlFor="resume-upload"
+							className="block text-sm font-medium mb-1"
+						>
 							Upload Resume
 						</label>
 						<div className="flex items-center border rounded-lg p-3">
 							<input
+								id="resume-upload"
 								type="text"
 								placeholder="Upload Resume"
 								className="w-full focus:outline-none"
 								value={resumeFile}
 								readOnly
 							/>
-							<label className="ml-2 text-purple-600 text-lg cursor-pointer">
+							<label
+								htmlFor=""
+								className="ml-2 text-purple-600 text-lg cursor-pointer"
+							>
 								📁
 								<input
 									type="file"
@@ -129,12 +154,12 @@ export default function OnboardingProfileSetup() {
 
 					{/* Skills Tags */}
 					<div>
-						<label className="block text-sm font-medium mb-1">
+						<label htmlFor="skills" className="block text-sm font-medium mb-1">
 							Skills Tags
 						</label>
 						{skills.map((skill, index) => (
 							<div
-								key={index}
+								key={link.id}
 								className="flex items-center border rounded-lg p-3 mb-2"
 							>
 								<input
@@ -144,19 +169,21 @@ export default function OnboardingProfileSetup() {
 									value={skill}
 									onChange={(e) => handleSkillChange(index, e.target.value)}
 								/>
-								<span
+								<button
+									type="button"
 									className="text-purple-600 text-xl cursor-pointer ml-2"
 									onClick={addSkill}
 								>
 									＋
-								</span>
+								</button>
 								{skills.length > 1 && (
-									<span
+									<button
+										type="button"
 										className="text-red-600 text-xl cursor-pointer ml-2"
 										onClick={() => removeSkill(index)}
 									>
 										✕
-									</span>
+									</button>
 								)}
 							</div>
 						))}
@@ -165,8 +192,14 @@ export default function OnboardingProfileSetup() {
 					{/* Job Preferences */}
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 						<div>
-							<label className="block text-sm font-medium mb-1">Job Type</label>
+							<label
+								htmlFor="job-type"
+								className="block text-sm font-medium mb-1"
+							>
+								Job Type
+							</label>
 							<select
+								id="job-type"
 								className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-purple-500"
 								defaultValue=""
 							>
@@ -180,10 +213,14 @@ export default function OnboardingProfileSetup() {
 						</div>
 
 						<div>
-							<label className="block text-sm font-medium mb-1">
+							<label
+								htmlFor="enviroment"
+								className="block text-sm font-medium mb-1"
+							>
 								Environment
 							</label>
 							<select
+								id="enviroment"
 								className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-purple-500"
 								defaultValue=""
 							>
@@ -199,34 +236,37 @@ export default function OnboardingProfileSetup() {
 
 					{/* Social Links */}
 					<div>
-						<label className="block text-sm font-medium mb-1">
+						<label htmlFor="" className="block text-sm font-medium mb-1">
 							Social Links
 						</label>
 						{socialLinks.map((link, index) => (
 							<div
-								key={index}
+								key={link.id}
 								className="flex items-center border rounded-lg p-3 mb-2"
 							>
 								<input
+									id={`social-link-${index}`}
 									type="text"
 									placeholder="Social Link"
 									className="w-full focus:outline-none"
 									value={link}
 									onChange={(e) => handleLinkChange(index, e.target.value)}
 								/>
-								<span
+								<button
+									type="button"
 									className="text-purple-600 text-xl cursor-pointer ml-2"
 									onClick={addSocialLink}
 								>
 									＋
-								</span>
+								</button>
 								{socialLinks.length > 1 && (
-									<span
+									<button
+										type="button"
 										className="text-red-600 text-xl cursor-pointer ml-2"
 										onClick={() => removeSocialLink(index)}
 									>
 										✕
-									</span>
+									</button>
 								)}
 							</div>
 						))}
@@ -234,10 +274,12 @@ export default function OnboardingProfileSetup() {
 
 					{/* Summary */}
 					<div>
-						<label className="block text-sm font-medium mb-1">
+						<label htmlFor="bio" className="block text-sm font-medium mb-1">
 							Short Bio / Summary
 						</label>
 						<textarea
+							id="bio"
+							name="bio"
 							placeholder="Summary"
 							className="w-full border rounded-lg p-3 h-24 focus:ring-2 focus:ring-purple-500"
 						></textarea>

@@ -13,7 +13,7 @@ const endpoints = {
 	logoutAll: "/auth/logout/all",
 };
 
-async function request(method, url, data = null, config = {}) {
+export async function request(method, url, data = null, config = {}) {
 	try {
 		const response = await axiosClient[method](url, data, config);
 

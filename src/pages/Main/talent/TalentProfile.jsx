@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 // قلم SVG
@@ -10,6 +10,7 @@ const PencilIcon = ({ onClick }) => (
 		viewBox="0 0 20 20"
 		fill="currentColor"
 	>
+		<title>edit</title>
 		<path d="M17.414 2.586a2 2 0 010 2.828l-9.9 9.9a1 1 0 01-.465.263l-4 1a1 1 0 01-1.213-1.213l1-4a1 1 0 01.263-.465l9.9-9.9a2 2 0 012.828 0zM15.121 4.05l.829.829-1.06 1.06-.829-.829 1.06-1.06zM5 13l6-6 1.06 1.06L6.06 14.06 5 15v-2z" />
 	</svg>
 );
@@ -50,30 +51,6 @@ export default function EditableProfile() {
 
 	return (
 		<div className="min-h-screen bg-gray-50 flex flex-col">
-			{/* Navbar */}
-			{/* <nav className="w-full bg-white shadow-sm py-4 px-6 flex justify-between items-center">
-        <div className="flex items-center gap-3">
-          <h1 className="text-purple-600 font-bold text-2xl">H</h1>
-
-          <Link to="/talent/findjob" className="text-gray-700">
-            Find Jobs
-          </Link>
-
-          <Link to="/talent/applications" className="text-gray-700">
-            My Applications
-          </Link>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <input
-            type="text"
-            placeholder="Search"
-            className="border rounded-lg px-3 py-1.5 w-60"
-          />
-          <span className="w-8 h-8 bg-gray-200 rounded-full"></span>
-        </div>
-      </nav> */}
-
 			{/* Main */}
 			<main className="flex-grow px-6 py-6 max-w-4xl mx-auto">
 				{/* Profile Card */}
@@ -175,8 +152,8 @@ export default function EditableProfile() {
 
 					{!editMode.skills && (
 						<ul className="list-disc ml-6 text-gray-700">
-							{profile.skills.map((s, idx) => (
-								<li key={idx}>{s}</li>
+							{profile.skills.map((skill, idx) => (
+								<li key={idx}>{skill.name}</li>
 							))}
 						</ul>
 					)}

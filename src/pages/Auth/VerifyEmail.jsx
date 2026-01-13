@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import VerifyEmailModal from "../../components/Modals/VerifyEmailModal";
 import { verifyEmail } from "../../services/auth.service";
@@ -23,14 +23,11 @@ export default function VerifyEmail() {
 
 			const response = await verifyEmail(token);
 
-			if (response.ok) {
+			if (response.ok || response.message === "email already verified") {
 				setStatus("success");
 				setMessage("Email verified successfully.");
-				setTimeout(() => navigate("/login"), 2000);
-			} else if (response.message === "email already verified") {
-				setStatus("success");
-				setMessage("Email already verified.");
-				setTimeout(() => navigate("/login"), 2000);
+				sessionStorage.setItem("vt", token);
+				setTimeout(() => navigate("/onboarding/talent"), 800);
 			} else {
 				setStatus("error");
 				setMessage(response.message || "Verification failed.");
@@ -38,7 +35,7 @@ export default function VerifyEmail() {
 		}
 
 		doVerify();
-	}, []);
+	}, [navigate, params]);
 
 	if (!showModal) return null;
 

@@ -3,7 +3,7 @@ import { useAuth } from "../../hooks/useAuth";
 
 export default function RoleRoute({
 	allowed = [],
-	redirect = "login",
+	redirect = "/",
 	forbidden = "/unauthorized",
 	children,
 }) {

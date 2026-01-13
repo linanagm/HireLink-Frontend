@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link, Outlet } from "react-router-dom";
 import signupImage from "../../assets/images/signup.svg";
@@ -64,6 +64,7 @@ export default function Register() {
 					</div>
 
 					{role === "TALENT" ? (
+						// biome-ignore lint/a11y/useValidAriaRole: <explanation>
 						<TalentSignupForm
 							role="TALENT"
 							onSuccess={(email) => {
@@ -72,6 +73,7 @@ export default function Register() {
 							}}
 						/>
 					) : (
+						// biome-ignore lint/a11y/useValidAriaRole: <explanation>
 						<EmployerSignupForm
 							role="EMPLOYER"
 							onSuccess={(email) => {

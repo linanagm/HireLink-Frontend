@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import Footer from "../Main/Footer";
-import NavbarComponent from "../Main/Navbar";
+import NavbarComponent from "../Main/navbar/NavbarComponent";
 
 export default function MainLayOut() {
 	const [Count, SetCount] = useState(0);
