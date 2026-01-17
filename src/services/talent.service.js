@@ -4,6 +4,11 @@ import { request } from "./auth.service";
 
 export const updateProfile = (payload) => request("put", "/talent/profile", payload);
 
+//get jobs
+export function getJobs(params = {}) {
+    return request("get", "/jobs", null, { params });
+};
+
 export const uploadAvatar = (file) => {
     const fd = new FormData();
     fd.append("avatar", file);

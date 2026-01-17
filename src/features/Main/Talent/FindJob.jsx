@@ -1,66 +1,100 @@
-import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { getJobs } from "../../../services/talent.service";
+
+const PAGE_SIZE = 10;
+
+function Chip({ children }) {
+	if (!children) return null;
+	return (
+		<span className="text-gray-600 text-sm bg-slate-100 px-3 py-1 rounded-full">
+			{children}
+		</span>
+	);
+}
 
 export default function JobList() {
-	const [tab, setTab] = useState("recent"); // "recent" أو "best"
+	const [tab, setTab] = useState("recent"); // "recent" | "best"
+	const [page, setPage] = useState(1);
 
-	const jobs = [
-		{
-			id: "0",
-			title: "UI/UX Designer for Mobile App",
-			desc: "Looking for a creative UI/UX Designer to enhance user experience for our mobile application.",
-			tags: ["Figma", "User Research", "Wireframing", "Prototyping"],
-			location: "Addis Ababa",
-		},
-		{
-			id: "1",
-			title: "Data Analyst for Marketing Team",
-			desc: "We need a Data Analyst to help drive insights for marketing efforts.",
-			tags: ["SQL", "Tableau", "Data Mining", "Predictive Analytics"],
-			location: "London",
-		},
-		{
-			id: "2",
-			title: "SEO Specialist for Website Optimization",
-			desc: "An experienced SEO Specialist is required to optimize our website.",
-			tags: ["SEO", "Backlinking", "Analytics"],
-			location: "New York",
-		},
-		{
-			id: "3",
-			title: "Content Writer for Blog Development",
-			desc: "Looking for a talented Content Writer to create engaging blog posts.",
-			tags: ["Writing", "Blogging", "Content Strategy"],
-			location: "Paris",
-		},
-	];
+	const skip = (page - 1) * PAGE_SIZE;
 
-	const userSkills = ["SEO", "SQL", "Figma"]; // سكيلز المستخدم
-	const userInterests = ["Marketing", "Design"]; // اهتمامات المستخدم
+	// important: best مش API mode. ده UI logic
+	const queryParams = useMemo(
+		() => ({ limit: PAGE_SIZE, skip, mode: "recent" }),
+		[skip],
+	);
 
-	// حساب score لكل وظيفة
-	const scoredJobs = jobs.map((job) => {
-		let score = 0;
-
-		// حساب نقاط السكيلز
-		job.tags.forEach((tag) => {
-			if (userSkills.includes(tag)) score += 1;
-		});
-
-		// حساب نقاط الاهتمامات من عنوان الوظيفة
-		userInterests.forEach((interest) => {
-			if (job.title.toLowerCase().includes(interest.toLowerCase())) score += 1;
-		});
-
-		return { ...job, score };
+	const {
+		data: response,
+		isLoading,
+		isError,
+		error,
+		isFetching,
+	} = useQuery({
+		queryKey: ["jobs", queryParams],
+		queryFn: () => getJobs(queryParams),
+		staleTime: 60 * 1000,
+		keepPreviousData: true,
 	});
 
-	// فلترة وترتيب Best Matches
-	const bestMatches = scoredJobs
-		.filter((job) => job.score > 0)
-		.sort((a, b) => b.score - a.score);
+	const jobs = response?.data?.data ?? response?.data ?? [];
+	const safeJobs = Array.isArray(jobs) ? jobs : [];
 
-	const displayedJobs = tab === "recent" ? jobs : bestMatches;
+	// لاحقًا: هتجيبيهم من profile الحقيقي
+	const userSkills = ["SEO", "SQL", "Figma"];
+	const userInterests = ["Marketing", "Design"];
+
+	const bestMatches = useMemo(() => {
+		const scored = safeJobs.map((job) => {
+			let score = 0;
+
+			const title = (job.title ?? "").toLowerCase();
+			const desc = (job.description ?? job.desc ?? "").toLowerCase();
+			const responsibilities = Array.isArray(job.responsibilities)
+				? job.responsibilities.join(" ").toLowerCase()
+				: "";
+
+			// skills matching (title/desc/responsibilities)
+			userSkills.forEach((skill) => {
+				const s = skill.toLowerCase();
+				if (title.includes(s)) score += 2;
+				if (desc.includes(s)) score += 1;
+				if (responsibilities.includes(s)) score += 1;
+			});
+
+			// interests matching (title)
+			userInterests.forEach((interest) => {
+				const i = interest.toLowerCase();
+				if (title.includes(i)) score += 2;
+			});
+
+			return { ...job, score };
+		});
+
+		return scored.filter((j) => j.score > 0).sort((a, b) => b.score - a.score);
+	}, [safeJobs]);
+
+	const displayedJobs = tab === "recent" ? safeJobs : bestMatches;
+
+	if (isLoading) {
+		return (
+			<div className="min-h-screen bg-gray-50 flex items-center justify-center">
+				<p className="text-gray-600">Loading jobs...</p>
+			</div>
+		);
+	}
+
+	if (isError) {
+		return (
+			<div className="min-h-screen bg-gray-50 flex items-center justify-center">
+				<p className="text-red-600">
+					Failed to load jobs: {error?.message || "Unknown error"}
+				</p>
+			</div>
+		);
+	}
 
 	return (
 		<div className="bg-gray-50 min-h-screen">
@@ -68,49 +102,89 @@ export default function JobList() {
 			<div
 				className="w-full h-96 bg-cover bg-center"
 				style={{ backgroundImage: "url(/images/talent-findjob.svg)" }}
-			></div>
+			/>
 
 			{/* TABS */}
-			<div className="mt-6 px-10 flex gap-6 border-b pb-2 text-gray-600">
+			<div className="mt-6 px-10 flex items-center gap-6 border-b pb-2 text-gray-600">
 				<button
 					type="button"
-					className={`pb-1 ${tab === "recent" ? "text-purple-600 border-b-2 border-purple-600" : ""}`}
-					onClick={() => setTab("recent")}
+					className={`pb-1 ${
+						tab === "recent"
+							? "text-purple-600 border-b-2 border-purple-600"
+							: ""
+					}`}
+					onClick={() => {
+						setTab("recent");
+						setPage(1);
+					}}
 				>
 					Most Recent
 				</button>
+
 				<button
 					type="button"
-					className={`pb-1 ${tab === "best" ? "text-purple-600 border-b-2 border-purple-600" : ""}`}
-					onClick={() => setTab("best")}
+					className={`pb-1 ${
+						tab === "best" ? "text-purple-600 border-b-2 border-purple-600" : ""
+					}`}
+					onClick={() => {
+						setTab("best");
+						setPage(1);
+					}}
 				>
 					Best Matches
 				</button>
+
+				{isFetching && (
+					<span className="ml-auto text-sm text-gray-400">Refreshing...</span>
+				)}
 			</div>
 
 			{/* JOB LIST */}
-			<div className="px-10 mt-6 space-y-6">
+			<div className="px-10 mt-6 space-y-6 ">
 				{displayedJobs.map((job) => (
 					<Link key={job.id} to={`/jobs/${job.id}`}>
-						<div className="bg-white p-6 rounded-xl shadow-sm border hover:shadow-md cursor-pointer">
-							<h2 className="text-black font-semibold mb-2">{job.title}</h2>
-							<p className="text-gray-600 mb-4">{job.desc}</p>
+						<div className="bg-white p-6 mb-6 rounded-l shadow-sm border hover:shadow-md cursor-pointer ">
 							<div className="flex flex-wrap gap-2 mb-4">
-								{job.tags.map((tag, i) => (
-									<span
-										key={i}
-										className="px-3 py-1 text-black bg-gray-100 rounded-full"
-									>
-										{tag}
-									</span>
-								))}
+								<Chip>
+									{job.hoursPerWeek ? `${job.hoursPerWeek} hrs/week` : null}
+								</Chip>
+								<Chip>{job.salary}</Chip>
+								<Chip>{job.location}</Chip>
+								<Chip>{job.experienceLevel}</Chip>
+								{tab === "best" ? <Chip>{`Match: ${job.score}`}</Chip> : null}
 							</div>
-							<p className="text-gray-500 text-sm">{job.location}</p>
+
+							<h2 className="text-black font-semibold mb-2 text-center">
+								{job.title || "Untitled job"}
+							</h2>
+
+							<p className="text-gray-600 mb-2">
+								{job.description || job.desc || ""}
+							</p>
+
+							{/* لو عندكم tags فعلا */}
+							{Array.isArray(job.tags) && job.tags.length > 0 ? (
+								<div className="flex flex-wrap gap-2 mt-3">
+									{job.tags.map((tag, i) => (
+										<span
+											key={`${job.id}-tag-${i}`}
+											className="px-3 py-1 text-black bg-gray-100 rounded-full"
+										>
+											{tag}
+										</span>
+									))}
+								</div>
+							) : null}
 						</div>
 					</Link>
 				))}
-				{displayedJobs.length === 0 && tab === "best" && (
+
+				{tab === "best" && displayedJobs.length === 0 && (
 					<p className="text-gray-500">No matching jobs found.</p>
+				)}
+
+				{tab === "recent" && safeJobs.length === 0 && (
+					<p className="text-gray-500">No jobs available right now.</p>
 				)}
 			</div>
 
@@ -120,7 +194,10 @@ export default function JobList() {
 					<button
 						type="button"
 						key={num}
-						className={`w-8 h-8 flex items-center justify-center rounded-full ${num === 1 ? "bg-purple-600 text-white" : "bg-white border"}`}
+						onClick={() => setPage(num)}
+						className={`w-8 h-8 flex items-center justify-center rounded-full ${
+							num === page ? "bg-purple-600 text-white" : "bg-white border"
+						}`}
 					>
 						{num}
 					</button>
