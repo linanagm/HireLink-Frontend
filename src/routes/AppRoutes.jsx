@@ -1,6 +1,6 @@
 import { lazy, Suspense } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Loading from "../pages/Main/Public/Loading";
+import Loading from "../features/Main/Public/Loading";
 
 // Guards
 const ProtectedRoute = lazy(() => import("./GuardRoutes/ProtectedRoute"));
@@ -15,70 +15,72 @@ const DashboardLayout = lazy(
 );
 
 // Public Pages
-const Home = lazy(() => import("../pages/Main/Public/Home"));
-const About = lazy(() => import("../pages/Main/Public/About"));
-const Contact = lazy(() => import("../pages/Main/Public/Contact"));
+const Home = lazy(() => import("../features/Main/Public/Home"));
+const About = lazy(() => import("../features/Main/Public/About"));
+const Contact = lazy(() => import("../features/Main/Public/Contact"));
 
-const NotFound = lazy(() => import("../pages/Main/Public/NotFound"));
-const Unauthorized = lazy(() => import("../pages/Main/Public/Unauthorized"));
+const NotFound = lazy(() => import("../features/Main/Public/NotFound"));
+const Unauthorized = lazy(() => import("../features/Main/Public/Unauthorized"));
 
 // Auth Pages
-const Register = lazy(() => import("../pages/Auth/Register"));
-const Login = lazy(() => import("../pages/Auth/Login"));
-const VerifyEmail = lazy(() => import("../pages/Auth/VerifyEmail")); //modal
-
-const TalentOnboardingProfile = lazy(
-	() => import("../pages/Auth/Onboarding/TalentOnboarding"),
-);
-
-const CompanyOnboardingProfile = lazy(
-	() => import("../pages/Auth/Onboarding/CompanyOnboarding"),
-);
+const Register = lazy(() => import("../features/Auth/pages/Register"));
+const Login = lazy(() => import("../features/Auth/pages/Login"));
+const VerifyEmail = lazy(() => import("../features/Auth/pages/VerifyEmail")); //modal
 
 //modal
-const ResetPassword = lazy(() => import("../pages/Auth/ResetPassword"));
+const ResetPassword = lazy(
+	() => import("../features/Auth/pages/ResetPassword"),
+);
 
 // Talent pages
-const TalentProfile = lazy(() => import("../pages/Main/talent/TalentProfile"));
+const TalentProfile = lazy(
+	() => import("../features/Main/talent/TalentProfile"),
+);
 
 const EditTalentProfile = lazy(
-	() => import("../pages/Main/talent/EditTalentProfile"),
+	() => import("../features/Main/talent/EditTalentProfile"),
 );
 
-const FindJob = lazy(() => import("../pages/Main/talent/FindJob"));
+const FindJob = lazy(() => import("../features/Main/talent/FindJob"));
 
 const MyApplications = lazy(
-	() => import("../pages/Main/talent/MyApplications"),
+	() => import("../features/Main/talent/MyApplications"),
 );
 
-const JobProposal = lazy(() => import("../pages/Main/talent/JobProposal"));
+const JobProposal = lazy(() => import("../features/Main/talent/JobProposal"));
 const TalentAccountSettings = lazy(
-	() => import("../pages/Main/talent/TalentAccountSettings"),
+	() => import("../features/Main/talent/TalentAccountSettings"),
 );
 
 // Employer routes
 const EmployerDashboard = lazy(
-	() => import("../pages/Main/Employer/Dashboard"),
+	() => import("../features/Main/Employer/Dashboard"),
 );
 const EmployerProfile = lazy(
-	() => import("../pages/Main/employer/EmployerProfile"),
+	() => import("../features/Main/employer/EmployerProfile"),
 );
-const EditProfile = lazy(() => import("../pages/Main/employer/EditProfile"));
+const EditProfile = lazy(() => import("../features/Main/employer/EditProfile"));
 
 const EmployerAccountSettings = lazy(
-	() => import("../pages/Main/Employer/AccountSettings"),
+	() => import("../features/Main/Employer/AccountSettings"),
 );
-const PostAJob = lazy(() => import("../pages/Main/employer/PostAJob"));
-const JobsList = lazy(() => import("../pages/Main/Public/JobList"));
-const JobDetails = lazy(() => import("../pages/Main/employer/JobDetails"));
-const MyApplicants = lazy(() => import("../pages/Main/employer/MyApplicants"));
-const EditJob = lazy(() => import("../pages/Main/employer/EditJob"));
+const PostAJob = lazy(() => import("../features/Main/employer/PostAJob"));
+const JobsList = lazy(() => import("../features/Main/Public/JobList"));
+const JobDetails = lazy(() => import("../features/Main/employer/JobDetails"));
+const MyApplicants = lazy(
+	() => import("../features/Main/employer/MyApplicants"),
+);
+const EditJob = lazy(() => import("../features/Main/employer/EditJob"));
 
-const SearchTalent = lazy(() => import("../pages/Main/Employer/SearchTalent"));
+const SearchTalent = lazy(
+	() => import("../features/Main/Employer/SearchTalent"),
+);
 
 // Moderator pages
-const AdminLogin = lazy(() => import("../pages/Main/Admin/AdminLogin"));
-const AdminDashboard = lazy(() => import("../pages/Main/Admin/AdminDashboard"));
+const AdminLogin = lazy(() => import("../features/Main/Admin/AdminLogin"));
+const AdminDashboard = lazy(
+	() => import("../features/Main/Admin/AdminDashboard"),
+);
 
 export default function AppRoutes() {
 	const router = createBrowserRouter([
@@ -105,11 +107,6 @@ export default function AppRoutes() {
 						{ path: "login", element: <Login /> },
 						{ path: "verify", element: <VerifyEmail /> },
 						{ path: "reset", element: <ResetPassword /> },
-						{ path: "onboarding/talent", element: <TalentOnboardingProfile /> },
-						{
-							path: "onboarding/company",
-							element: <CompanyOnboardingProfile />,
-						},
 					],
 				},
 

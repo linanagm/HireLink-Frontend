@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import VerifyEmailModal from "../../components/Modals/VerifyEmailModal";
-import { verifyEmail } from "../../services/auth.service";
+import VerifyEmailModal from "../../../components/Modals/VerifyEmailModal";
+import { verifyEmail } from "../../../services/auth.service";
 
 export default function VerifyEmail() {
 	const [params] = useSearchParams();

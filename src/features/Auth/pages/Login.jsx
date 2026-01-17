@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Helmet } from "react-helmet";
-import loginImage from "../../assets/images/login.svg";
-import LoginForm from "../../components/auth/LoginForm";
-import ForgotPasswordModal from "../../components/Modals/ForgotPasswordModal";
+import loginImage from "../../../assets/images/login.svg";
+import LoginForm from "../../../components/auth/LoginForm";
+import ForgotPasswordModal from "../../../components/Modals/ForgotPasswordModal";
 
 export default function Login() {
 	const [showForgotModal, setShowForgotModal] = useState(false);

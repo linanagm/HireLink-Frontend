@@ -1,25 +1,37 @@
-// src/hooks/useLogin.js
+/**
+ * useLogin
+ *
+ * This hook handles everything related to logging a user in.
+ * The idea is to keep all login logic in one place
+ * instead of spreading it across components.
+ *
+ * Flow:
+ * - Send email & password to the login API.
+ * - If login succeeds, save the auth token
+ *   (localStorage or sessionStorage based on "remember me").
+ * - Fetch the current user to know their role.
+ *
+ * If the user is a TALENT:
+ * - Fetch the full talent profile from the server.
+ * - Try to fetch the avatar URL (failure here should not block login).
+ * - Store the final user object in AuthContext.
+ *
+ * If the user is not a TALENT:
+ * - Just store the basic user data from /auth/profile.
+ *
+ * Finally:
+ * - Redirect the user to the correct page based on their role.
+ *
+ * The hook also exposes:
+ * - isLoading → for disabling buttons / showing loaders.
+ * - apiError → for showing login errors in the UI.
+ */
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getUser, login as loginApi } from "../services/auth.service";
-import {
-	getAvatarUrl,
-	getCurrent,
-	updateProfile,
-	uploadAvatar,
-} from "../services/talent.service";
-import { clearDraft, loadDraft } from "../utils/Helpers/profile.helper";
+import { getAvatarUrl, getCurrent } from "../services/talent.service";
 import { useAuth } from "./useAuth";
-
-function base64ToFile(base64, filename = "avatar.png") {
-	const arr = base64.split(",");
-	const mime = arr[0].match(/:(.*?);/)?.[1] || "image/png";
-	const bstr = atob(arr[1]);
-	let n = bstr.length;
-	const u8 = new Uint8Array(n);
-	while (n--) u8[n] = bstr.charCodeAt(n);
-	return new File([u8], filename, { type: mime });
-}
 
 export function useLogin() {
 	const navigate = useNavigate();
@@ -31,93 +43,12 @@ export function useLogin() {
 	const navigateByRole = (role) => {
 		if (role === "TALENT") return navigate("/talent/findjob");
 		if (role === "EMPLOYER") return navigate("/employer/dashboard");
+		if (role === "ADMIN" || role === "MODERATOR")
+			return navigate("/admin/dashboard");
 		return navigate("/");
 	};
 
-	const syncTalentDraft = async () => {
-		const draft = loadDraft();
-		if (!draft) return;
-
-		if (draft.profile && Object.keys(draft.profile).length) {
-			await updateProfile(draft.profile);
-		}
-
-		if (draft.avatarBase64) {
-			const file = base64ToFile(draft.avatarBase64, "avatar.png");
-			await uploadAvatar(file);
-		}
-
-		clearDraft();
-	};
-
-	// const doLogin = async ({ email, password }, rememberMe) => {
-	// 	setIsLoading(true);
-	// 	setApiError("");
-
-	// 	try {
-	// 		// 1) login
-	// 		const response = await loginApi({ email, password });
-	// 		if (!response?.ok) {
-	// 			throw new Error(response?.message || "Login failed");
-	// 		}
-
-	// 		const token = response?.data?.token;
-	// 		if (!token) throw new Error("Unexpected server response (token missing)");
-
-	// 		// 2) save token
-	// 		saveLogin(token, rememberMe);
-
-	// 		// 3) get user role
-	// 		const meRes = await getUser(token);
-	// 		console.log("uselogin meres: ", meRes);
-
-	// 		if (!meRes?.ok) throw new Error(meRes?.message || "Failed to fetch user");
-
-	// 		// 4) talent: sync draft then refresh
-	// 		if (meRes.data?.role === "TALENT") {
-	// 			await syncTalentDraft();
-
-	// 			const updated = await getCurrent();
-	// 			const updatedUser = updated?.data?.data;
-
-	// 			let avatarUrl = null;
-	// 			try {
-	// 				const av = await getAvatarUrl(80, 80);
-	// 				avatarUrl = av?.data?.data?.avatar;
-	// 			} catch {}
-
-	// 			setUser({ ...updatedUser, avatarUrl });
-	// 			return navigateByRole(updatedUser?.role);
-	// 		}
-
-	// 		// other roles
-	// 		setUser(meRes.data);
-	// 		return navigateByRole(meRes.data?.role);
-	// 	} catch (err) {
-	// 		setApiError(err?.message || "Something went wrong. Try again.");
-	// 		throw err;
-	// 	} finally {
-	// 		setIsLoading(false);
-	// 	}
-	// };
-
 	const doLogin = async ({ email, password }, rememberMe) => {
-		/**
-		 * LOGIN ALGORITHM
-		 * 1) Authenticate user (email/password) -> get token
-		 * 2) Persist token (localStorage or sessionStorage)
-		 * 3) Fetch "me" (/auth/profile) to know role + basic identity
-		 * 4) If role = TALENT:
-		 *    4.1) Sync local draft (profile + avatar) to server (optional)
-		 *    4.2) Fetch fresh talent profile (/talent/profile)
-		 *    4.3) (Optional) Fetch avatar URL (/talent/avatar?width&height)
-		 *    4.4) Store final user in AuthContext
-		 *    4.5) Navigate based on role
-		 * 5) Else (EMPLOYER/ADMIN/etc):
-		 *    5.1) Store "me" data in AuthContext
-		 *    5.2) Navigate based on role
-		 */
-
 		setIsLoading(true);
 		setApiError("");
 
@@ -129,12 +60,10 @@ export function useLogin() {
 			const token = loginRes?.data?.token;
 			if (!token) throw new Error("Token missing from login response");
 
-			// 2)) SAVE TOKEN (single source of truth for authentication)
+			// 2) SAVE TOKEN
 			saveLogin(token, rememberMe);
 
-			// 3) GET ME (role + identity)
-			// NOTE: Prefer not passing token manually unless your service requires it.
-			// If your axios interceptor reads token from storage, just call getUser().
+			// 3) GET ME (/auth/profile)
 			const meRes = await getUser(token);
 			if (!meRes?.ok)
 				throw new Error(meRes?.message || "Failed to fetch current user");
@@ -142,44 +71,40 @@ export function useLogin() {
 			const me = meRes?.data; // { id, email, role, ... }
 			const role = me?.role;
 
-			// 4) TALENT FLOW
+			// 4) TALENT: GET FULL PROFILE (server is source of truth)
 			if (role === "TALENT") {
-				// 4.1) Sync local draft (optional). If it fails, we still continue login.
+				let talentProfile = null;
+
 				try {
-					await syncTalentDraft();
+					const profileRes = await getCurrent();
+
+					talentProfile =
+						profileRes?.data?.data ||
+						profileRes?.data?.data?.data ||
+						profileRes?.data?.data?.profile;
 				} catch (e) {
-					// draft sync should not block login
-					console.warn("Draft sync failed:", e);
+					console.warn("Talent profile fetch failed:", e);
 				}
 
-				// 4.2) Fetch latest talent profile (server is source of truth)
-				const profileRes = await getCurrent();
-				const talentProfile = profileRes?.data?.data;
-
-				if (!talentProfile) {
-					// fallback to "me" data at least, instead of saving broken object
-					setUser(me);
-					return navigateByRole(role);
-				}
-
-				// 4.3) Optional avatar URL (never break login if it fails)
+				// Optional avatar URL (don’t break login)
 				let avatarUrl;
 				try {
 					const avatarRes = await getAvatarUrl(80, 80);
-					// adjust path depending on your API response shape
 					avatarUrl = avatarRes?.data?.data?.avatar;
 				} catch (e) {
 					console.warn("Avatar fetch failed:", e);
 				}
 
-				// 4.4) Store final user in context
-				setUser({ ...talentProfile, avatarUrl });
+				const finalUser =
+					talentProfile && typeof talentProfile === "object"
+						? { ...talentProfile, avatarUrl }
+						: { ...me, avatarUrl };
 
-				// 4.5) Navigate
-				return navigateByRole(talentProfile?.role || role);
+				setUser(finalUser);
+				return navigateByRole(finalUser?.role || role);
 			}
 
-			// 5) OTHER ROLES FLOW
+			// 5) OTHER ROLES
 			setUser(me);
 			return navigateByRole(role);
 		} catch (err) {
