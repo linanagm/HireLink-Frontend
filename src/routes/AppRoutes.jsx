@@ -43,12 +43,12 @@ const EditTalentProfile = lazy(
 
 const FindJob = lazy(() => import("../features/Main/talent/FindJob"));
 const JobDetails = lazy(() => import("../features/Main/Talent/JobDetails"));
+const JobProposal = lazy(() => import("../features/Main/talent/JobProposal"));
 
 const MyApplications = lazy(
 	() => import("../features/Main/talent/MyApplications"),
 );
 
-const JobProposal = lazy(() => import("../features/Main/talent/JobProposal"));
 const TalentAccountSettings = lazy(
 	() => import("../features/Main/talent/TalentAccountSettings"),
 );
@@ -128,7 +128,8 @@ export default function AppRoutes() {
 			children: [
 				{ index: true, element: <FindJob /> },
 				{ path: "findjob", element: <FindJob /> },
-				{ path: "/talent/jobs/:id", element: <JobDetails /> },
+				{ path: "jobs/:id", element: <JobDetails /> },
+				{ path: "jobs/:id/apply", element: <JobProposal /> },
 
 				{ path: "profile", element: <TalentProfile /> },
 				// modal
@@ -137,8 +138,6 @@ export default function AppRoutes() {
 				{ path: "profile/settings", element: <TalentAccountSettings /> },
 
 				{ path: "applications", element: <MyApplications /> },
-
-				{ path: "jobs/:jobId/proposal", element: <JobProposal /> },
 			],
 		},
 

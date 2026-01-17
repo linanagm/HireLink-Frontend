@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import InfoItem from "../../../components/UI/InfoItem";
 import Loading from "../../../components/UI/Loading";
 import { getJobById } from "../../../services/talent.service";
@@ -24,6 +24,7 @@ export default function JobDetails() {
 
 	// عدلي حسب API عندكم
 	const job = data?.data?.data ?? data?.data ?? null;
+	console.log("job from job proposal: \n", job);
 
 	if (isLoading) return <Loading />;
 	if (isError)
@@ -87,8 +88,8 @@ export default function JobDetails() {
 				<h2 className="text-xl font-semibold mb-2">Responsibilities:</h2>
 				{responsibilities.length > 0 ? (
 					<ul className="list-disc ml-6 space-y-1 mb-8 text-gray-700">
-						{responsibilities.map((item, i) => (
-							<li key={item}>{item}</li>
+						{responsibilities.map((item, id) => (
+							<li key={id}>{item}</li>
 						))}
 					</ul>
 				) : (
@@ -99,9 +100,9 @@ export default function JobDetails() {
 				<h2 className="text-xl font-semibold mb-2">Skills</h2>
 				{skills.length > 0 ? (
 					<div className="flex flex-wrap gap-2 mb-8">
-						{skills.map((skill, i) => (
+						{skills.map((skill, id) => (
 							<span
-								key={skill}
+								key={id}
 								className="px-3 py-1 text-sm bg-gray-100 rounded-full"
 							>
 								{skill}
@@ -113,12 +114,12 @@ export default function JobDetails() {
 				)}
 
 				<div className="text-center">
-					<button
-						type="button"
+					<Link
+						to={`/talent/jobs/${id}/apply`}
 						className="px-8 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 duration-200 inline-block"
 					>
 						Apply Now
-					</button>
+					</Link>
 				</div>
 			</div>
 		</div>
