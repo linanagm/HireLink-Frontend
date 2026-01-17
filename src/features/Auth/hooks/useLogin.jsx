@@ -29,9 +29,9 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getUser, login as loginApi } from "../services/auth.service";
-import { getAvatarUrl, getCurrent } from "../services/talent.service";
-import { useAuth } from "./useAuth";
+import { useAuth } from "../../../hooks/useAuth";
+import { getUser, login as loginApi } from "../../../services/auth.service";
+import { getAvatarUrl, getCurrent } from "../../../services/talent.service";
 
 export function useLogin() {
 	const navigate = useNavigate();

@@ -1,9 +1,9 @@
 import { useFormik } from "formik";
 import { useState } from "react";
-import Button from "../../components/UI/Button";
-import { resetPassword } from "../../services/auth.service";
-import { passwordschema } from "../../utils/validation/authValidationjs";
-import FormInput from "../UI/FormInput";
+import Button from "../../../../components/UI/Button";
+import FormInput from "../../../../components/UI/FormInput";
+import { resetPassword } from "../../../../services/auth.service";
+import { passwordschema } from "../../../../utils/validation/authValidationjs";
 
 export default function ResetPasswordModal({ token, onClose, onSuccess }) {
 	const [message, setMessage] = useState("");
@@ -47,6 +47,7 @@ export default function ResetPasswordModal({ token, onClose, onSuccess }) {
 			<div className="relative bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
 				{/* Close button */}
 				<button
+					type="button"
 					onClick={onClose}
 					className="absolute top-3 right-4 text-gray-500 hover:text-gray-900 text-2xl"
 				>

@@ -1,4 +1,4 @@
-import SuccessCard from "../Main/SuccessCard";
+import SuccessCard from "../../../../components/Main/SuccessCard";
 
 export default function VerifyEmailModal({
 	status,

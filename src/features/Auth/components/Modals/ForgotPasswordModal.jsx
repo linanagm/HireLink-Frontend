@@ -1,10 +1,10 @@
 import { useFormik } from "formik";
 import { useState } from "react";
-import { requestPasswordReset } from "../../services/auth.service";
-import { getMailProviderUrl } from "../../utils/mail.js";
-import { emailschema } from "../../utils/validation/authValidationjs";
-import Button from "../UI/Button";
-import FormInput from "../UI/FormInput.jsx";
+import Button from "../../../../components/UI/Button.jsx";
+import FormInput from "../../../../components/UI/FormInput.jsx";
+import { requestPasswordReset } from "../../../../services/auth.service.js";
+import { getMailProviderUrl } from "../../../../utils/mail.js";
+import { emailschema } from "../../../../utils/validation/authValidationjs";
 
 export default function ForgotPasswordModal({ onClose }) {
 	const [message, setMessage] = useState("");

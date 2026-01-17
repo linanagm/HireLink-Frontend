@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link, Outlet } from "react-router-dom";
-import EmployerSignupForm from "../../../components/auth/EmployerSignupForm";
-import TalentSignupForm from "../../../components/auth/TalentSignupForm";
-import SignupSuccess from "../../../components/Modals/SignupSuccessModal";
-import signupImage from "../../assets/images/signup.svg";
+import signupImage from "../../../assets/images/signup.svg";
+import EmployerSignupForm from "../components/EmployerSignupForm";
+import SignupSuccess from "../components/Modals/SignupSuccessModal";
+import TalentSignupForm from "../components/TalentSignupForm";
 export default function Register() {
 	const [role, setRole] = useState("TALENT");
 

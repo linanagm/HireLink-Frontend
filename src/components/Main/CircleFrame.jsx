@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import circleImage from "../../assets/images/circle.svg";
 import Hlogo from "../../assets/images/H.svg";
 export default function MainLayOut() {
@@ -11,10 +11,12 @@ export default function MainLayOut() {
 			<img
 				src={circleImage}
 				className="absolute -right-5 top-0  w-64 h-64z-40"
+				alt="circle"
 			/>
 			<img
 				src={Hlogo}
 				className=" absolute top-10 right-10 items-center z-50 justify-center w-15 h-15"
+				alt="logo"
 			/>
 		</div>
 	);

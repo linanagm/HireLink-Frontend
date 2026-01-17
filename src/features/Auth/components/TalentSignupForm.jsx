@@ -1,10 +1,10 @@
 import { useFormik } from "formik";
 import { useState } from "react";
-import { register } from "../../services/auth.service";
-import { EmployerRegisterSchema } from "../../utils/validation/authValidationjs";
+import { register } from "../../../services/auth.service";
+import { splitName } from "../../../utils/tools";
+import { TalentRegisterSchema } from "../../../utils/validation/authValidationjs";
 
-export default function EmployerSignupForm({ role, onSuccess }) {
-	//const navigate = useNavigate();
+export default function TalentSignupForm({ role, onSuccess }) {
 	const [apiError, setApiError] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
@@ -16,11 +16,11 @@ export default function EmployerSignupForm({ role, onSuccess }) {
 		const { rePassword: _, ...rest } = values;
 
 		const payload = {
-			email: rest.email,
-			password: rest.password,
-			role: role.toUpperCase(),
+			...rest,
+			role,
 			profileData: {
-				companyName: rest.name,
+				firstName: splitName(values.name).firstName,
+				lastName: splitName(values.name).lastName,
 			},
 		};
 
@@ -32,7 +32,8 @@ export default function EmployerSignupForm({ role, onSuccess }) {
 			return;
 		}
 
-		if (onSuccess) onSuccess(values.email);
+		//navigate("/register/signup-success");
+		if (onSuccess) onSuccess(values.email); //open success model
 	}
 
 	const formik = useFormik({
@@ -42,19 +43,19 @@ export default function EmployerSignupForm({ role, onSuccess }) {
 			password: "",
 			rePassword: "",
 		},
-		validationSchema: EmployerRegisterSchema,
+		validationSchema: TalentRegisterSchema,
 		onSubmit: handleRegister,
 	});
 
 	return (
 		<form onSubmit={formik.handleSubmit} className="font-sans pt-2">
-			{/* Company Name */}
+			{/* Name */}
 			<div className="mb-5">
 				<label
 					htmlFor="name"
 					className="block mb-2.5 text-sm font-medium text-heading"
 				>
-					Company Name
+					Your Name
 				</label>
 
 				<input
@@ -62,11 +63,11 @@ export default function EmployerSignupForm({ role, onSuccess }) {
 					type="text"
 					{...formik.getFieldProps("name")}
 					className="bg-neutral-secondary-medium border border-default-medium rounded w-full px-3 py-3"
-					placeholder="Company Name"
+					placeholder="Your Name"
 				/>
 
 				{formik.touched.name && formik.errors.name && (
-					<div className="bg-red-50 text-red-800 p-2 rounded mt-1 text-sm">
+					<div className="text-red-600 bg-red-50 p-2 mt-1 rounded">
 						{formik.errors.name}
 					</div>
 				)}
@@ -78,7 +79,7 @@ export default function EmployerSignupForm({ role, onSuccess }) {
 					htmlFor="email"
 					className="block mb-2.5 text-sm font-medium text-heading"
 				>
-					Business Email Address
+					Email
 				</label>
 
 				<input
@@ -86,11 +87,11 @@ export default function EmployerSignupForm({ role, onSuccess }) {
 					type="email"
 					{...formik.getFieldProps("email")}
 					className="bg-neutral-secondary-medium border border-default-medium rounded w-full px-3 py-3"
-					placeholder="Business Email Address"
+					placeholder="Email"
 				/>
 
 				{formik.touched.email && formik.errors.email && (
-					<div className="bg-red-50 text-red-800 p-2 rounded mt-1 text-sm">
+					<div className="text-red-600 bg-red-50 p-2 mt-1 rounded">
 						{formik.errors.email}
 					</div>
 				)}
@@ -116,7 +117,7 @@ export default function EmployerSignupForm({ role, onSuccess }) {
 				<button
 					type="button"
 					onClick={() => setShowPassword((p) => !p)}
-					className="absolute right-3 top-2/3 -translate-y-1/2 cursor-pointer text-gray-500"
+					className="absolute right-3 top-2/3 -translate-y-1/2 cursor-pointer"
 				>
 					{showPassword ? (
 						<i className="fa-regular fa-eye"></i>
@@ -126,7 +127,7 @@ export default function EmployerSignupForm({ role, onSuccess }) {
 				</button>
 
 				{formik.touched.password && formik.errors.password && (
-					<div className="bg-red-50 text-red-800 p-2 rounded mt-1 text-sm">
+					<div className="text-red-600 bg-red-50 p-2 mt-1 rounded">
 						{formik.errors.password}
 					</div>
 				)}
@@ -150,7 +151,7 @@ export default function EmployerSignupForm({ role, onSuccess }) {
 				/>
 
 				{formik.touched.rePassword && formik.errors.rePassword && (
-					<div className="bg-red-50 text-red-800 p-2 rounded mt-1 text-sm">
+					<div className="text-red-600 bg-red-50 p-2 mt-1 rounded">
 						{formik.errors.rePassword}
 					</div>
 				)}
@@ -159,7 +160,7 @@ export default function EmployerSignupForm({ role, onSuccess }) {
 			{/* Submit */}
 			<button
 				type="submit"
-				className="bg-fuchsia-700 w-full hover:bg-fuchsia-800 text-white py-2.5 rounded"
+				className="bg-fuchsia-700 w-full text-white py-2.5 rounded hover:bg-fuchsia-800"
 			>
 				{isLoading ? (
 					<i className="fa-solid fa-spinner fa-spin"></i>
