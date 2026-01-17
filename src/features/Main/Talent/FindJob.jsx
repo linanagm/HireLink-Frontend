@@ -1,18 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import Chip from "../../../components/UI/Chip";
 import { getJobs } from "../../../services/talent.service";
 
 const PAGE_SIZE = 10;
-
-function Chip({ children }) {
-	if (!children) return null;
-	return (
-		<span className="text-gray-600 text-sm bg-slate-100 px-3 py-1 rounded-full">
-			{children}
-		</span>
-	);
-}
 
 export default function JobList() {
 	const [tab, setTab] = useState("recent"); // "recent" | "best"
@@ -142,7 +134,7 @@ export default function JobList() {
 			{/* JOB LIST */}
 			<div className="px-10 mt-6 space-y-6 ">
 				{displayedJobs.map((job) => (
-					<Link key={job.id} to={`/jobs/${job.id}`}>
+					<Link key={job.id} to={`/talent/jobs/${job.id}`}>
 						<div className="bg-white p-6 mb-6 rounded-l shadow-sm border hover:shadow-md cursor-pointer ">
 							<div className="flex flex-wrap gap-2 mb-4">
 								<Chip>
@@ -162,7 +154,7 @@ export default function JobList() {
 								{job.description || job.desc || ""}
 							</p>
 
-							{/* لو عندكم tags فعلا */}
+							{/*  tags  */}
 							{Array.isArray(job.tags) && job.tags.length > 0 ? (
 								<div className="flex flex-wrap gap-2 mt-3">
 									{job.tags.map((tag, i) => (

@@ -1,6 +1,6 @@
 import { lazy, Suspense } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Loading from "../features/Main/Public/Loading";
+import Loading from "../components/UI/Loading";
 
 // Guards
 const ProtectedRoute = lazy(() => import("./GuardRoutes/ProtectedRoute"));
@@ -42,6 +42,7 @@ const EditTalentProfile = lazy(
 );
 
 const FindJob = lazy(() => import("../features/Main/talent/FindJob"));
+const JobDetails = lazy(() => import("../features/Main/Talent/JobDetails"));
 
 const MyApplications = lazy(
 	() => import("../features/Main/talent/MyApplications"),
@@ -66,7 +67,7 @@ const EmployerAccountSettings = lazy(
 );
 const PostAJob = lazy(() => import("../features/Main/employer/PostAJob"));
 const JobsList = lazy(() => import("../features/Main/Public/JobList"));
-const JobDetails = lazy(() => import("../features/Main/employer/JobDetails"));
+
 const MyApplicants = lazy(
 	() => import("../features/Main/employer/MyApplicants"),
 );
@@ -127,6 +128,7 @@ export default function AppRoutes() {
 			children: [
 				{ index: true, element: <FindJob /> },
 				{ path: "findjob", element: <FindJob /> },
+				{ path: "/talent/jobs/:id", element: <JobDetails /> },
 
 				{ path: "profile", element: <TalentProfile /> },
 				// modal

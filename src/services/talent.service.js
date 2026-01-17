@@ -4,10 +4,19 @@ import { request } from "./auth.service";
 
 export const updateProfile = (payload) => request("put", "/talent/profile", payload);
 
+
+//jobs services 
 //get jobs
 export function getJobs(params = {}) {
     return request("get", "/jobs", null, { params });
 };
+
+export function getJobById(id) {
+    return request("get", `/jobs/${id}`);
+}
+
+
+
 
 export const uploadAvatar = (file) => {
     const fd = new FormData();

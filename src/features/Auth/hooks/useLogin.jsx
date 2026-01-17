@@ -71,7 +71,7 @@ export function useLogin() {
 			const me = meRes?.data; // { id, email, role, ... }
 			const role = me?.role;
 
-			// 4) TALENT: GET FULL PROFILE (server is source of truth)
+			// 4) TALENT: GET FULL PROFILE
 			if (role === "TALENT") {
 				let talentProfile = null;
 
@@ -106,6 +106,8 @@ export function useLogin() {
 
 			// 5) OTHER ROLES
 			setUser(me);
+
+			// 6) REDIRECT
 			return navigateByRole(role);
 		} catch (err) {
 			setApiError(err?.message || "Something went wrong. Try again.");

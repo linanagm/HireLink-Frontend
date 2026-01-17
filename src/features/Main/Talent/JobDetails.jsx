@@ -1,134 +1,126 @@
-import React from "react";
-import { Link, useParams } from "react-router-dom";
-import Footer from "../../../components/Main/Footer"; // تأكدي المسار
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate, useParams } from "react-router-dom";
+import InfoItem from "../../../components/UI/InfoItem";
+import Loading from "../../../components/UI/Loading";
+import { getJobById } from "../../../services/talent.service";
 
-export default function JobDetail() {
+function prettyEnum(value) {
+	if (!value) return null;
+	return String(value)
+		.toLowerCase()
+		.replaceAll("_", " ")
+		.replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+export default function JobDetails() {
 	const { id } = useParams();
+	const navigate = useNavigate();
 
-	// بيانات مؤقتة لحد ما توصلي ببيانات الـ Backend
-	const jobs = [
-		{
-			id: "0",
-			title: "UI/UX Designer for Mobile App",
-			desc: "Looking for a creative UI/UX Designer to enhance user experience for our mobile application. Must possess strong design skills and experience with prototyping tools.",
-			payment: "Hourly",
-			budget: "$50/hr",
-			workType: "Hybrid",
-			level: "Intermediate",
-			location: "Addis Ababa",
-			responsibilities: [
-				"Create wireframes, user flows, and high-fidelity prototypes",
-				"Design intuitive interfaces that align with brand and user goals",
-				"Collaborate closely with developers, PMs, and stakeholders",
-				"Conduct user research and translate insights into actionable design decisions",
-				"Ensure responsive and accessible mobile design",
-			],
-			skills: ["Figma", "User Research", "Wireframing", "Prototyping"],
-		},
-		{
-			id: "1",
-			title: "Data Analyst for Marketing Team",
-			desc: "We need a Data Analyst to help drive insights for marketing efforts and improve business decisions.",
-			payment: "Monthly",
-			budget: "$3000/month",
-			workType: "Remote",
-			level: "Senior",
-			location: "London",
-			responsibilities: [
-				"Analyze marketing data and generate insights",
-				"Create dashboards and reports for management",
-				"Collaborate with marketing team to identify opportunities",
-				"Perform data cleaning and validation",
-				"Provide recommendations based on data analysis",
-			],
-			skills: ["SQL", "Tableau", "Data Mining", "Predictive Analytics"],
-		},
-	];
+	const { data, isLoading, isError, error } = useQuery({
+		queryKey: ["job", id],
+		queryFn: () => getJobById(id),
+		enabled: !!id,
+	});
 
-	const job = jobs.find((job) => job.id === id) || jobs[0]; // مؤقت لحد ما توصلي API
+	// عدلي حسب API عندكم
+	const job = data?.data?.data ?? data?.data ?? null;
+
+	if (isLoading) return <Loading />;
+	if (isError)
+		return <div className="px-10 py-10 text-red-600">{error?.message}</div>;
+	if (!job) return <div className="px-10 py-10">Job not found</div>;
+
+	const paymentType = job.salary ? "Salary" : "Hourly"; // placeholder منطقي
+	const budget =
+		job.salary ?? (job.hoursPerWeek ? `${job.hoursPerWeek} hrs/week` : null);
+	const workArrangement = prettyEnum(job.jobType);
+	const experienceLevel = prettyEnum(job.experienceLevel);
+	const location = job.location;
+
+	const responsibilities = Array.isArray(job.responsibilities)
+		? job.responsibilities
+		: [];
+	const skills = Array.isArray(job.skills)
+		? job.skills
+		: Array.isArray(job.tags)
+			? job.tags
+			: [];
 
 	return (
-		<div className="bg-gray-50 min-h-screen flex flex-col">
-			{/* المحتوى الرئيسي */}
-			<div className="flex-grow px-10 pt-10">
-				{/* BACK BUTTON */}
-				<div className="mb-4">
-					<Link
-						to="/talent/findjob"
-						className="text-purple-600 hover:underline"
-					>
-						← Back to Jobs
-					</Link>
-				</div>
+		<div className="px-10 py-10">
+			{/* Back */}
+			<button
+				type="button"
+				onClick={() => navigate(-1)}
+				className="text-purple-600 hover:underline mb-6"
+			>
+				← Back to Jobs
+			</button>
 
-				{/* MAIN CARD */}
-				<div className="bg-white mx-auto max-w-4xl p-10 rounded-2xl shadow-sm border">
-					{/* TITLE */}
-					<h1 className="text-3xl font-bold mb-4">{job.title}</h1>
-					<p className="text-gray-600 leading-relaxed mb-8">{job.desc}</p>
-
-					{/* INFO ROW */}
-					<div className="grid grid-cols-2 md:grid-cols-5 gap-6 mb-10">
-						<div>
-							<p className="font-semibold">{job.payment}</p>
-							<p className="text-gray-500 text-sm">Payment Type</p>
-						</div>
-
-						<div>
-							<p className="font-semibold">{job.budget}</p>
-							<p className="text-gray-500 text-sm">Budget</p>
-						</div>
-
-						<div>
-							<p className="font-semibold">{job.workType}</p>
-							<p className="text-gray-500 text-sm">Work Arrangement</p>
-						</div>
-
-						<div>
-							<p className="font-semibold">{job.level}</p>
-							<p className="text-gray-500 text-sm">Experience Level</p>
-						</div>
-
-						<div>
-							<p className="font-semibold">{job.location}</p>
-							<p className="text-gray-500 text-sm">Location</p>
-						</div>
+			{/* MAIN CARD */}
+			<div className="bg-white mx-auto max-w-4xl p-10 rounded-2xl shadow-sm border">
+				{/* TITLE */}
+				<div className="flex items-start justify-between gap-4">
+					<div>
+						<h1 className="text-3xl font-bold mb-4">{job.title}</h1>
+						<p className="text-gray-600 leading-relaxed mb-8">
+							{job.description}
+						</p>
 					</div>
 
-					{/* RESPONSIBILITIES */}
-					<h2 className="text-xl font-semibold mb-2">Responsibilities:</h2>
+					{/* Heart placeholder */}
+					<button type="button" className="text-gray-400 hover:text-purple-600">
+						♡
+					</button>
+				</div>
+
+				{/* INFO ROW */}
+				<div className="grid grid-cols-2 md:grid-cols-5 gap-6 mb-10">
+					<InfoItem value={paymentType} label="Payment Type" />
+					<InfoItem value={budget} label="Budget" />
+					<InfoItem value={workArrangement} label="Work Arrangement" />
+					<InfoItem value={experienceLevel} label="Experience Level" />
+					<InfoItem value={location} label="Location" />
+				</div>
+
+				{/* RESPONSIBILITIES */}
+				<h2 className="text-xl font-semibold mb-2">Responsibilities:</h2>
+				{responsibilities.length > 0 ? (
 					<ul className="list-disc ml-6 space-y-1 mb-8 text-gray-700">
-						{job.responsibilities.map((item, i) => (
-							<li key={i}>{item}</li>
+						{responsibilities.map((item, i) => (
+							<li key={item}>{item}</li>
 						))}
 					</ul>
+				) : (
+					<p className="text-gray-500 mb-8">No responsibilities listed.</p>
+				)}
 
-					{/* SKILLS */}
-					<h2 className="text-xl font-semibold mb-2">Skills</h2>
+				{/* SKILLS */}
+				<h2 className="text-xl font-semibold mb-2">Skills</h2>
+				{skills.length > 0 ? (
 					<div className="flex flex-wrap gap-2 mb-8">
-						{job.skills.map((skill, i) => (
+						{skills.map((skill, i) => (
 							<span
-								key={i}
+								key={skill}
 								className="px-3 py-1 text-sm bg-gray-100 rounded-full"
 							>
 								{skill}
 							</span>
 						))}
 					</div>
+				) : (
+					<p className="text-gray-500 mb-8">No skills listed.</p>
+				)}
 
-					<div className="text-center">
-						<Link
-							to={`/talent/jobs/${job.id}/proposal`}
-							state={job} // ← هنا بنبعت كل بيانات الوظيفة
-							className="px-8 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 duration-200 inline-block"
-						>
-							Apply Now
-						</Link>
-					</div>
+				<div className="text-center">
+					<button
+						type="button"
+						className="px-8 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 duration-200 inline-block"
+					>
+						Apply Now
+					</button>
 				</div>
 			</div>
-
-			{/* Footer */}
 		</div>
 	);
 }
