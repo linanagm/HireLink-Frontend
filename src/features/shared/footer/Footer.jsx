@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
-import footerBanner from "../../assets/images/footer.svg";
-import whiteLogo from "../../assets/images/H-white.svg";
+import footerBanner from "../../../assets/images/footer.svg";
+import whiteLogo from "../../../assets/images/H-white.svg";
 
 export default function Footer() {
 	const [Count, SetCount] = useState();

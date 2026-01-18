@@ -1,18 +1,18 @@
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../../hooks/useAuth";
+import { useAuth } from "../../../hooks/useAuth.jsx";
 import {
 	getDisplayName,
 	getProfilePaths,
+	publicTabs,
 	roleTabs,
-} from "../../../utils/Helpers/user";
-import { publicTabs } from "../../../utils/Helpers/user.js";
-import { AuthButtons } from "./AuthButtons";
-import { Brand } from "./Brand";
-import { NotificationsMenu } from "./NotificationMenu";
-import { ProfileMenu } from "./ProfileMenu";
-import { SearchBar } from "./SearchBar";
-import { Tabs } from "./Tabs";
+} from "../../../utils/Helpers/user.js";
+import { AuthButtons } from "./components/AuthButtons.jsx";
+import { Brand } from "./components/Brand.jsx";
+import { NotificationsMenu } from "./components/NotificationMenu.jsx";
+import { ProfileMenu } from "./components/ProfileMenu.jsx";
+import { SearchBar } from "./components/SearchBar.jsx";
+import { Tabs } from "./components/Tabs.jsx";
 
 export default function NavbarComponent() {
 	const { token, currentUser, logout } = useAuth();

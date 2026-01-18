@@ -32,28 +32,36 @@ const ResetPassword = lazy(
 	() => import("../features/Auth/pages/ResetPassword"),
 );
 
-// Talent pages
+// ************************* Talent pages *****************************
+
+// 1- findjob page
+const FindJob = lazy(() => import("../features/Main/talent/FindJob"));
+// 2- job details page
+const JobDetails = lazy(() => import("../features/Main/Talent/JobDetails"));
+//3- job proposal page
+const JobProposal = lazy(() => import("../features/Main/talent/JobProposal"));
+//4- my applications page
+const MyApplications = lazy(
+	() => import("../features/Main/Talent/MyApplications"),
+);
+// //5- my applications details page -> modal
+// const MyApplicationsDetails = lazy(
+// 	() => import("../features/Main/Talent/MyApplicationsDetails"),
+// );
+
 const TalentProfile = lazy(
-	() => import("../features/Main/talent/TalentProfile"),
+	() => import("../features/Main/Talent/TalentProfile"),
 );
 
 const EditTalentProfile = lazy(
-	() => import("../features/Main/talent/EditTalentProfile"),
-);
-
-const FindJob = lazy(() => import("../features/Main/talent/FindJob"));
-const JobDetails = lazy(() => import("../features/Main/Talent/JobDetails"));
-const JobProposal = lazy(() => import("../features/Main/talent/JobProposal"));
-
-const MyApplications = lazy(
-	() => import("../features/Main/talent/MyApplications"),
+	() => import("../features/Main/Talent/EditTalentProfile"),
 );
 
 const TalentAccountSettings = lazy(
-	() => import("../features/Main/talent/TalentAccountSettings"),
+	() => import("../features/Main/Talent/TalentAccountSettings"),
 );
 
-// Employer routes
+// **************** Employer routes ************************
 const EmployerDashboard = lazy(
 	() => import("../features/Main/Employer/Dashboard"),
 );
@@ -66,6 +74,7 @@ const EmployerAccountSettings = lazy(
 	() => import("../features/Main/Employer/AccountSettings"),
 );
 const PostAJob = lazy(() => import("../features/Main/employer/PostAJob"));
+
 const JobsList = lazy(() => import("../features/Main/Public/JobList"));
 
 const MyApplicants = lazy(
@@ -130,14 +139,14 @@ export default function AppRoutes() {
 				{ path: "findjob", element: <FindJob /> },
 				{ path: "jobs/:id", element: <JobDetails /> },
 				{ path: "jobs/:id/apply", element: <JobProposal /> },
+				{ path: "applications", element: <MyApplications /> },
 
 				{ path: "profile", element: <TalentProfile /> },
+
 				// modal
 				{ path: "profile/edit", element: <EditTalentProfile /> },
 
 				{ path: "profile/settings", element: <TalentAccountSettings /> },
-
-				{ path: "applications", element: <MyApplications /> },
 			],
 		},
 

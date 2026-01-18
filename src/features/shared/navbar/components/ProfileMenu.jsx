@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { getAvatar } from "../../../utils/Helpers/user";
+import defaultProfileImage from "../../../../assets/images/profile-image.png";
 
 export function ProfileMenu({
 	open,
@@ -10,7 +10,7 @@ export function ProfileMenu({
 	profilePath,
 	settingsPath,
 }) {
-	const avatar = getAvatar(user);
+	const avatar = user?.image || defaultProfileImage;
 
 	return (
 		<li className="relative">

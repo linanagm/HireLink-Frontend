@@ -1,4 +1,4 @@
-import profileImageFallback from "../../assets/images/profile-image.png";
+
 
 export const publicTabs = [
     { to: "/", label: "Home" },
@@ -39,7 +39,6 @@ export const getDisplayName = (user) => {
     return user?.name || "User";
 };
 
-export const getAvatar = (user) => user?.image || profileImageFallback;
 
 export const getProfilePaths = (role) => {
     const profilePath = role === "TALENT" ? "/talent/profile" : "/employer/profile";

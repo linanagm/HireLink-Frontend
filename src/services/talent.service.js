@@ -1,5 +1,5 @@
 
-// services/talent.service.js
+
 import { request } from "./auth.service";
 
 export const updateProfile = (payload) => request("put", "/talent/profile", payload);
@@ -17,6 +17,16 @@ export function getJobById(id) {
 
 export function applyToJob(id, payload) {
     return request("post", `/jobs/${id}/apply`, payload);
+}
+
+// get applications
+export function getMyApplications(params = {}) {
+    return request("get", "/talent/applications", null, { params });
+}
+
+// get application by id
+export function getApplicationById(id) {
+    return request("get", `/applications/${id}`);
 }
 
 
