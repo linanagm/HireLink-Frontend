@@ -15,7 +15,9 @@ export function getJobById(id) {
     return request("get", `/jobs/${id}`);
 }
 
-
+export function applyToJob(id, payload) {
+    return request("post", `/jobs/${id}/apply`, payload);
+}
 
 
 export const uploadAvatar = (file) => {

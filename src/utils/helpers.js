@@ -16,3 +16,11 @@ export function cx(...classes) {
 	return classes.filter(Boolean).join(" ");
 }
 
+// Helper to prettify enum values
+export function prettyEnum(value) {
+	if (!value) return "";
+	return String(value)
+		.toLowerCase()
+		.replaceAll("_", " ")
+		.replace(/\b\w/g, (c) => c.toUpperCase());
+}

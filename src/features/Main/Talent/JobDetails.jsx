@@ -3,14 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import InfoItem from "../../../components/UI/InfoItem";
 import Loading from "../../../components/UI/Loading";
 import { getJobById } from "../../../services/talent.service";
-
-function prettyEnum(value) {
-	if (!value) return null;
-	return String(value)
-		.toLowerCase()
-		.replaceAll("_", " ")
-		.replace(/\b\w/g, (c) => c.toUpperCase());
-}
+import { prettyEnum } from "../../../utils/helpers";
 
 export default function JobDetails() {
 	const { id } = useParams();
