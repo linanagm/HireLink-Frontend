@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Spinner from "./Spinner";
 
-export default function TalentPublicDetails() {
+export default function Loading() {
 	const [Count, SetCount] = useState();
 
 	useEffect(() => {}, []);

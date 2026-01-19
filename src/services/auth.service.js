@@ -1,6 +1,8 @@
 import axiosClient from "../config/axiosClient";
 import { handleError } from "../utils/helpers";
 
+
+
 const endpoints = {
 	register: "/auth/register",
 	verify: "/auth/verify",

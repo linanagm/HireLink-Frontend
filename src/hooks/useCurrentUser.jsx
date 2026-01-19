@@ -3,17 +3,24 @@ import { useQuery } from "@tanstack/react-query";
 import { queryKeys } from "../lib/queryKeys";
 import { getUser } from "../services/auth.service";
 
-export function useCurrentUser({ token, onUser, onLogout }) {
+/**
+ * useCurrentUser hook to fetch the current user from the server.
+ * @param {token} authentication token
+ * @param {hasUser} whether the user is already fetched
+ * @param {onUser} callback function to handle the fetched user
+ * @param {onLogout} callback function to handle logout
+ * @returns {object} the current user or null if not found
+ */
+export function useCurrentUser({ token, hasUser, onUser, onLogout }) {
 	return useQuery({
 		queryKey: queryKeys.currentUser,
-		queryFn: getUser,
-		enabled: !!token,
+		queryFn: () => getUser(token),
+		enabled: !!token && !hasUser,
 		retry: false,
-		onSuccess: (user) => {
-			onUser?.(user);
-		},
-		onError: () => {
-			onLogout?.();
-		},
+		refetchOnWindowFocus: false,
+		refetchOnReconnect: false,
+		staleTime: 5 * 60 * 1000,
+		onSuccess: (res) => onUser?.(res?.data ?? res),
+		onError: () => onLogout?.(),
 	});
 }

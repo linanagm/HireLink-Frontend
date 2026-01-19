@@ -1,35 +1,8 @@
-/**
- * useLogin
- *
- * This hook handles everything related to logging a user in.
- * The idea is to keep all login logic in one place
- * instead of spreading it across components.
- *
- * Flow:
- * - Send email & password to the login API.
- * - If login succeeds, save the auth token
- *   (localStorage or sessionStorage based on "remember me").
- * - Fetch the current user to know their role.
- *
- * If the user is a TALENT:
- * - Fetch the full talent profile from the server.
- * - Try to fetch the avatar URL (failure here should not block login).
- * - Store the final user object in AuthContext.
- *
- * If the user is not a TALENT:
- * - Just store the basic user data from /auth/profile.
- *
- * Finally:
- * - Redirect the user to the correct page based on their role.
- *
- * The hook also exposes:
- * - isLoading → for disabling buttons / showing loaders.
- * - apiError → for showing login errors in the UI.
- */
-
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
+import { queryKeys } from "../../../lib/queryKeys";
 import { getUser, login as loginApi } from "../../../services/auth.service";
 import {
 	getTalentAvatar,
@@ -39,16 +12,19 @@ import {
 export function useLogin() {
 	const navigate = useNavigate();
 	const { saveLogin, setUser } = useAuth();
-
+	const qc = useQueryClient();
+	//const { currentUser } = useAuth();
 	const [isLoading, setIsLoading] = useState(false);
 	const [apiError, setApiError] = useState("");
 
 	const navigateByRole = (role) => {
-		if (role === "TALENT") return navigate("/talent/findjob");
-		if (role === "EMPLOYER") return navigate("/employer/dashboard");
+		if (role === "TALENT")
+			return navigate("/talent/findjob", { replace: true });
+		if (role === "EMPLOYER")
+			return navigate("/employer/dashboard", { replace: true });
 		if (role === "ADMIN" || role === "MODERATOR")
-			return navigate("/admin/dashboard");
-		return navigate("/");
+			return navigate("/admin/dashboard", { replace: true });
+		return navigate("/", { replace: true });
 	};
 
 	const doLogin = async ({ email, password }, rememberMe) => {
@@ -63,55 +39,51 @@ export function useLogin() {
 			const token = loginRes?.data?.token;
 			if (!token) throw new Error("Token missing from login response");
 
-			// 2) SAVE TOKEN
+			// 2) SAVE TOKEN (so next requests include Authorization header)
 			saveLogin(token, rememberMe);
 
-			// 3) GET ME (/auth/profile)
-			const meRes = await getUser(token);
-			if (!meRes?.ok)
-				throw new Error(meRes?.message || "Failed to fetch current user");
+			// 3) FETCH SERVER CURRENT USER ONCE (source of truth)
+			const me = await qc.fetchQuery({
+				queryKey: queryKeys.currentUser,
+				queryFn: () => getUser(token),
+			});
 
-			const me = meRes?.data; // { id, email, role, ... }
-			const role = me?.role;
+			const role = me?.role || me?.data?.role;
+			if (!role) throw new Error("Role missing from current user response");
 
-			// 4) TALENT: GET FULL PROFILE
+			// 4) Build final user (TALENT enrich)
+			let finalUser = me?.data ?? me;
+
 			if (role === "TALENT") {
 				let talentProfile = null;
-
 				try {
 					const profileRes = await getTalentProfile();
-
 					talentProfile =
 						profileRes?.data?.data ||
 						profileRes?.data?.data?.data ||
 						profileRes?.data?.data?.profile;
-				} catch (e) {
-					console.warn("Talent profile fetch failed:", e);
-				}
+				} catch {}
 
-				// Optional avatar URL (don’t break login)
 				let avatarUrl;
 				try {
 					const avatarRes = await getTalentAvatar(80, 80);
 					avatarUrl = avatarRes?.data?.data?.avatar;
-				} catch (e) {
-					console.warn("Avatar fetch failed:", e);
+				} catch {}
+
+				if (talentProfile && typeof talentProfile === "object") {
+					finalUser = { ...talentProfile, avatarUrl };
+				} else {
+					finalUser = { ...(me?.data ?? me), avatarUrl };
 				}
-
-				const finalUser =
-					talentProfile && typeof talentProfile === "object"
-						? { ...talentProfile, avatarUrl }
-						: { ...me, avatarUrl };
-
-				setUser(finalUser);
-				return navigateByRole(finalUser?.role || role);
 			}
 
-			// 5) OTHER ROLES
-			setUser(me);
+			console.log("final user: \n", finalUser);
 
-			// 6) REDIRECT
-			return navigateByRole(role);
+			// 5) SET USER ONCE
+			setUser(finalUser);
+
+			// 6) NAVIGATE ONCE
+			return navigateByRole(finalUser?.role || role);
 		} catch (err) {
 			setApiError(err?.message || "Something went wrong. Try again.");
 			throw err;

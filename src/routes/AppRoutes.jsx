@@ -44,11 +44,7 @@ const JobProposal = lazy(() => import("../features/Main/talent/JobProposal"));
 const MyApplications = lazy(
 	() => import("../features/Main/Talent/MyApplications"),
 );
-// //5- my applications details page -> modal
-// const MyApplicationsDetails = lazy(
-// 	() => import("../features/Main/Talent/MyApplicationsDetails"),
-// );
-
+//5- profile page / account
 const TalentProfile = lazy(
 	() => import("../features/Main/Talent/TalentProfile"),
 );
@@ -143,7 +139,6 @@ export default function AppRoutes() {
 
 				{ path: "profile", element: <TalentProfile /> },
 
-				// modal
 				{ path: "profile/edit", element: <EditTalentProfile /> },
 
 				{ path: "profile/settings", element: <TalentAccountSettings /> },
