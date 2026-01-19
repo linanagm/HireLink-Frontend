@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import defaultProfileImage from "../../../assets/images/profile-image.png";
+import { queryKeys } from "../../../lib/queryKeys";
 import {
 	getTalentProfile,
 	uploadTalentAvatar,
@@ -18,7 +19,7 @@ export default function TalentProfile() {
 		isError,
 		error,
 	} = useQuery({
-		queryKey: ["talent-profile"],
+		queryKey: queryKeys.talentProfile,
 		queryFn: getTalentProfile,
 		staleTime: 60 * 1000,
 	});
@@ -33,9 +34,9 @@ export default function TalentProfile() {
 		 */
 		onSuccess: async () => {
 			// get new profile data
-			await qc.invalidateQueries({ queryKey: ["talent-profile"] });
+			await qc.invalidateQueries(queryKeys.talentProfile);
 			//for navbar
-			//await qc.invalidateQueries({queryKey: ["current-user"]});
+			await qc.invalidateQueries(queryKeys.currentUser);
 		},
 	});
 

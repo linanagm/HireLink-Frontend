@@ -1,5 +1,3 @@
-//import { createContext, useEffect, useState } from "react";
-
 import {
 	createContext,
 	useCallback,
@@ -7,64 +5,11 @@ import {
 	useMemo,
 	useState,
 } from "react";
+import { useCurrentUser } from "../hooks/useCurrentUser";
 import { getUser } from "../services/auth.service";
 
 // Create context
 export const AuthContext = createContext(null);
-
-// export function AuthProvider({ children }) {
-// 	const [token, setToken] = useState(null);
-// 	const [currentUser, setCurrentUser] = useState(null);
-// 	const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-// 	// Load authentication state on app start
-// 	useEffect(() => {
-// 		const savedToken =
-// 			localStorage.getItem("token") || sessionStorage.getItem("token");
-// 		const savedUser =
-// 			localStorage.getItem("user") || sessionStorage.getItem("user");
-
-// 		if (savedToken && savedUser) {
-// 			setToken(savedToken);
-// 			setCurrentUser(JSON.parse(savedUser));
-// 			setIsAuthenticated(true);
-// 		}
-// 	}, []);
-
-// 	// Save login result
-// 	const saveLogin = async (token, rememberMe, userData = null) => {
-// 		const storage = rememberMe ? localStorage : sessionStorage;
-
-// 		setToken(token);
-// 		storage.setItem("token", token);
-// 		setIsAuthenticated(true);
-
-// 		if (userData) {
-// 			setCurrentUser(userData);
-
-// 			storage.setItem("user", JSON.stringify(userData));
-// 		}
-// 	};
-
-// 	const logout = () => {
-// 		localStorage.removeItem("token");
-// 		localStorage.removeItem("user");
-// 		sessionStorage.removeItem("token");
-// 		sessionStorage.removeItem("user");
-
-// 		setToken(null);
-// 		setCurrentUser(null);
-// 		setIsAuthenticated(false);
-// 	};
-
-// 	return (
-// 		<AuthContext.Provider
-// 			value={{ token, currentUser, isAuthenticated, saveLogin, logout }}
-// 		>
-// 			{children}
-// 		</AuthContext.Provider>
-// 	);
-// }
 
 const STORAGE_KEYS = {
 	token: "token",
@@ -94,34 +39,13 @@ export function AuthProvider({ children }) {
 	const [currentUser, setCurrentUser] = useState(null);
 
 	const isAuthenticated = Boolean(token);
-
-	useEffect(() => {
-		const savedToken = readFromStorage(STORAGE_KEYS.token);
-		console.log("savetToken", savedToken);
-
-		const savedUser = safeJsonParse(readFromStorage(STORAGE_KEYS.user));
-
-		if (savedToken) setToken(savedToken);
-		if (savedUser) setCurrentUser(savedUser);
-	}, []);
-
-	const saveLogin = useCallback((newToken, rememberMe) => {
-		const storage = rememberMe ? localStorage : sessionStorage;
-
-		setToken(newToken);
-		storage.setItem(STORAGE_KEYS.token, newToken);
-		const userData = getUser();
-		console.log("authcontext: userData -> ", userData);
+	const setUser = useCallback((userData) => {
 		setCurrentUser(userData);
-		if (userData) {
-			setCurrentUser(userData);
-			storage.setItem(STORAGE_KEYS.user, JSON.stringify(userData));
-		}
+		const storage = localStorage.getItem(STORAGE_KEYS.token)
+			? localStorage
+			: sessionStorage;
+		if (userData) storage.setItem(STORAGE_KEYS.user, JSON.stringify(userData));
 	}, []);
-
-	const setUser = (userData) => {
-		setCurrentUser(userData);
-	};
 
 	const logout = useCallback(() => {
 		removeFromBothStorages(STORAGE_KEYS.token);
@@ -129,6 +53,32 @@ export function AuthProvider({ children }) {
 
 		setToken(null);
 		setCurrentUser(null);
+	}, []);
+
+	useEffect(() => {
+		const savedToken = readFromStorage(STORAGE_KEYS.token);
+		const savedUser = safeJsonParse(readFromStorage(STORAGE_KEYS.user));
+
+		if (savedToken) setToken(savedToken);
+		if (savedUser) setCurrentUser(savedUser);
+	}, []);
+
+	useCurrentUser({ token, onUser: setUser, onLogout: logout });
+
+	const saveLogin = useCallback((newToken, rememberMe) => {
+		const storage = rememberMe ? localStorage : sessionStorage;
+
+		setToken(newToken);
+
+		storage.setItem(STORAGE_KEYS.token, newToken);
+
+		const userData = getUser();
+
+		setCurrentUser(userData);
+		if (userData) {
+			setCurrentUser(userData);
+			storage.setItem(STORAGE_KEYS.user, JSON.stringify(userData));
+		}
 	}, []);
 
 	const value = useMemo(
