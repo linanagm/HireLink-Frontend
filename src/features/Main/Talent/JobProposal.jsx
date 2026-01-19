@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
 import { useQuery } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import { useMemo } from "react";

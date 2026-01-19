@@ -1,325 +1,324 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRef, useState } from "react";
+import defaultProfileImage from "../../../assets/images/profile-image.png";
+import {
+	getTalentProfile,
+	uploadTalentAvatar,
+} from "../../../services/talent.service";
 
-// قلم SVG
-const PencilIcon = ({ onClick }) => (
-	<svg
-		onClick={onClick}
-		xmlns="http://www.w3.org/2000/svg"
-		className="w-5 h-5 text-purple-600 cursor-pointer"
-		viewBox="0 0 20 20"
-		fill="currentColor"
-	>
-		<title>edit</title>
-		<path d="M17.414 2.586a2 2 0 010 2.828l-9.9 9.9a1 1 0 01-.465.263l-4 1a1 1 0 01-1.213-1.213l1-4a1 1 0 01.263-.465l9.9-9.9a2 2 0 012.828 0zM15.121 4.05l.829.829-1.06 1.06-.829-.829 1.06-1.06zM5 13l6-6 1.06 1.06L6.06 14.06 5 15v-2z" />
-	</svg>
-);
+export default function TalentProfile() {
+	const [avatarError, setAvatarError] = useState("");
+	const fileRef = useRef(null);
+	const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 
-export default function EditableProfile() {
-	// State لكل Section
-	const [profile, setProfile] = useState({
-		name: "Lilian",
-		location: "Addis Ababa",
-		title: "UX/UI Designer | Fronted Developer",
-		bio: "Hi there! I'm Lilian, a dedicated UX/UI designer and fronted developer with a sharp focus on creating smooth user experiences and transforming designs into reality.",
-		skills: [
-			"UX/UI Design",
-			"HTML5, CSS3, JavaScript",
-			"Responsive Web Design",
-		],
-		work: "No experience",
-		extraSkills: ["Figma", "User Research", "Wireframing", "Prototyping"],
-		certification: {
-			title: "Google UX Design Specialization",
-			provider: "Google",
-			issued: "October 2023",
-			id: "UCMNJFMB43AG",
+	const qc = useQueryClient();
+	const {
+		data: res,
+		isLoading,
+		isError,
+		error,
+	} = useQuery({
+		queryKey: ["talent-profile"],
+		queryFn: getTalentProfile,
+		staleTime: 60 * 1000,
+	});
+
+	const talentProfile = res?.data?.talentProfile ?? null;
+
+	const avatarMutation = useMutation({
+		mutationFn: (file) => uploadTalentAvatar(file),
+		/**
+		 * Called after a successful avatar upload.
+		 * Invalidates the talent profile query and the current user query.
+		 */
+		onSuccess: async () => {
+			// get new profile data
+			await qc.invalidateQueries({ queryKey: ["talent-profile"] });
+			//for navbar
+			//await qc.invalidateQueries({queryKey: ["current-user"]});
 		},
 	});
 
-	const [editMode, setEditMode] = useState({
-		titleBio: false,
-		skills: false,
-		work: false,
-		extraSkills: false,
-		certification: false,
-	});
+	const onPickAvatar = () => fileRef.current.click();
 
-	const toggleEdit = (section) => {
-		setEditMode({ ...editMode, [section]: !editMode[section] });
+	const onAvatarChange = (e) => {
+		const file = e.target.files[0];
+		if (!file) return;
+		setAvatarError("");
+		//validation
+		const allowed = ["image/jpeg", "image/png", "image/jpg"];
+		if (!allowed.includes(file.type)) {
+			setAvatarError("Only JPG, JPEG,  and PNG images are allowed");
+			e.target.value = "";
+			return;
+		}
+
+		if (file.size > 5 * 1024 * 1024) {
+			setAvatarError("Image size must be less than 5 MB");
+			e.target.value = "";
+			return;
+		}
+		avatarMutation.mutate(file);
+
+		//if he chose the same photo again
+		e.target.value = "";
 	};
 
+	console.log("profile-data: \n", res);
+
+	const buildAvatarUrl = (publicId) => {
+		if (!publicId) return defaultProfileImage;
+		return `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${publicId}`;
+	};
+	const profile = {
+		name: `${talentProfile?.firstName}  ${talentProfile?.lastName}`,
+		location: talentProfile?.location ?? "location",
+		completion: 70,
+		avatarUrl: talentProfile?.avatarPublicId
+			? buildAvatarUrl(talentProfile?.avatarPublicId)
+			: defaultProfileImage,
+		title: talentProfile?.headline ?? "Your Title",
+		level: "Expert",
+		bio: talentProfile?.bio,
+		bullets: talentProfile?.skills.name ?? [],
+		work: talentProfile?.workExperience ?? "No experience",
+		chips: talentProfile?.certifications ?? [],
+		cert: {
+			title: talentProfile?.certificates?.name ?? "None",
+			provider: talentProfile?.certificates?.issuer ?? "None",
+			issued:
+				talentProfile?.certificates?.issueDate ?? "Certificate Issued Date",
+			id: talentProfile?.certificates?.certificationId ?? "Certificate ID",
+		},
+	};
+
+	// Just placeholders (UI only)
+	const onEdit = (section) => console.log("edit:", section);
+	const onAddCert = () => console.log("add certification");
+	const onDeleteCert = () => console.log("delete certification");
+
+	// handle loading and errors
+	if (isLoading) return <div>Loading...</div>;
+	if (isError) return <div>{error.message}</div>;
+
 	return (
-		<div className="min-h-screen bg-gray-50 flex flex-col">
-			{/* Main */}
-			<main className="flex-grow px-6 py-6 max-w-4xl mx-auto">
-				{/* Profile Card */}
-				<div className="bg-white p-5 rounded-lg shadow-sm mb-6 flex justify-between items-center">
-					<div className="flex items-center gap-4">
-						<img
-							src="/avatar.jpg"
-							alt="profile"
-							className="w-14 h-14 rounded-full"
-						/>
-						<div>
-							<h2 className="font-bold text-lg">{profile.name}</h2>
-							<p className="text-gray-500 text-sm">{profile.location}</p>
+		<div className="min-h-screen bg-white">
+			<main className="max-w-5xl mx-auto px-6 py-8">
+				{/* Top Profile Card */}
+				<section className="bg-white border rounded-xl p-6 flex items-center justify-between ">
+					<div className="flex items-center gap-4 pb-4">
+						{/* profile image */}
+						<div className="flex flex-col items-center ">
+							<div className="relative  items-center gap-4">
+								<img
+									src={profile?.avatarUrl}
+									alt="profile"
+									className="w-28 h-28 rounded-full object-cover   border border-gray-200"
+								/>
+								<button
+									type="button"
+									onClick={onPickAvatar}
+									disabled={avatarMutation.isPending}
+									className="w-6 h-6 rounded-full bg-purple-600 text-white absolute right-0  bottom-0 -translate-x-1 -translate-y-2/3 items-center justify-center"
+									aria-label="Edit profile"
+									title="Edit profile"
+								>
+									{avatarMutation.isPending ? (
+										<i className="fa-solid fa-spinner animate-spin text-xs"></i>
+									) : (
+										<i className="fa-solid fa-pencil text-xs "></i>
+									)}
+								</button>
+								{/* invisible input */}
+								<input
+									type="file"
+									ref={fileRef}
+									accept="image/*"
+									className="hidden"
+									onChange={onAvatarChange}
+								/>
+							</div>
+
+							{/* photo upload errors */}
+							<div className="pt-2">
+								{avatarError && (
+									<p className="mt-2 text-xs text-red-600">{avatarError}</p>
+								)}
+								{avatarMutation.isError && (
+									<p className="mt-3 text-xs text-red-600">
+										Failed to upload photo:{" "}
+										{avatarMutation.error?.message || "Unknown error"}
+									</p>
+								)}
+							</div>
+						</div>
+
+						{/* name and location */}
+						<div className="">
+							<div className="flex items-center gap-2">
+								<h2 className="text-lg font-semibold text-gray-900">
+									{profile?.name}
+								</h2>
+							</div>
+
+							<p className="text-sm text-gray-500 flex items-center gap-2 mt-1">
+								<i className="fa-solid fa-location-dot"></i>
+								{profile?.location}
+							</p>
 						</div>
 					</div>
-					<Link to="/profile-edit" className="text-purple-600 font-medium">
-						Edit Profile
-					</Link>
-				</div>
+					{/* profile completion */}
+					<p className="text-sm text-purple-600 font-medium ">
+						Profile {profile?.completion}% Complete
+					</p>
+				</section>
 
-				{/* Title & Bio */}
-				<div className="bg-white p-5 rounded-lg shadow-sm mb-6">
-					<div className="flex justify-between items-center mb-2">
-						<h3 className="font-semibold text-xl">About Me</h3>
-						<PencilIcon onClick={() => toggleEdit("titleBio")} />
-					</div>
+				{/* About Me */}
+				<section className="bg-white border rounded-xl p-6 mt-6">
+					<div className="flex items-start justify-between gap-4">
+						<div className="min-w-0">
+							<div className="flex items-center gap-2">
+								<h3 className="text-xl font-semibold text-gray-900 truncate">
+									{profile?.title}
+								</h3>
 
-					{!editMode.titleBio && (
-						<>
-							<h3 className="font-semibold text-xl mb-2">{profile.title}</h3>
-							<p className="text-gray-600 mb-3">{profile.bio}</p>
-						</>
-					)}
+								<button
+									type="button"
+									onClick={() => onEdit("title")}
+									className="w-7 h-7 rounded-full bg-purple-600 text-white flex items-center justify-center shrink-0"
+									aria-label="Edit title"
+								>
+									<i className="fa-solid fa-pencil text-sm"></i>
+								</button>
+							</div>
 
-					{editMode.titleBio && (
-						<div className="space-y-3">
-							<input
-								type="text"
-								className="border rounded-lg w-full px-3 py-2"
-								value={profile.title}
-								onChange={(e) =>
-									setProfile({ ...profile, title: e.target.value })
-								}
-							/>
-							<textarea
-								className="border rounded-lg w-full px-3 py-2"
-								rows={4}
-								value={profile.bio}
-								onChange={(e) =>
-									setProfile({ ...profile, bio: e.target.value })
-								}
-							/>
-							<button
-								type="button"
-								className="bg-purple-600 text-white px-4 py-2 rounded-lg"
-								onClick={() => toggleEdit("titleBio")}
-							>
-								Save
-							</button>
+							<div className="flex items-center gap-2 mt-4">
+								<p className="text-gray-700">{profile.level}</p>
+
+								<button
+									type="button"
+									onClick={() => onEdit("level")}
+									className="w-7 h-7 rounded-full bg-purple-600 text-white flex items-center justify-center"
+									aria-label="Edit level"
+								>
+									<i className="fa-solid fa-pencil text-sm"></i>
+								</button>
+							</div>
+
+							<div className="flex items-start justify-between gap-4 mt-4">
+								<p className="text-gray-600 leading-relaxed">{profile.bio}</p>
+
+								<button
+									type="button"
+									onClick={() => onEdit("bio")}
+									className="w-7 h-7 rounded-full bg-purple-600 text-white flex items-center justify-center shrink-0 mt-1"
+									aria-label="Edit bio"
+								>
+									<i className="fa-solid fa-pencil text-sm"></i>
+								</button>
+							</div>
+
+							<div className="mt-6">
+								<p className="text-sm font-medium text-gray-700 mb-2">
+									Skills:
+								</p>
+								<ul className="list-disc ml-5 space-y-2 text-gray-700">
+									{profile?.bullets?.map((b) => (
+										<li key={b}>{b}</li>
+									))}
+								</ul>
+							</div>
 						</div>
-					)}
-				</div>
+					</div>
+				</section>
 
 				{/* Work Experience */}
-				<div className="bg-white p-5 rounded-lg shadow-sm mb-6">
-					<div className="flex justify-between items-center mb-2">
-						<h3 className="font-semibold text-lg">Work Experience</h3>
-						<PencilIcon onClick={() => toggleEdit("work")} />
+				<section className="bg-white border rounded-xl p-6 mt-6">
+					<h3 className="text-lg font-semibold text-gray-900 mb-2">
+						Work Experience
+					</h3>
+					<p className="text-gray-600">{profile.work}</p>
+				</section>
+
+				{/* Skills Chips */}
+				<section className="bg-white border rounded-xl p-6 mt-6">
+					<div className="flex items-center justify-between">
+						<h3 className="text-lg font-semibold text-gray-900">Skills</h3>
+
+						<button
+							type="button"
+							onClick={() => onEdit("chips")}
+							className="w-7 h-7 rounded-full bg-purple-600 text-white flex items-center justify-center"
+							aria-label="Edit skills"
+						>
+							<i className="fa-solid fa-pencil text-sm"></i>
+						</button>
 					</div>
 
-					{!editMode.work && <p className="text-gray-500">{profile.work}</p>}
-					{editMode.work && (
-						<div className="space-y-3">
-							<textarea
-								className="border rounded-lg w-full px-3 py-2"
-								rows={3}
-								value={profile.work}
-								onChange={(e) =>
-									setProfile({ ...profile, work: e.target.value })
-								}
-							/>
-							<button
-								type="button"
-								className="bg-purple-600 text-white px-4 py-2 rounded-lg"
-								onClick={() => toggleEdit("work")}
+					<div className="flex flex-wrap gap-3 mt-4">
+						{profile?.chips?.map((chip) => (
+							<span
+								key={chip}
+								className="px-4 py-2 rounded-full bg-gray-100 text-gray-700 text-sm"
 							>
-								Save
-							</button>
-						</div>
-					)}
-				</div>
-
-				{/* Skills */}
-				<div className="bg-white p-5 rounded-lg shadow-sm mb-6">
-					<div className="flex justify-between items-center mb-3">
-						<h3 className="font-semibold text-lg">Skills</h3>
-						<PencilIcon onClick={() => toggleEdit("skills")} />
+								{chip}
+							</span>
+						))}
 					</div>
-
-					{!editMode.skills && (
-						<ul className="list-disc ml-6 text-gray-700">
-							{profile.skills.map((skill, idx) => (
-								<li key={idx}>{skill.name}</li>
-							))}
-						</ul>
-					)}
-
-					{editMode.skills && (
-						<div className="space-y-3">
-							{profile.skills.map((s, idx) => (
-								<input
-									key={idx}
-									type="text"
-									className="border rounded-lg w-full px-3 py-2"
-									value={s}
-									onChange={(e) => {
-										const newSkills = [...profile.skills];
-										newSkills[idx] = e.target.value;
-										setProfile({ ...profile, skills: newSkills });
-									}}
-								/>
-							))}
-							<button
-								type="button"
-								className="bg-purple-600 text-white px-4 py-2 rounded-lg"
-								onClick={() => toggleEdit("skills")}
-							>
-								Save
-							</button>
-						</div>
-					)}
-				</div>
-
-				{/* Extra Skills */}
-				<div className="bg-white p-5 rounded-lg shadow-sm mb-6">
-					<div className="flex justify-between items-center mb-3">
-						<h3 className="font-semibold text-lg">Extra Skills</h3>
-						<PencilIcon onClick={() => toggleEdit("extraSkills")} />
-					</div>
-
-					{!editMode.extraSkills && (
-						<div className="flex gap-2 flex-wrap">
-							{profile.extraSkills.map((s, idx) => (
-								<span
-									key={idx}
-									className="px-3 py-1 bg-gray-200 text-gray-700 rounded-full text-sm"
-								>
-									{s}
-								</span>
-							))}
-						</div>
-					)}
-
-					{editMode.extraSkills && (
-						<div className="space-y-3">
-							{profile.extraSkills.map((s, idx) => (
-								<input
-									key={idx}
-									type="text"
-									className="border rounded-lg w-full px-3 py-2"
-									value={s}
-									onChange={(e) => {
-										const newSkills = [...profile.extraSkills];
-										newSkills[idx] = e.target.value;
-										setProfile({ ...profile, extraSkills: newSkills });
-									}}
-								/>
-							))}
-							<button
-								type="button"
-								className="bg-purple-600 text-white px-4 py-2 rounded-lg"
-								onClick={() => toggleEdit("extraSkills")}
-							>
-								Save
-							</button>
-						</div>
-					)}
-				</div>
+				</section>
 
 				{/* Certification */}
-				<div className="bg-white p-5 rounded-lg shadow-sm mb-6">
-					<div className="flex justify-between items-center mb-2">
-						<h3 className="font-semibold text-lg">Certification</h3>
-						<PencilIcon onClick={() => toggleEdit("certification")} />
+				<section className="bg-white border rounded-xl p-6 mt-6">
+					<div className="flex items-center justify-between">
+						<h3 className="text-lg font-semibold text-gray-900">
+							Certification
+						</h3>
+
+						<button
+							type="button"
+							onClick={onAddCert}
+							className="w-8 h-8 rounded-full border border-purple-600 text-purple-600 flex items-center justify-center"
+							aria-label="Add certification"
+						>
+							<i className="fa-solid fa-plus"></i>
+						</button>
 					</div>
 
-					{!editMode.certification && (
+					<div className="mt-5 border-t pt-5 flex items-start justify-between gap-4">
 						<div>
-							<p className="font-semibold">{profile.certification.title}</p>
-							<p className="text-gray-600 text-sm">
-								Provider: {profile.certification.provider}
+							<p className="font-semibold text-gray-900">
+								{profile?.cert?.title}
 							</p>
-							<p className="text-gray-600 text-sm">
-								Issued: {profile.certification.issued}
-							</p>
-							<p className="text-gray-600 text-sm">
-								Certification ID: {profile.certification.id}
-							</p>
-						</div>
-					)}
 
-					{editMode.certification && (
-						<div className="space-y-3">
-							<input
-								type="text"
-								className="border rounded-lg w-full px-3 py-2"
-								value={profile.certification.title}
-								onChange={(e) =>
-									setProfile({
-										...profile,
-										certification: {
-											...profile.certification,
-											title: e.target.value,
-										},
-									})
-								}
-							/>
-							<input
-								type="text"
-								className="border rounded-lg w-full px-3 py-2"
-								value={profile.certification.provider}
-								onChange={(e) =>
-									setProfile({
-										...profile,
-										certification: {
-											...profile.certification,
-											provider: e.target.value,
-										},
-									})
-								}
-							/>
-							<input
-								type="text"
-								className="border rounded-lg w-full px-3 py-2"
-								value={profile.certification.issued}
-								onChange={(e) =>
-									setProfile({
-										...profile,
-										certification: {
-											...profile.certification,
-											issued: e.target.value,
-										},
-									})
-								}
-							/>
-							<input
-								type="text"
-								className="border rounded-lg w-full px-3 py-2"
-								value={profile.certification.id}
-								onChange={(e) =>
-									setProfile({
-										...profile,
-										certification: {
-											...profile.certification,
-											id: e.target.value,
-										},
-									})
-								}
-							/>
+							<p className="text-sm text-gray-600 mt-2">
+								Provider: {profile.cert.provider}
+							</p>
+							<p className="text-sm text-gray-600">
+								Issued: {profile.cert.issued}
+							</p>
+							<p className="text-sm text-gray-600">
+								Certification ID: {profile.cert.id}
+							</p>
+
 							<button
 								type="button"
-								className="bg-purple-600 text-white px-4 py-2 rounded-lg"
-								onClick={() => toggleEdit("certification")}
+								className="text-sm text-purple-600 mt-3 hover:underline"
+								onClick={() => console.log("show description")}
 							>
-								Save
+								Show description
 							</button>
 						</div>
-					)}
-				</div>
+
+						<button
+							type="button"
+							onClick={onDeleteCert}
+							className="w-10 h-10 rounded-full border border-purple-600 text-purple-600 flex items-center justify-center shrink-0"
+							aria-label="Delete certification"
+						>
+							<i className="fa-solid fa-trash"></i>
+						</button>
+					</div>
+				</section>
 			</main>
 		</div>
 	);

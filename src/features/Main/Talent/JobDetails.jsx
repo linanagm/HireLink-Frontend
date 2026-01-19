@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";

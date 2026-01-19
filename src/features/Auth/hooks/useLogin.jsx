@@ -31,7 +31,10 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
 import { getUser, login as loginApi } from "../../../services/auth.service";
-import { getAvatarUrl, getCurrent } from "../../../services/talent.service";
+import {
+	getTalentAvatar,
+	getTalentProfile,
+} from "../../../services/talent.service";
 
 export function useLogin() {
 	const navigate = useNavigate();
@@ -76,7 +79,7 @@ export function useLogin() {
 				let talentProfile = null;
 
 				try {
-					const profileRes = await getCurrent();
+					const profileRes = await getTalentProfile();
 
 					talentProfile =
 						profileRes?.data?.data ||
@@ -89,7 +92,7 @@ export function useLogin() {
 				// Optional avatar URL (don’t break login)
 				let avatarUrl;
 				try {
-					const avatarRes = await getAvatarUrl(80, 80);
+					const avatarRes = await getTalentAvatar(80, 80);
 					avatarUrl = avatarRes?.data?.data?.avatar;
 				} catch (e) {
 					console.warn("Avatar fetch failed:", e);
