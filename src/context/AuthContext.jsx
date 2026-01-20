@@ -5,25 +5,30 @@ import {
 	useMemo,
 	useState,
 } from "react";
-import { useCurrentUser } from "../hooks/useCurrentUser";
+import { useCurrentUser } from "../hooks/queries/useCurrentUser";
 
-// Create context
+// AuthContext will be used by the whole app to access auth data
 export const AuthContext = createContext(null);
 
+// Keys we use in localStorage / sessionStorage
 const STORAGE_KEYS = {
 	token: "token",
 	user: "user",
 };
 
+// Read from localStorage first, if not found check sessionStorage
 const readFromStorage = (key) => {
 	return localStorage.getItem(key) ?? sessionStorage.getItem(key);
 };
 
+// Remove a key from both storages (used on logout)
 const removeFromBothStorages = (key) => {
 	localStorage.removeItem(key);
 	sessionStorage.removeItem(key);
 };
 
+// Safely parse JSON from storage
+// If parsing fails, return null instead of crashing the app
 const safeJsonParse = (value) => {
 	if (!value) return null;
 	try {
@@ -34,34 +39,50 @@ const safeJsonParse = (value) => {
 };
 
 /**
- * AuthProvider is a React Context that provides authentication-related state and functions to its children.
+ * AuthProvider
+ * ------------
+ * This component wraps the app and controls authentication state.
  *
- * It manages the following state variables:
- * - `token`: The authentication token.
- * - `currentUser`: The currently logged-in user.
- * - `isAuthenticated`: A boolean indicating whether the user is authenticated or not.
+ * What it stores:
+ * - token: auth token from backend
+ * - currentUser: logged-in user data
  *
- * It also provides the following functions to its children:
- * - `setUser`: A function to set the currently logged-in user.
- * - `saveLogin`: A function to save a new authentication token and optionally remember the user.
- * - `logout`: A function to logout the currently logged-in user.
+ * What it provides:
+ * - saveLogin: save token after login
+ * - setUser: save user data
+ * - updateCurrentUser: update part of user data (example: avatar)
+ * - logout: clear everything
  */
 export function AuthProvider({ children }) {
+	// Token state (null means not logged in)
 	const [token, setToken] = useState(null);
+
+	// User object (null until we fetch it)
 	const [currentUser, setCurrentUser] = useState(null);
 
+	// Simple boolean to know if user is logged in
 	const isAuthenticated = Boolean(token);
+
+	/**
+	 * Save user data in state and storage
+	 * We detect which storage is used based on where the token exists
+	 */
 	const setUser = useCallback((userData) => {
 		setCurrentUser(userData);
 
-		// Save user data to localStorage
 		const storage = localStorage.getItem(STORAGE_KEYS.token)
 			? localStorage
 			: sessionStorage;
 
-		if (userData) storage.setItem(STORAGE_KEYS.user, JSON.stringify(userData));
+		if (userData) {
+			storage.setItem(STORAGE_KEYS.user, JSON.stringify(userData));
+		}
 	}, []);
 
+	/**
+	 * Logout the user
+	 * Clears token and user from state and storage
+	 */
 	const logout = useCallback(() => {
 		removeFromBothStorages(STORAGE_KEYS.token);
 		removeFromBothStorages(STORAGE_KEYS.user);
@@ -70,6 +91,36 @@ export function AuthProvider({ children }) {
 		setCurrentUser(null);
 	}, []);
 
+	/**
+	 * Update current user data
+	 * Can accept:
+	 * - a function (prev => newUser)
+	 * - or a partial object ({ avatar: "newUrl" })
+	 *
+	 * Also keeps storage updated so refresh doesn’t lose changes
+	 */
+	const updateCurrentUser = useCallback((updater) => {
+		setCurrentUser((prev) => {
+			const next =
+				typeof updater === "function" ? updater(prev) : { ...prev, ...updater };
+
+			const storage = localStorage.getItem(STORAGE_KEYS.token)
+				? localStorage
+				: sessionStorage;
+
+			if (next) {
+				storage.setItem(STORAGE_KEYS.user, JSON.stringify(next));
+			}
+
+			return next;
+		});
+	}, []);
+
+	/**
+	 * On app start:
+	 * - read token and user from storage
+	 * - restore login state if exists
+	 */
 	useEffect(() => {
 		const savedToken = readFromStorage(STORAGE_KEYS.token);
 		const savedUser = safeJsonParse(readFromStorage(STORAGE_KEYS.user));
@@ -78,33 +129,54 @@ export function AuthProvider({ children }) {
 		if (savedUser) setCurrentUser(savedUser);
 	}, []);
 
-	// only fetch the current user if we have a token or user
+	const hasUser = !!currentUser;
+
+	/**
+	 * Fetch current user from API only when:
+	 * - we have a token
+	 * - but we don’t have user data yet
+	 */
 	useCurrentUser({
 		token,
-		hasUser: !!currentUser,
+		enabled: !!token && !hasUser,
 		onUser: setUser,
 		onLogout: logout,
 	});
 
+	/**
+	 * Save token after login
+	 * rememberMe decides if token goes to localStorage or sessionStorage
+	 */
 	const saveLogin = useCallback((newToken, rememberMe) => {
 		const storage = rememberMe ? localStorage : sessionStorage;
 
 		setToken(newToken);
-
 		storage.setItem(STORAGE_KEYS.token, newToken);
-
-		// const userData = getUser(token);
-
-		// setCurrentUser(userData);
-		// if (userData) {
-		// 	setCurrentUser(userData);
-		// 	storage.setItem(STORAGE_KEYS.user, JSON.stringify(userData));
-		// }
 	}, []);
 
+	/**
+	 * Memoized context value
+	 * Prevents unnecessary re-renders
+	 */
 	const value = useMemo(
-		() => ({ token, currentUser, isAuthenticated, setUser, saveLogin, logout }),
-		[token, currentUser, isAuthenticated, setUser, saveLogin, logout],
+		() => ({
+			token,
+			currentUser,
+			updateCurrentUser,
+			isAuthenticated,
+			setUser,
+			saveLogin,
+			logout,
+		}),
+		[
+			token,
+			currentUser,
+			isAuthenticated,
+			updateCurrentUser,
+			setUser,
+			saveLogin,
+			logout,
+		],
 	);
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -22,15 +22,19 @@ export function getTalentAvatar() {
     return request("get", "/talent/profile");
 }
 
-//upload profile picture
+// upload profile picture
 export function uploadTalentAvatar(file) {
-    const form = new FormData();
+    // const form = new FormData();
     // name must be the same as the backend 
-    form.append("avatar", file);
-    return request("put", "/talent/avatar", form, {
+    // form.append("avatar", file);
+    return request("put", "/talent/avatar", file, {
         headers: { "Content-Type": "multipart/form-data" },
     });
 }
+
+// export function uploadTalentAvatar(formData) {
+//     return request("put", "/talent/avatar", formData);
+// }
 
 export function uploadTalentResume(file) {
     const form = new FormData();

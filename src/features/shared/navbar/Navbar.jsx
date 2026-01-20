@@ -1,6 +1,8 @@
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+//import defaultProfileImage from "../../../assets/images/profile-image.png";
 import { useAuth } from "../../../hooks/useAuth.jsx";
+import { buildAvatarUrl } from "../../../utils/Helpers/avatar.js";
 import {
 	getDisplayName,
 	getProfilePaths,
@@ -25,8 +27,6 @@ export default function NavbarComponent() {
 		setOpenMenu((prev) => (prev === menuName ? null : menuName));
 	}, []);
 
-	console.log("Current user: ", currentUser);
-
 	const tabs = useMemo(() => {
 		if (!token) return publicTabs;
 		return roleTabs[currentUser?.role] || [];
@@ -37,6 +37,14 @@ export default function NavbarComponent() {
 		() => getProfilePaths(currentUser?.role),
 		[currentUser?.role],
 	);
+	//const avatar = buildAvatarUrl(currentUser?.talentProfile?.avatarPublicId);
+
+	const avatar = `${buildAvatarUrl(
+		currentUser?.talentProfile?.avatarPublicId,
+	)}?v=${currentUser?.talentProfile?.updatedAt || Date.now()}`;
+	console.log("nav avatar", avatar);
+
+	console.log("nav user :", currentUser);
 
 	const handleLogout = useCallback(() => {
 		logout();
@@ -71,6 +79,7 @@ export default function NavbarComponent() {
 							onToggle={() => toggleMenu("profile")}
 							onLogout={handleLogout}
 							user={currentUser}
+							avatar={avatar}
 							displayName={displayName}
 							profilePath={profilePath}
 							settingsPath={settingsPath}

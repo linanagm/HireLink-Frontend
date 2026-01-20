@@ -1,18 +1,27 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import defaultProfileImage from "../../../assets/images/profile-image.png";
+import { useUploadAvatar } from "../../../hooks/useUploadAvatar";
 import { queryKeys } from "../../../lib/queryKeys";
 import {
 	getTalentProfile,
 	uploadTalentAvatar,
 } from "../../../services/talent.service";
+import { buildAvatarUrl } from "../../../utils/Helpers/avatar";
 
 export default function TalentProfile() {
-	const [avatarError, setAvatarError] = useState("");
-	const fileRef = useRef(null);
-	const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+	// upload avatar
+	const { fileRef, onPickAvatar, onAvatarChange, avatarError, avatarMutation } =
+		useUploadAvatar({
+			uploadFn: uploadTalentAvatar,
+			fieldName: "avatar",
+			invalidateKeys: [queryKeys.talentProfile, queryKeys.currentUser],
+			validationOptions: {
+				allowedTypes: ["image/jpeg", "image/png", "image/jpg"],
+				maxSizeMB: 5,
+			},
+		});
 
-	const qc = useQueryClient();
+	// get talent profile
 	const {
 		data: res,
 		isLoading,
@@ -26,51 +35,8 @@ export default function TalentProfile() {
 
 	const talentProfile = res?.data?.talentProfile ?? null;
 
-	const avatarMutation = useMutation({
-		mutationFn: (file) => uploadTalentAvatar(file),
-		/**
-		 * Called after a successful avatar upload.
-		 * Invalidates the talent profile query and the current user query.
-		 */
-		onSuccess: async () => {
-			// get new profile data
-			await qc.invalidateQueries(queryKeys.talentProfile);
-			//for navbar
-			await qc.invalidateQueries(queryKeys.currentUser);
-		},
-	});
-
-	const onPickAvatar = () => fileRef.current.click();
-
-	const onAvatarChange = (e) => {
-		const file = e.target.files[0];
-		if (!file) return;
-		setAvatarError("");
-		//validation
-		const allowed = ["image/jpeg", "image/png", "image/jpg"];
-		if (!allowed.includes(file.type)) {
-			setAvatarError("Only JPG, JPEG,  and PNG images are allowed");
-			e.target.value = "";
-			return;
-		}
-
-		if (file.size > 5 * 1024 * 1024) {
-			setAvatarError("Image size must be less than 5 MB");
-			e.target.value = "";
-			return;
-		}
-		avatarMutation.mutate(file);
-
-		//if he chose the same photo again
-		e.target.value = "";
-	};
-
 	console.log("profile-data: \n", res);
 
-	const buildAvatarUrl = (publicId) => {
-		if (!publicId) return defaultProfileImage;
-		return `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/${publicId}`;
-	};
 	const profile = {
 		name: `${talentProfile?.firstName}  ${talentProfile?.lastName}`,
 		location: talentProfile?.location ?? "location",
@@ -81,7 +47,7 @@ export default function TalentProfile() {
 		title: talentProfile?.headline ?? "Your Title",
 		level: "Expert",
 		bio: talentProfile?.bio,
-		bullets: talentProfile?.skills.name ?? [],
+		bullets: talentProfile?.skills?.map((s) => s.name) ?? [],
 		work: talentProfile?.workExperience ?? "No experience",
 		chips: talentProfile?.certifications ?? [],
 		cert: {

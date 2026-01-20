@@ -1,17 +1,15 @@
 import { Link } from "react-router-dom";
-import defaultProfileImage from "../../../../assets/images/profile-image.png";
 
 export function ProfileMenu({
 	open,
 	onToggle,
 	onLogout,
 	user,
+	avatar,
 	displayName,
 	profilePath,
 	settingsPath,
 }) {
-	const avatar = user?.image || defaultProfileImage;
-
 	return (
 		<li className="relative">
 			<button
@@ -20,6 +18,7 @@ export function ProfileMenu({
 				className="rounded-full focus:outline-none focus:ring-4 focus:ring-gray-300"
 				aria-label="User profile"
 			>
+				{/* PROFILE AVATAR */}
 				<img
 					className="w-10 h-10 rounded-full"
 					src={avatar}
@@ -31,6 +30,7 @@ export function ProfileMenu({
 				<div className="absolute right-0 mt-2 w-72 bg-white shadow-lg rounded-xl border z-50">
 					{/* HEADER */}
 					<div className="p-3 flex items-center gap-2 bg-gray-100 rounded-t-xl">
+						{/* PROFILE AVATAR */}
 						<img
 							className="w-10 h-10 rounded-full"
 							src={avatar}
