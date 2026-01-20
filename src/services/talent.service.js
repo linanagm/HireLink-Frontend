@@ -1,20 +1,20 @@
-
-
+import { PATHS } from "../constants/apiPaths";
+import { api } from "../lib/api";
 import { request } from "./auth.service";
 
 
 // *********************** talent profile services ***********
 
 export function getTalentProfile() {
-    return request("get", "/talent/profile");
+    return api("get", PATHS.talent.profile);
 }
 
 export function updateTalentProfile(payload) {
-    return request("put", "/talent/profile", payload);
+    return api("put", PATHS.talent.profile, payload);
 }
 
 export function setTalentSkills(payload) {
-    return request("put", "/talent/skills", payload);
+    return api("put", PATHS.talent.skills, payload);
 }
 
 //get profile picture
@@ -24,22 +24,17 @@ export function getTalentAvatar() {
 
 // upload profile picture
 export function uploadTalentAvatar(file) {
-    // const form = new FormData();
-    // name must be the same as the backend 
-    // form.append("avatar", file);
-    return request("put", "/talent/avatar", file, {
+
+    return api("put", PATHS.talent.avatar, file, {
         headers: { "Content-Type": "multipart/form-data" },
     });
 }
 
-// export function uploadTalentAvatar(formData) {
-//     return request("put", "/talent/avatar", formData);
-// }
-
+// upload resume
 export function uploadTalentResume(file) {
     const form = new FormData();
     form.append("resume", file);
-    return request("put", "/talent/resume", form, {
+    return api("put", PATHS.talent.resume, form, {
         headers: { "Content-Type": "multipart/form-data" },
     });
 }
@@ -49,44 +44,29 @@ export function uploadTalentResume(file) {
 // *********************** talent with jobs services *********************** 
 //get jobs
 export function getJobs(params = {}) {
-    return request("get", "/jobs", null, { params });
+    return api("get", PATHS.jobs.jobsList, null, { params });
 };
 
+
 export function getJobById(id) {
-    return request("get", `/jobs/${id}`);
+    return api("get", PATHS.jobs.jobDetails(id));
 }
 
 export function applyToJob(id, payload) {
-    return request("post", `/jobs/${id}/apply`, payload);
+    return api("post", PATHS.jobs.jobPropsal(id), payload);
 }
 
 // ********************** talent with applications services ********************
 // get applications
 export function getMyApplications(params = {}) {
-    return request("get", "/talent/applications", null, { params });
+    return api("get", PATHS.talent.applications, null, { params });
 }
 
 // get application by id
 export function getApplicationById(id) {
-    return request("get", `/applications/${id}`);
+    return api("get", PATHS.applications.applicationDetails(id));
 }
 
 
-// export const uploadAvatar = (file) => {
-//     const fd = new FormData();
-//     fd.append("avatar", file);
-//     return request("put", "/talent/avatar", fd);
-// }
-
-// export const uploadResume = (file) => {
-//     const fd = new FormData();
-//     fd.append("resume", file);
-//     return request("put", "/talent/resume", fd);
-// }
-
-// export const getCurrent = () => request("get", "/talent/profile");
-
-// export const getAvatarUrl = (width = 80, height = 80) =>
-//     request("get", `/talent/avatar?width=${width}&height=${height}`);
 
 

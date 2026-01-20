@@ -34,6 +34,7 @@ export function useLogin() {
 		try {
 			// 1) LOGIN -> TOKEN
 			const loginRes = await loginApi({ email, password });
+			console.log("login response: ", loginRes);
 
 			if (!loginRes?.ok) throw new Error(loginRes?.message || "Login failed");
 

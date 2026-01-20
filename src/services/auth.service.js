@@ -1,19 +1,9 @@
 import axiosClient from "../config/axiosClient";
+import { PATHS } from "../constants/apiPaths";
+import { api } from "../lib/api";
 import { handleError } from "../utils/helpers";
 
 
-
-const endpoints = {
-	register: "/auth/register",
-	verify: "/auth/verify",
-	login: "/auth/login",
-	refresh: "/auth/refresh",
-	resetRequest: "/auth/reset/request",
-	reset: "/auth/reset",
-	me: "/auth/me",
-	logout: "/auth/logout",
-	logoutAll: "/auth/logout/all",
-};
 
 export async function request(method, url, data = null, config = {}) {
 	try {
@@ -31,32 +21,39 @@ export async function request(method, url, data = null, config = {}) {
 	}
 }
 
-export const register = (values) =>
-	request("post", endpoints.register, values, { timeout: 60000 });
+
+export const register = (values) => api("post", PATHS.auth.register, values);
+
 
 export const verifyEmail = (verificationToken) =>
-	request("post", endpoints.verify, { verificationToken });
+	api("post", PATHS.auth.verify, { verificationToken });
+
 
 export const login = ({ email, password }) =>
-	request("post", endpoints.login, { email, password });
+	api("post", PATHS.auth.login, { email, password });
 
-export const refreshToken = () => request("get", endpoints.refresh);
+
+export const refreshToken = () => api("get", PATHS.auth.refresh);
+
 
 export const requestPasswordReset = (email) =>
-	request("post", endpoints.resetRequest, { email });
+	api("post", PATHS.auth.resetRequest, { email });
+
+
 
 export const resetPassword = (verificationToken, newPassword, oldPassword) =>
-	request("put", endpoints.reset, {
+	api("put", PATHS.auth.reset, {
 		verificationToken,
 		newPassword,
 		oldPassword,
 	});
 
+
 export const getUser = (token) =>
-	request("get", endpoints.me, {
+	api("get", PATHS.auth.me, {
 		headers: { Authorization: `Bearer ${token}` },
 	});
 
-export const logout = () => request("post", endpoints.logout);
+export const logout = () => api("post", PATHS.auth.logout);
 
-export const logoutAll = () => request("post", endpoints.logoutAll);
+export const logoutAll = () => api("post", PATHS.auth.logoutAll);
