@@ -6,6 +6,7 @@ import {
 	useState,
 } from "react";
 import { useCurrentUser } from "../hooks/queries/useCurrentUser";
+import { logoutRes } from "../services/auth.service";
 
 // AuthContext will be used by the whole app to access auth data
 export const AuthContext = createContext(null);
@@ -20,12 +21,6 @@ const STORAGE_KEYS = {
 // Read from localStorage first, if not found check sessionStorage
 const readFromStorage = (key) => {
 	return localStorage.getItem(key) ?? sessionStorage.getItem(key);
-};
-
-// Remove a key from both storages (used on logout)
-const removeFromBothStorages = (key) => {
-	localStorage.removeItem(key);
-	sessionStorage.removeItem(key);
 };
 
 // Safely parse JSON from storage
@@ -84,9 +79,10 @@ export function AuthProvider({ children }) {
 	 * Logout the user
 	 * Clears token and user from state and storage
 	 */
-	const logout = useCallback(() => {
-		removeFromBothStorages(STORAGE_KEYS.token);
-		removeFromBothStorages(STORAGE_KEYS.user);
+	const logout = useCallback(async () => {
+		await logoutRes();
+		localStorage.clear();
+		sessionStorage.clear();
 
 		setToken(null);
 		setCurrentUser(null);

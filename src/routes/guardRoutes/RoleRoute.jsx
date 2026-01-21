@@ -1,6 +1,16 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import Loading from "../../components/UI/Loading";
 import { useAuth } from "../../hooks/useAuth";
+/**
+ * RoleRoute component is a protected route that checks if the user is logged in and has the right role to access the route.
+ * If the user is not logged in, it redirects to the redirect path.
+ * If the user is logged in but does not have the right role, it redirects to the forbidden path.
+ * If the user is logged in and has the right role, it renders the children component.
+ * @param {allowed} array of roles that are allowed to access the route
+ * @param {redirect} path to redirect to if the user is not logged in
+ * @param {forbidden} path to redirect to if the user is logged in but does not have the right role
+ * @param {children} component to render if the user is logged in and has the right role
+ */
 export default function RoleRoute({
 	allowed = [],
 	redirect = "/",

@@ -1,4 +1,4 @@
-import { cx } from "../../../utils/helpers.js";
+import { cx } from "../../../utils/formatter";
 
 export default function Tabs({ tabs, activeTab, setActiveTab }) {
 	return (

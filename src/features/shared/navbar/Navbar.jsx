@@ -2,7 +2,6 @@ import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 //import defaultProfileImage from "../../../assets/images/profile-image.png";
 import { useAuth } from "../../../hooks/useAuth.jsx";
-import { logoutRes } from "../../../services/auth.service.js";
 import { buildAvatarUrl } from "../../../utils/Helpers/avatar.js";
 import {
 	getDisplayName,
@@ -17,6 +16,13 @@ import { ProfileMenu } from "./components/ProfileMenu.jsx";
 import { SearchBar } from "./components/SearchBar.jsx";
 import { Tabs } from "./components/Tabs.jsx";
 
+/**
+ * Navbar component
+ * @returns {JSX.Element} - The Navbar component
+ * @param {object} props - props for the Navbar component
+ * @example
+ * <NavbarComponent />
+ */
 export default function NavbarComponent() {
 	const { token, currentUser, logout } = useAuth();
 	const navigate = useNavigate();
@@ -47,9 +53,14 @@ export default function NavbarComponent() {
 
 	console.log("nav user :", currentUser);
 
-	const handleLogout = useCallback(() => {
-		logoutRes();
-		logout();
+	const handleLogout = useCallback(async () => {
+		//await logoutRes();
+		// console.log("logoytRes", logoutRes);
+
+		// localStorage.clear();
+		// sessionStorage.clear();
+		// caches.delete("jwt");
+		await logout();
 		closeMenus();
 		navigate("/");
 	}, [logout, navigate, closeMenus]);
@@ -79,7 +90,7 @@ export default function NavbarComponent() {
 						<ProfileMenu
 							open={openMenu === "profile"}
 							onToggle={() => toggleMenu("profile")}
-							onLogout={handleLogout}
+							onLogout={() => handleLogout()}
 							user={currentUser}
 							avatar={avatar}
 							displayName={displayName}

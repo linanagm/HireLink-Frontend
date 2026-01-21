@@ -1,101 +1,16 @@
-// import React, { useState } from "react";
-// import { Link } from "react-router-dom";
-
-// export default function App() {
-// 	const [statusFilter, setStatusFilter] = useState("");
-// 	const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
-
-// 	const statusOptions = [
-// 		"Under Review",
-// 		"Interview Scheduled",
-// 		"Pending",
-// 		"Accepted",
-// 		"Rejected",
-// 	];
-
-// 	const filteredApplications = statusFilter
-// 		? applicationsData.filter((job) => job.status === statusFilter)
-// 		: applicationsData;
-
-// 	return (
-// 		<div className="min-h-screen bg-gray-100">
-// 			{/* Filters */}
-// 			<div className="px-10 mt-6 flex gap-4 relative">
-// 				<div className="relative">
-// 					<button
-// 						type="button"
-// 						className="bg-white border px-4 py-2 rounded-md whitespace-nowrap"
-// 						onClick={() => setStatusDropdownOpen(!statusDropdownOpen)}
-// 					>
-// 						{statusFilter || "Status"}
-// 					</button>
-
-// 					{statusDropdownOpen && (
-// 						<div className="absolute mt-1 bg-white border rounded-md shadow-lg z-10">
-// 							{statusOptions.map((status, idx) => (
-// 								<div
-// 									key={idx}
-// 									className="px-4 py-2 hover:bg-gray-100 cursor-pointer whitespace-nowrap"
-// 									onClick={() => {
-// 										setStatusFilter(status);
-// 										setStatusDropdownOpen(false);
-// 									}}
-// 								>
-// 									{status}
-// 								</div>
-// 							))}
-// 							<div
-// 								className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-red-500 whitespace-nowrap"
-// 								onClick={() => {
-// 									setStatusFilter("");
-// 									setStatusDropdownOpen(false);
-// 								}}
-// 							>
-// 								Clear
-// 							</div>
-// 						</div>
-// 					)}
-// 				</div>
-// 			</div>
-
-// 			{/* Applications List */}
-// 			<div className="px-10 mt-6 space-y-5">
-// 				{filteredApplications.map((job, idx) => (
-// 					<div
-// 						key={idx}
-// 						className="bg-purple-100 rounded-xl p-6 flex justify-between items-start"
-// 					>
-// 						<div>
-// 							<h2 className="font-semibold text-lg">{job.title}</h2>
-// 							<p className="text-gray-600">{job.company}</p>
-// 							<p className="text-gray-500">{job.date}</p>
-
-// 							<span
-// 								className={`mt-2 inline-block font-semibold ${job.statusColor}`}
-// 							>
-// 								● {job.status}
-// 							</span>
-// 						</div>
-
-// 						<Link
-// 							to={`/jobs/${idx}`}
-// 							className="bg-purple-600 text-white px-4 py-2 rounded-lg inline-block"
-// 						>
-// 							View Details
-// 						</Link>
-// 					</div>
-// 				))}
-// 			</div>
-// 		</div>
-// 	);
-// }
-
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import FieldError from "../../../components/UI/FieldError";
 import Loading from "../../../components/UI/Loading";
 import { getMyApplications } from "../../../services/talent.service";
+/**
+ * MyApplications is a component that displays a list of job applications
+ * for the current user. The component allows the user to filter the list
+ * by job status and view job details by clicking on a job title.
+ * The component renders a loading indicator while the data is being fetched and
+ * an error message if an error occurs while fetching the data.
+ */
 export default function MyApplications() {
 	const [statusFilter, setStatusFilter] = useState("");
 	const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);

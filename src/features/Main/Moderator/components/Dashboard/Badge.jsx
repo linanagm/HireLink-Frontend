@@ -1,4 +1,4 @@
-import { cx } from "../../../utils/helpers.js";
+import { cx } from "../../../../../utils/formatter.js";
 
 export default function Badge({ variant = "slate", children }) {
 	const base =

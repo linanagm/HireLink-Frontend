@@ -6,13 +6,21 @@ import { getJobs } from "../../../services/talent.service";
 
 const PAGE_SIZE = 10;
 
+/**
+ * JobList component
+ *
+ * This component renders a list of job postings based on the selected tab.
+ * If the "recent" tab is selected, it renders a list of the most recent job postings.
+ * If the "best" tab is selected, it renders a list of job postings that best match the user's skills and interests.
+ *
+ * @returns {JSX.Element} a JSX element representing the JobList component
+ */
 export default function JobList() {
 	const [tab, setTab] = useState("recent"); // "recent" | "best"
 	const [page, setPage] = useState(1);
 
 	const skip = (page - 1) * PAGE_SIZE;
 
-	// important: best مش API mode. ده UI logic
 	const queryParams = useMemo(
 		() => ({ limit: PAGE_SIZE, skip, mode: "recent" }),
 		[skip],
@@ -34,7 +42,7 @@ export default function JobList() {
 	const jobs = response?.data?.data ?? response?.data ?? [];
 	const safeJobs = Array.isArray(jobs) ? jobs : [];
 
-	// لاحقًا: هتجيبيهم من profile الحقيقي
+	// dummy data
 	const userSkills = ["SEO", "SQL", "Figma"];
 	const userInterests = ["Marketing", "Design"];
 

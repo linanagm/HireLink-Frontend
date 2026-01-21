@@ -27,24 +27,18 @@ axiosClient.interceptors.request.use(
 	(error) => Promise.reject(error),
 );
 
-//Response Interceptor
-// axiosClient.interceptors.response.use(
-// 	(response) => response,
-// 	(error) => {
-// 		if (error.response && error.response.status === 401) {
-
-// 			localStorage.removeItem("token");
-// 			window.location.href = "/login";
-// 		}
-// 		console.log('req err:', error);
-
-// 		return Promise.reject(error);
-// 	},
-// );
 
 let isRefreshing = false;
 let failedQueue = [];
 
+/**
+ * Processes the failed queue by resolving or rejecting the promises
+ * depending on whether an error or token is provided.
+ * If an error is provided, all promises in the queue are rejected
+ * with the error. If a token is provided, all promises in the queue
+ * are resolved with the token.
+ * After processing the queue, the failed queue is reset to an empty array.
+ */
 const processQueue = (error, token = null) => {
 	failedQueue.forEach((prom) => {
 		if (error) {
@@ -82,7 +76,7 @@ axiosClient.interceptors.response.use(
 			isRefreshing = true;
 
 			try {
-				const res = await axiosClient.post(PATHS.auth.refresh);
+				const res = await axiosClient.get(PATHS.auth.refresh);
 				const newAccessToken = res.data.accessToken;
 
 				setAccessToken(newAccessToken);

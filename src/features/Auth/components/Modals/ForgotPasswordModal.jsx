@@ -6,6 +6,17 @@ import { requestPasswordReset } from "../../../../services/auth.service.js";
 import { getMailProviderUrl } from "../../../../utils/mail.js";
 import { emailschema } from "../../../../utils/validation/authValidationjs";
 
+/**
+ * ForgotPasswordModal is a component that handles the forgot password functionality.
+ * It shows a form with an email field and a submit button.
+ * When the user clicks the submit button, the requestPasswordReset function from the auth.service is called.
+ * If the request password reset is successful, a success message is shown to the user.
+ * If the request password reset fails, an error message is shown to the user.
+ * It shows a link to the mail provider's website if the user has submitted their email address.
+ * It shows a loading indicator while the request password reset is in progress.
+ * It shows an error message if the API returns an error.
+ * @param {function} onClose - A function to be called when the modal is closed.
+ */
 export default function ForgotPasswordModal({ onClose }) {
 	const [message, setMessage] = useState("");
 	const [error, setError] = useState("");

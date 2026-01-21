@@ -8,6 +8,20 @@ import InfoItem from "../../../components/UI/InfoItem";
 import { applyToJob, getJobById } from "../../../services/talent.service";
 import { proposalSchema } from "../../../utils/validation/jobs.validators";
 
+/**
+ * JobProposal component
+ *
+ * This component is used to display a job proposal and its details.
+ * It also allows the user to submit a proposal for the job.
+ *
+ * The component receives the job id as a parameter and fetches the job data from the server.
+ * It then displays the job details and allows the user to edit the proposal terms.
+ *
+ * The user can then submit the proposal and the component will handle the submission process.
+ *
+ * @param {string} id - The id of the job.
+ * @returns {JSX.Element} - The JSX element for the job proposal component.
+ */
 export default function JobProposal() {
 	const { id } = useParams();
 

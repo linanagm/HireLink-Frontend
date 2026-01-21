@@ -1,5 +1,13 @@
 import SuccessCard from "../../../../components/UI/SuccessCard";
 
+/**
+ * VerifyEmailModal is a component that handles the verification of the user's email address.
+ * It takes status, message, onClose, and buttonLink as props.
+ * It shows a success, loading, or error card based on the status.
+ * It shows a message based on the message.
+ * It shows a button with the buttonLink text (defaults to "Go to Login" if not provided).
+ * It shows a close button.
+ */
 export default function VerifyEmailModal({
 	status,
 	message,

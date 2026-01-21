@@ -1,4 +1,4 @@
-import { cx } from "../../../utils/helpers.js";
+import { cx } from "../../../utils/formatter.js";
 
 export default function Icon({ name, className }) {
 	const common = "w-5 h-5";

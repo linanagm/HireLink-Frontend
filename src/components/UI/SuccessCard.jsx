@@ -1,6 +1,14 @@
 import { Link } from "react-router-dom";
 import correctImage from "../../assets/images/correct.svg";
 
+/**
+ * SuccessCard is a component that displays a success, loading, or error card based on the status.
+ * It takes status, message, button text, and button link as props.
+ * It shows a success card with a message and a button based on the button link.
+ * It shows a loading card with a spinner if the status is "loading".
+ * It shows an error card if the status is "error".
+ * The component is intended to be used in the modal components to display the result of an action.
+ */
 export default function SuccessCard({
 	status,
 	message,

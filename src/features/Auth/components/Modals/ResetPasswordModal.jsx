@@ -5,6 +5,12 @@ import FormInput from "../../../../components/UI/FormInput";
 import { resetPassword } from "../../../../services/auth.service";
 import { passwordschema } from "../../../../utils/validation/authValidationjs";
 
+/**
+ * Resets the password for the user.
+ * @param {string} token - The verification token obtained from the password reset request.
+ * @param {function} onClose - A function to be called when the modal is closed.
+ * @param {function} onSuccess - A function to be called when the password reset is successful.
+ */
 export default function ResetPasswordModal({ token, onClose, onSuccess }) {
 	const [message, setMessage] = useState("");
 	const [error, setError] = useState("");

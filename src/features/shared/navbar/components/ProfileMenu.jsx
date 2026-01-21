@@ -1,5 +1,16 @@
 import { Link } from "react-router-dom";
 
+/**
+ * ProfileMenu component
+ * @param {boolean} open - If the menu is open
+ * @param {function} onToggle - Toggle the menu
+ * @param {function} onLogout - Logout the user
+ * @param {object} user - User object
+ * @param {string} avatar - User avatar URL
+ * @param {string} displayName - User name
+ * @param {string} profilePath - Path to user profile page
+ * @param {string} settingsPath - Path to user settings page
+ */
 export function ProfileMenu({
 	open,
 	onToggle,

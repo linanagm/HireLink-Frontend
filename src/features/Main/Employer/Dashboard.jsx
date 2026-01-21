@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 const Dashboard = () => {
 	const [activeTab, setActiveTab] = useState("jobs");
@@ -239,7 +239,7 @@ const Dashboard = () => {
 					>
 						{talents.map((t, i) => (
 							<div
-								key={i}
+								key={i.id}
 								style={{
 									backgroundColor: "#f3e8ff",
 									padding: "15px",
@@ -256,6 +256,7 @@ const Dashboard = () => {
 											height: "50px",
 											borderRadius: "50%",
 										}}
+										alt={t.name}
 									/>
 									<div>
 										<p style={{ fontWeight: "600" }}>{t.name}</p>
@@ -279,7 +280,7 @@ const Dashboard = () => {
 								>
 									{t.skills.map((s, j) => (
 										<span
-											key={j}
+											key={j.id}
 											style={{
 												backgroundColor: "white",
 												border: "1px solid #d8b4fe",

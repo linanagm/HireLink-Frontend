@@ -3,6 +3,21 @@ import { useState } from "react";
 import { register } from "../../../services/auth.service";
 import { EmployerRegisterSchema } from "../../../utils/validation/authValidationjs";
 
+/**
+ * EmployerSignupForm is a component that handles the employer signup functionality.
+ * It uses the useFormik hook to create a form with name, email, password, and confirm password fields.
+ * It uses the register function from the auth.service to authenticate the employer.
+ * It saves the employer's authentication token and full user info (including role) on success.
+ * It navigates to the appropriate dashboard based on the employer's role.
+ * It shows an error message if the employer login fails.
+ * It shows a loading indicator while the employer login is in progress.
+ * It shows a link to the forgot password page.
+ * It shows a link to the home page.
+ * It shows an error message if the API returns an error.
+ * @param {Object} props - An object containing the role and onSuccess function.
+ * @param {String} role - The role of the employer.
+ * @param {Function} onSuccess - A function to be called on signup success.
+ */
 export default function EmployerSignupForm({ role, onSuccess }) {
 	//const navigate = useNavigate();
 	const [apiError, setApiError] = useState("");

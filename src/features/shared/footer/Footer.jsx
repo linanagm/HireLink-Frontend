@@ -3,6 +3,13 @@ import { NavLink } from "react-router-dom";
 import footerBanner from "../../../assets/images/footer.svg";
 import whiteLogo from "../../../assets/images/H-white.svg";
 
+/**
+ * Footer component
+ * @returns {JSX.Element} The footer component
+ *
+ * A component that renders the footer section of the website.
+ * It includes the company's logo, contact information, terms of service, and social media links.
+ */
 export default function Footer() {
 	const [Count, SetCount] = useState();
 

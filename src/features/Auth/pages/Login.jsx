@@ -4,6 +4,19 @@ import loginImage from "../../../assets/images/login.svg";
 import LoginForm from "../components/LoginForm";
 import ForgotPasswordModal from "../components/Modals/ForgotPasswordModal";
 
+/**
+ * The login page allows users to log in with their email and password.
+ * The page shows a login form and a forgot password button.
+ * When the user clicks the forgot password button, the ForgotPasswordModal is shown.
+ * The ForgotPasswordModal allows the user to enter their email and send a password reset email.
+ * If the password reset is successful, the user is redirected to the login page.
+ * If the password reset fails, an error message is shown to the user.
+ * The login page also shows a link to the register page.
+ * The register page allows users to sign up with their email, password, and name.
+ * The page shows a register form and a terms and conditions checkbox.
+ * When the user clicks the register button, the register form is validated and the user is redirected to the login page.
+ * If the register form is invalid, an error message is shown to the user.
+ */
 export default function Login() {
 	const [showForgotModal, setShowForgotModal] = useState(false);
 

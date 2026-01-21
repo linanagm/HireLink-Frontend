@@ -1,7 +1,15 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import aboutUs from "../../../assets/images/about-us.svg";
 
+/**
+ * About component
+ *
+ * This component renders the about page of the application.
+ * It includes the title, description, mission, and features of the application.
+ *
+ * @returns {JSX.Element} The About component
+ */
 export default function About() {
 	const [Count, SetCount] = useState();
 

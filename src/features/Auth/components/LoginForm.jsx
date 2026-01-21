@@ -4,6 +4,14 @@ import { Link } from "react-router-dom";
 import { LoginSchema } from "../../../utils/validation/authValidationjs";
 import { useLogin } from "../hooks/useLogin";
 
+/**
+ * LoginForm is a component that handles the login functionality.
+ * It shows a login form with email and password fields.
+ * It allows users to remember their login credentials.
+ * It shows a forgot password button.
+ * It shows a link to the signup page.
+ * It shows an error message if the API returns an error.
+ */
 export default function LoginForm({ onOpenForgot }) {
 	const [showPassword, setShowPassword] = useState(false);
 	const [rememberMeChecked, setRememberMeChecked] = useState(false);

@@ -1,21 +1,29 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { NavLink } from "react-router-dom";
 import achievementImage from "../../../assets/images/achievement.png";
-// carsoul images
 import a1 from "../../../assets/images/carousel/achievement1.svg";
 import a2 from "../../../assets/images/carousel/achievement2.svg";
 import a3 from "../../../assets/images/carousel/achievement3.svg";
 import a4 from "../../../assets/images/carousel/achievement4.svg";
 import a5 from "../../../assets/images/carousel/achievement5.svg";
-import heroImage from "../../../assets/images/home.svg";
 import bannarImage from "../../../assets/images/home-bannar.svg";
+import heroImage from "../../../assets/images/home.svg";
 import AchievementCarousel from "../../../components/UI/AchievmentCarousel";
 import Card from "../../../components/UI/Card";
 import InfoCard from "../../../components/UI/InfoCard";
 import StatCard from "../../../components/UI/StatCard";
 import TestimonialCard from "../../../components/UI/TestimonialCard";
 
+/**
+ * Home page component
+ *
+ * This component renders the home page of the application.
+ *
+ * It includes the hero section, our achievements, how it works, why choose us, and testimonials.
+ *
+ * @returns {JSX.Element} The home page component
+ */
 export default function Home() {
 	const [Count, SetCount] = useState(0);
 
@@ -175,22 +183,22 @@ export default function Home() {
 				<div className="grid md:grid-cols-4 gap-6 max-w-6xl mx-auto px-6">
 					<TestimonialCard
 						name="Emily Johnson"
-						role="Software Engineer"
+						roleText="Software Engineer"
 						text="This platform made finding a job fast and stress-free."
 					/>
 					<TestimonialCard
 						name="Ahmed Ali"
-						role="HR Manager"
+						roleText="HR Manager"
 						text="Hiring talent has never been this smooth and organized."
 					/>
 					<TestimonialCard
 						name="Lydia Chen"
-						role="Product Designer"
+						roleText="Product Designer"
 						text="Great user experience and real opportunities."
 					/>
 					<TestimonialCard
 						name="Lydia Chen"
-						role="Product Designer"
+						roleText="Product Designer"
 						text="Great user experience and real opportunities."
 					/>
 				</div>

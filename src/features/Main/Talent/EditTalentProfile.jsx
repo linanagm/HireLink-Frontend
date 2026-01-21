@@ -1,3 +1,4 @@
+//اتحذفتonboarding profile
 import { useState } from "react";
 
 export default function OnboardingProfileSetup() {

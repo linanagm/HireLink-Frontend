@@ -1,5 +1,10 @@
 import { NavLink } from "react-router-dom";
 
+/**
+ * Renders a list of authentication-related links.
+ * This component is used in the navbar to provide links to the login and sign up pages.
+ * @returns {JSX.Element} - A JSX element representing a list of authentication-related links.
+ */
 export function AuthButtons() {
 	return (
 		<ul className="flex gap-7">

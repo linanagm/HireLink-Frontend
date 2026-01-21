@@ -1,17 +1,17 @@
 import { useMemo, useState } from "react";
-import Badge from "../../../components/Admin/Dashboard/Badge.jsx";
-import { Card } from "../../../components/Admin/Dashboard/Card";
+import { useAuth } from "../../../hooks/useAuth.jsx";
+import { MOCK_USERS, TABS } from "../../../services/adminMockData.js";
+import Badge from "./components/Dashboard/Badge.jsx";
+import { Card } from "./components/Dashboard/Card";
 import {
 	ActivityStateChart,
 	UsersGrowthChart,
-} from "../../../components/Admin/Dashboard/Charts.jsx";
-import Sidebar from "../../../components/Admin/Dashboard/Sidebar";
-import StatsGrid from "../../../components/Admin/Dashboard/StatsGrid";
-import Tabs from "../../../components/Admin/Dashboard/Tabs";
-import Topbar from "../../../components/Admin/Dashboard/Topbar";
-import UsersTable from "../../../components/Admin/Dashboard/UsersTable";
-import { useAuth } from "../../../hooks/useAuth.jsx";
-import { MOCK_USERS, TABS } from "../../../services/adminMockData.js";
+} from "./components/Dashboard/Charts.jsx";
+import Sidebar from "./components/Dashboard/Sidebar";
+import StatsGrid from "./components/Dashboard/StatsGrid";
+import Tabs from "./components/Dashboard/Tabs";
+import Topbar from "./components/Dashboard/Topbar";
+import UsersTable from "./components/Dashboard/UsersTable";
 
 export default function AdminDashboard() {
 	const { logout } = useAuth();

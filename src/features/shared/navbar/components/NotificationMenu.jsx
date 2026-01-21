@@ -1,5 +1,12 @@
 import { Link } from "react-router-dom";
 
+/**
+ * A button to toggle the notifications menu
+ *
+ * @param {boolean} open - Whether the menu is open or not
+ * @param {function} onToggle - Function to toggle the menu
+ * @param {function} onClose - Function to close the menu
+ */
 export function NotificationsMenu({ open, onToggle, onClose }) {
 	return (
 		<li className="relative">

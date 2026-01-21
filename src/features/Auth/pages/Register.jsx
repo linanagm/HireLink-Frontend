@@ -5,6 +5,16 @@ import signupImage from "../../../assets/images/signup.svg";
 import EmployerSignupForm from "../components/EmployerSignupForm";
 import SignupSuccess from "../components/Modals/SignupSuccessModal";
 import TalentSignupForm from "../components/TalentSignupForm";
+/**
+ * The Register component handles the signup functionality for both talent and employer.
+ * It shows a form based on the role and handles the submission based on the role.
+ * It saves the user's email and shows a success modal on success.
+ * It shows a loading indicator while the signup is in progress.
+ * It shows a link to the forgot password page.
+ * It shows a link to the home page.
+ * It shows an error message if the API returns an error.
+ * @returns {JSX.Element} The Register component.
+ */
 export default function Register() {
 	const [role, setRole] = useState("TALENT");
 

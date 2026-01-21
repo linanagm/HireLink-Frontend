@@ -1,4 +1,13 @@
-export default function TestimonialCard({ name, role, text }) {
+/**
+ * A component that displays a testimonial card.
+ * It includes a name, role text and a text.
+ * The component is a div with a class name of "bg-zinc-300 p-6 rounded-2xl transition duration-300 ease-out hover:scale-105 hover:shadow-xl cursor-pointer".
+ * Inside the component is a header and a content section.
+ * The header contains an avatar and a name and role text.
+ * The content section contains a vertical line and a text.
+ * The component is intended to be used on the landing page to display testimonials from users.
+ */
+export default function TestimonialCard({ name, roleText, text }) {
 	return (
 		<div
 			className="
@@ -20,7 +29,7 @@ export default function TestimonialCard({ name, role, text }) {
 
 				<div>
 					<p className="font-semibold text-sm">{name}</p>
-					<p className="text-xs text-gray-500">{role}</p>
+					<p className="text-xs text-gray-500">{roleText}</p>
 				</div>
 			</div>
 

@@ -1,5 +1,10 @@
 import { NavLink } from "react-router-dom";
 
+/**
+ * Tabs component to render a list of tabs
+ * @param {object} tabs - An object with keys being the route and values being the label
+ * @returns {jsx} A JSX element containing a list of tabs
+ */
 export function Tabs({ tabs }) {
 	return (
 		<div className="hidden md:flex">

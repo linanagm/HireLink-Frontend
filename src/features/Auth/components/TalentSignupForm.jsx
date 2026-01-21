@@ -4,6 +4,18 @@ import { register } from "../../../services/auth.service";
 import { splitName } from "../../../utils/tools";
 import { TalentRegisterSchema } from "../../../utils/validation/authValidationjs";
 
+/**
+ * TalentSignupForm is a component that handles the talent sign up functionality.
+ * It uses the useFormik hook to create a form with name, email, password, and confirm password fields.
+ * It uses the register function from the auth.service to authenticate the talent.
+ * It saves the talent's authentication token and full user info (including role) on success.
+ * It navigates to the appropriate dashboard based on the talent's role.
+ * It shows an error message if the talent sign up fails.
+ * It shows a loading indicator while the talent sign up is in progress.
+ * It shows a link to the forgot password page.
+ * It shows a link to the home page.
+ * It shows an error message if the API returns an error.
+ */
 export default function TalentSignupForm({ role, onSuccess }) {
 	const [apiError, setApiError] = useState("");
 	const [isLoading, setIsLoading] = useState(false);

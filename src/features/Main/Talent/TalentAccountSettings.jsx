@@ -1,6 +1,4 @@
-// AccountSettings.jsx
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
 
 function PencilIcon({ className = "w-5 h-5" }) {
 	return (
@@ -14,6 +12,7 @@ function PencilIcon({ className = "w-5 h-5" }) {
 			strokeLinejoin="round"
 			xmlns="http://www.w3.org/2000/svg"
 		>
+			<title>edit</title>
 			<path d="M12 20h9" />
 			<path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5z" />
 		</svg>

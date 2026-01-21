@@ -1,6 +1,5 @@
 import { PATHS } from "../constants/apiPaths";
 import { api } from "../lib/api";
-import { request } from "./auth.service";
 
 
 // *********************** talent profile services ***********
@@ -25,7 +24,7 @@ export function setTalentLanguages(payload) {
 }
 //get profile picture
 export function getTalentAvatar() {
-    return request("get", "/talent/profile");
+    return api("get", "/talent/profile");
 }
 
 // upload profile picture
@@ -77,7 +76,6 @@ export function applyToJob(id, payload) {
 export function getMyApplications(params = {}) {
     return api("get", PATHS.talent.applications, null, { params });
 }
-
 
 
 

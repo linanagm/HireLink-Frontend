@@ -1,4 +1,3 @@
-import React from "react";
 import { FiSearch } from "react-icons/fi";
 import { IoSettingsOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
@@ -86,8 +85,8 @@ export default function SearchTalent() {
 
 					<nav className="flex gap-8 text-gray-700 font-medium">
 						<Link to="/dashboard">Dashboard</Link>
-						<a href="#">Post a Job</a>
-						<a className="text-purple-600 font-semibold" href="#">
+						<a href="#postjob">Post a Job</a>
+						<a className="text-purple-600 font-semibold" href="#search">
 							Search Talent
 						</a>
 					</nav>
@@ -128,7 +127,7 @@ export default function SearchTalent() {
 
 			<div className="px-10 grid grid-cols-2 gap-6">
 				{talents.map((t, i) => (
-					<div key={i} className="bg-purple-100 rounded-xl p-6 shadow-sm">
+					<div key={i.id} className="bg-purple-100 rounded-xl p-6 shadow-sm">
 						<div className="flex items-center gap-4">
 							<img src={t.img} className="w-14 h-14 rounded-full" alt="" />
 							<div>
@@ -142,7 +141,7 @@ export default function SearchTalent() {
 						<div className="mt-4 flex flex-wrap gap-2">
 							{t.skills.map((s, j) => (
 								<span
-									key={j}
+									key={j.id}
 									className="bg-white border border-purple-300 text-purple-700 px-3 py-1 rounded-full text-sm"
 								>
 									{s}

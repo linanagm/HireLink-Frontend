@@ -1,3 +1,10 @@
+/**
+ * A search bar component that will be hidden on mobile devices.
+ * It consists of a button with a magnifying glass icon and an input field.
+ * The input field will have a placeholder text of "Search" and a rounded border.
+ * It will also have a focus ring with a gray color.
+ * The component will be rendered with the given CSS classes.
+ */
 export function SearchBar() {
 	return (
 		<form className="hidden md:flex w-1/2">

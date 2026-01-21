@@ -1,5 +1,3 @@
-import React from "react";
-
 const EmployerProfile = () => {
 	return (
 		<div className="min-h-screen bg-gray-50 p-4">
@@ -66,19 +64,19 @@ const EmployerProfile = () => {
 							</span>
 							<div className="flex space-x-4">
 								<a
-									href="#"
+									href="#linkedin"
 									className="text-blue-700 hover:text-blue-900 hover:underline"
 								>
 									LinkedIn
 								</a>
 								<a
-									href="#"
+									href="#x"
 									className="text-gray-700 hover:text-gray-900 hover:underline"
 								>
 									X
 								</a>
 								<a
-									href="#"
+									href="#facebook"
 									className="text-blue-600 hover:text-blue-800 hover:underline"
 								>
 									Facebook

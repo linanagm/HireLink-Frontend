@@ -16,7 +16,6 @@ export const PATHS = {
         avatar: "/talent/avatar",//put/get/delete
         skills: "/talent/skills",//put
         languages: "/talent/languages",//put
-        //jobs: "/talent/jobs",
         applications: "/talent/applications",
         resume: "/talent/resume",//get/put/delete
     },

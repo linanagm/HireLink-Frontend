@@ -1,6 +1,8 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import defaultProfileImage from "../../../assets/images/profile-image.png";
+import Loading from "../../../components/UI/Loading";
+import { useProfileEdit } from "../../../hooks/useProfileEdit";
 import { useUploadAvatar } from "../../../hooks/useUploadAvatar";
 import { queryKeys } from "../../../lib/queryKeys";
 import {
@@ -13,60 +15,13 @@ import { buildAvatarUrl } from "../../../utils/Helpers/avatar";
 export default function TalentProfile() {
 	const [isEditingTitle, setIsEditingTitle] = useState(false);
 	const [titleDraft, setTitleDraft] = useState("");
+	const [exoertLevel, setExoertLevel] = useState("");
+	const [bio, setBio] = useState("");
+	const [experience, setExperience] = useState([]);
+	const [skills, setSkills] = useState([]);
+	const [certifications, setCertifications] = useState({});
 
-	// const qc = useQueryClient();
-	// const updateProfileMutation = useMutation({
-	// 	mutationFn: (payload) => updateTalentProfile({headline: payload}),
-	// 	onSuccess:async () => {
-	// 		await qc.invalidateQueries({querryKeys: queryKeys.talentProfile});
-	// 		await qc.invalidateQueries({queryKeys: queryKeys.currentUser});
-
-	// 	},
-
-	// })
-
-	const qc = useQueryClient();
-
-	const updateTitleMutation = useMutation({
-		mutationFn: (headline) => updateTalentProfile({ headline }),
-
-		// optimistic update
-		onMutate: async (headline) => {
-			await qc.cancelQueries({ queryKey: queryKeys.talentProfile });
-
-			const prev = qc.getQueryData(queryKeys.talentProfile);
-
-			// حدّث الكاش فورًا عشان UI يتغير في وقتها
-			qc.setQueryData(queryKeys.talentProfile, (old) => {
-				if (!old) return old;
-				return {
-					...old,
-					data: {
-						...old.data,
-						talentProfile: {
-							...old.data?.talentProfile,
-							headline,
-						},
-					},
-				};
-			});
-
-			return { prev };
-		},
-
-		// لو فشل: رجّعي القديم
-		onError: (err, _headline, ctx) => {
-			if (ctx?.prev) qc.setQueryData(queryKeys.talentProfile, ctx.prev);
-		},
-
-		// بعد النجاح/الفشل: هاتي الداتا الصح من السيرفر
-		onSettled: async () => {
-			await qc.invalidateQueries({ queryKey: queryKeys.talentProfile });
-			await qc.invalidateQueries({ queryKey: queryKeys.currentUser });
-		},
-	});
-
-	// upload avatar
+	// 1) upload avatar
 	const { fileRef, onPickAvatar, onAvatarChange, avatarError, avatarMutation } =
 		useUploadAvatar({
 			uploadFn: uploadTalentAvatar,
@@ -78,7 +33,7 @@ export default function TalentProfile() {
 			},
 		});
 
-	// get talent profile
+	// 2) get talent profile
 	const {
 		data: res,
 		isLoading,
@@ -89,9 +44,40 @@ export default function TalentProfile() {
 		queryFn: getTalentProfile,
 		staleTime: 60 * 1000,
 	});
-
 	const talentProfile = res?.data?.talentProfile ?? null;
+
 	console.log("profile-data: \n", res);
+	// 3) update title
+	const updateTitleMutation = useProfileEdit({
+		mutationFn: (headline) => updateTalentProfile({ headline }),
+
+		queryKey: queryKeys.talentProfile,
+
+		optimisticUpdater: (old, headline) => ({
+			...old,
+			data: {
+				...old.data,
+				talentProfile: {
+					...old.data?.talentProfile,
+					headline, // string ✅
+				},
+			},
+		}),
+
+		invalidateKeys: [queryKeys.currentUser],
+		successMsg: "Title updated successfully",
+		errorMsg: "Failed to update title",
+	});
+
+	// 4) update Expert Level
+
+	// 5) update bio
+
+	// 6) update experience
+
+	// 7) update skills
+
+	// 8) update certifications
 
 	const profile = {
 		name: `${talentProfile?.firstName}  ${talentProfile?.lastName}`,
@@ -129,7 +115,7 @@ export default function TalentProfile() {
 	const onDeleteCert = () => console.log("delete certification");
 
 	// handle loading and errors
-	if (isLoading) return <div>Loading...</div>;
+	if (isLoading) return <Loading />;
 	if (isError) return <div>{error.message}</div>;
 
 	return (

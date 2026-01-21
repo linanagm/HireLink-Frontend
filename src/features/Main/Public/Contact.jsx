@@ -1,16 +1,24 @@
 import { useFormik } from "formik";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import contactImage from "../../../assets/images/contact.svg";
 import Button from "../../../components/UI/Button";
 import FormInput from "../../../components/UI/FormInput";
 import { contactUsSchema } from "../../../utils/validation/generalValidation";
 
+/**
+ * Contact component
+ *
+ * This component renders the contact page of the application.
+ *
+ * It includes a form to send a message to the application's administrators.
+ *
+ * @returns {JSX.Element} The contact component
+ */
 export default function Contact() {
 	const [success, setSuccess] = useState(false);
 
 	const handleContactUs = async (values, { resetForm }) => {
-		//هتتغير لما نربط الباك اند
 		//fake request
 		await new Promise((resolve) => setTimeout(resolve, 1000));
 		console.log(values);
@@ -92,7 +100,9 @@ export default function Contact() {
 							/>
 
 							<div className="flex flex-col">
-								<label className="mb-1 font-semibold">Message</label>
+								<label htmlFor="" className="mb-1 font-semibold">
+									Message
+								</label>
 								<textarea
 									name="message"
 									rows="4"

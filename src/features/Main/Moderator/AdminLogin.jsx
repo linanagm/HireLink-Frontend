@@ -2,11 +2,25 @@ import { useFormik } from "formik";
 import { useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link, useNavigate } from "react-router-dom";
-import AdminLogo from "../../../components/Admin/AdminLogo";
 import { useAuth } from "../../../hooks/useAuth";
 import { getUser, login } from "../../../services/auth.service";
 import { LoginSchema } from "../../../utils/validation/authValidationjs";
+import AdminLogo from "./components/AdminLogo";
 
+/**
+ * AdminLogin is a component that handles the admin login functionality.
+ * It uses the useAuth hook to access the AuthContext and get the saveLogin function.
+ * It uses the useFormik hook to create a form with email and password fields.
+ * It uses the login function from the auth.service to authenticate the admin.
+ * It saves the admin's authentication token and full user info (including role) on success.
+ * It navigates to the appropriate dashboard based on the admin's role.
+ * It shows an error message if the admin login fails.
+ * It shows a loading indicator while the admin login is in progress.
+ * It shows a link to the forgot password page.
+ * It shows a link to the home page.
+ * It shows an error message if the API returns an error.
+ * @returns {React.Component} A React component that handles the admin login functionality.
+ */
 export default function AdminLogin() {
 	const { saveLogin } = useAuth();
 	const navigate = useNavigate();

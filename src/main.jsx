@@ -1,4 +1,3 @@
-// biome-ignore lint/correctness/noUnusedImports: <explanation>
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "@vitejs/plugin-react/preamble";
 import { StrictMode } from "react";

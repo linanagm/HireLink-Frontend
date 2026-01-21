@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 const JobPostingForm = () => {
 	const [formData, setFormData] = useState({
@@ -37,7 +37,10 @@ const JobPostingForm = () => {
 				<form onSubmit={handleSubmit} className="space-y-6">
 					{/* Job Title */}
 					<div>
-						<label className="block text-sm font-medium text-gray-700 mb-1">
+						<label
+							htmlFor=""
+							className="block text-sm font-medium text-gray-700 mb-1"
+						>
 							Job Title
 						</label>
 						<input
@@ -54,7 +57,10 @@ const JobPostingForm = () => {
 					{/* Employment Type & Job Category */}
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 						<div>
-							<label className="block text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor=""
+								className="block text-sm font-medium text-gray-700 mb-1"
+							>
 								Employment Type
 							</label>
 							<select
@@ -71,7 +77,10 @@ const JobPostingForm = () => {
 						</div>
 
 						<div>
-							<label className="block text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor=""
+								className="block text-sm font-medium text-gray-700 mb-1"
+							>
 								Job Category
 							</label>
 							<input
@@ -89,7 +98,10 @@ const JobPostingForm = () => {
 					{/* Experience Level & Job Location */}
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 						<div>
-							<label className="block text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor=""
+								className="block text-sm font-medium text-gray-700 mb-1"
+							>
 								Experience Level
 							</label>
 							<select
@@ -105,7 +117,10 @@ const JobPostingForm = () => {
 						</div>
 
 						<div>
-							<label className="block text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor=""
+								className="block text-sm font-medium text-gray-700 mb-1"
+							>
 								Job Location
 							</label>
 							<input
@@ -123,7 +138,10 @@ const JobPostingForm = () => {
 					{/* Salary Range & Work Type */}
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 						<div>
-							<label className="block text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor=""
+								className="block text-sm font-medium text-gray-700 mb-1"
+							>
 								Salary Range
 							</label>
 							<input
@@ -137,7 +155,10 @@ const JobPostingForm = () => {
 						</div>
 
 						<div>
-							<label className="block text-sm font-medium text-gray-700 mb-1">
+							<label
+								htmlFor=""
+								className="block text-sm font-medium text-gray-700 mb-1"
+							>
 								Work Type
 							</label>
 							<select
@@ -155,7 +176,10 @@ const JobPostingForm = () => {
 
 					{/* Job Description */}
 					<div>
-						<label className="block text-sm font-medium text-gray-700 mb-1">
+						<label
+							htmlFor=""
+							className="block text-sm font-medium text-gray-700 mb-1"
+						>
 							Job Description
 						</label>
 						<textarea
@@ -171,7 +195,10 @@ const JobPostingForm = () => {
 
 					{/* Required Skills */}
 					<div>
-						<label className="block text-sm font-medium text-gray-700 mb-1">
+						<label
+							htmlFor=""
+							className="block text-sm font-medium text-gray-700 mb-1"
+						>
 							Required Skills
 						</label>
 						<input
@@ -205,7 +232,10 @@ const JobPostingForm = () => {
 
 					{/* Auto-Response Message */}
 					<div>
-						<label className="block text-sm font-medium text-gray-700 mb-1">
+						<label
+							htmlFor=""
+							className="block text-sm font-medium text-gray-700 mb-1"
+						>
 							Auto-Response Message
 						</label>
 						<textarea

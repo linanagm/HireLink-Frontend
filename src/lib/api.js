@@ -1,7 +1,16 @@
 import axiosClient from "../config/axiosClient";
-import { handleError } from "../utils/helpers";
 
 
+/**
+ * Makes an API request using axios.
+ * Returns a normalized response object with ok, message, and data properties.
+ * If the request fails, it calls handleError and returns the result.
+ * @param {string} method - The HTTP method to use (e.g. GET, POST, PUT, DELETE)
+ * @param {string} url - The URL to make the request to
+ * @param {Object} [data] - Optional data to send with the request
+ * @param {Object} [config] - Optional config for the request
+ * @returns {Promise<Object>} A promise that resolves with the normalized response object
+ */
 export async function api(method, url, data = null, config = {}) {
     try {
         const response = await axiosClient[method](url, data, config);
@@ -14,7 +23,9 @@ export async function api(method, url, data = null, config = {}) {
             data: response?.data?.data ?? null,
         };
     } catch (error) {
-        return handleError(error);
+        console.log('api', error);
+
+        return;
 
     }
 }

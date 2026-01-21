@@ -3,6 +3,11 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { verifyEmail } from "../../../services/auth.service";
 import VerifyEmailModal from "../components/Modals/VerifyEmailModal";
 
+/**
+ * Verifies the user's email address.
+ * Redirects to the onboarding flow once the email is verified.
+ * @returns {JSX.Element} The VerifyEmail component.
+ */
 export default function VerifyEmail() {
 	const [params] = useSearchParams();
 	const [status, setStatus] = useState("loading");

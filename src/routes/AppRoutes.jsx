@@ -46,12 +46,12 @@ const MyApplications = lazy(
 );
 //5- profile page / account
 const TalentProfile = lazy(
-	() => import("../features/Main/Talent/TalentProfile"),
+	() => import("../features/Main/talent/TalentProfile"),
 );
 
-const EditTalentProfile = lazy(
-	() => import("../features/Main/Talent/EditTalentProfile"),
-);
+// const EditTalentProfile = lazy(
+// 	() => import("../features/Main/Talent/EditTalentProfile"),
+// );
 
 const TalentAccountSettings = lazy(
 	() => import("../features/Main/Talent/TalentAccountSettings"),
@@ -71,8 +71,6 @@ const EmployerAccountSettings = lazy(
 );
 const PostAJob = lazy(() => import("../features/Main/employer/PostAJob"));
 
-const JobsList = lazy(() => import("../features/Main/Public/JobList"));
-
 const MyApplicants = lazy(
 	() => import("../features/Main/employer/MyApplicants"),
 );
@@ -83,11 +81,21 @@ const SearchTalent = lazy(
 );
 
 // Moderator pages
-const AdminLogin = lazy(() => import("../features/Main/Admin/AdminLogin"));
+const AdminLogin = lazy(() => import("../features/Main/Moderator/AdminLogin"));
 const AdminDashboard = lazy(
-	() => import("../features/Main/Admin/AdminDashboard"),
+	() => import("../features/Main/Moderator/AdminDashboard"),
 );
 
+/**
+ * AppRoutes is the main routes component of the application.
+ * It defines all the routes of the application, including public,
+ * auth, talent, employer, and admin routes.
+ * It uses the React Router library to define the routes and
+ * redirect the user to the correct page based on their role and
+ * the current path.
+ *
+ * @returns {JSX.Element} The AppRoutes component.
+ */
 export default function AppRoutes() {
 	const router = createBrowserRouter([
 		// 1) Public routes
@@ -139,7 +147,7 @@ export default function AppRoutes() {
 
 				{ path: "profile", element: <TalentProfile /> },
 
-				{ path: "profile/edit", element: <EditTalentProfile /> },
+				// { path: "profile/edit", element: <EditTalentProfile /> },
 
 				{ path: "profile/settings", element: <TalentAccountSettings /> },
 			],
@@ -165,7 +173,6 @@ export default function AppRoutes() {
 				// modal
 				{ path: "profile/edit", element: <EditProfile /> },
 
-				{ path: "jobs", element: <JobsList /> },
 				{ path: "jobs/new", element: <PostAJob /> },
 
 				{ path: "jobs/:jobId", element: <JobDetails /> },
