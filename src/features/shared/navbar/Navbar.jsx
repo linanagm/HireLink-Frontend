@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 //import defaultProfileImage from "../../../assets/images/profile-image.png";
 import { useAuth } from "../../../hooks/useAuth.jsx";
+import { logoutRes } from "../../../services/auth.service.js";
 import { buildAvatarUrl } from "../../../utils/Helpers/avatar.js";
 import {
 	getDisplayName,
@@ -47,6 +48,7 @@ export default function NavbarComponent() {
 	console.log("nav user :", currentUser);
 
 	const handleLogout = useCallback(() => {
+		logoutRes();
 		logout();
 		closeMenus();
 		navigate("/");

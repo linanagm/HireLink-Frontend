@@ -1,14 +1,71 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import defaultProfileImage from "../../../assets/images/profile-image.png";
 import { useUploadAvatar } from "../../../hooks/useUploadAvatar";
 import { queryKeys } from "../../../lib/queryKeys";
 import {
 	getTalentProfile,
+	updateTalentProfile,
 	uploadTalentAvatar,
 } from "../../../services/talent.service";
 import { buildAvatarUrl } from "../../../utils/Helpers/avatar";
 
 export default function TalentProfile() {
+	const [isEditingTitle, setIsEditingTitle] = useState(false);
+	const [titleDraft, setTitleDraft] = useState("");
+
+	// const qc = useQueryClient();
+	// const updateProfileMutation = useMutation({
+	// 	mutationFn: (payload) => updateTalentProfile({headline: payload}),
+	// 	onSuccess:async () => {
+	// 		await qc.invalidateQueries({querryKeys: queryKeys.talentProfile});
+	// 		await qc.invalidateQueries({queryKeys: queryKeys.currentUser});
+
+	// 	},
+
+	// })
+
+	const qc = useQueryClient();
+
+	const updateTitleMutation = useMutation({
+		mutationFn: (headline) => updateTalentProfile({ headline }),
+
+		// optimistic update
+		onMutate: async (headline) => {
+			await qc.cancelQueries({ queryKey: queryKeys.talentProfile });
+
+			const prev = qc.getQueryData(queryKeys.talentProfile);
+
+			// حدّث الكاش فورًا عشان UI يتغير في وقتها
+			qc.setQueryData(queryKeys.talentProfile, (old) => {
+				if (!old) return old;
+				return {
+					...old,
+					data: {
+						...old.data,
+						talentProfile: {
+							...old.data?.talentProfile,
+							headline,
+						},
+					},
+				};
+			});
+
+			return { prev };
+		},
+
+		// لو فشل: رجّعي القديم
+		onError: (err, _headline, ctx) => {
+			if (ctx?.prev) qc.setQueryData(queryKeys.talentProfile, ctx.prev);
+		},
+
+		// بعد النجاح/الفشل: هاتي الداتا الصح من السيرفر
+		onSettled: async () => {
+			await qc.invalidateQueries({ queryKey: queryKeys.talentProfile });
+			await qc.invalidateQueries({ queryKey: queryKeys.currentUser });
+		},
+	});
+
 	// upload avatar
 	const { fileRef, onPickAvatar, onAvatarChange, avatarError, avatarMutation } =
 		useUploadAvatar({
@@ -34,17 +91,16 @@ export default function TalentProfile() {
 	});
 
 	const talentProfile = res?.data?.talentProfile ?? null;
-
 	console.log("profile-data: \n", res);
 
 	const profile = {
 		name: `${talentProfile?.firstName}  ${talentProfile?.lastName}`,
-		location: talentProfile?.location ?? "location",
+		location: talentProfile?.location ?? "_",
 		completion: 70,
 		avatarUrl: talentProfile?.avatarPublicId
 			? buildAvatarUrl(talentProfile?.avatarPublicId)
 			: defaultProfileImage,
-		title: talentProfile?.headline ?? "Your Title",
+		title: talentProfile?.headline ?? "Title",
 		level: "Expert",
 		bio: talentProfile?.bio,
 		bullets: talentProfile?.skills?.map((s) => s.name) ?? [],
@@ -59,8 +115,16 @@ export default function TalentProfile() {
 		},
 	};
 
-	// Just placeholders (UI only)
-	const onEdit = (section) => console.log("edit:", section);
+	useEffect(() => {
+		// نزبط draft مرة لما الداتا تيجي، لكن ما نخرّبش على المستخدم وهو بيكتب
+		if (!isEditingTitle) {
+			setTitleDraft(talentProfile?.headline ?? "");
+		}
+	}, [talentProfile?.headline, isEditingTitle]);
+
+	const onEdit = (section) => {
+		console.log("edit:", section);
+	};
 	const onAddCert = () => console.log("add certification");
 	const onDeleteCert = () => console.log("delete certification");
 
@@ -135,30 +199,82 @@ export default function TalentProfile() {
 						</div>
 					</div>
 					{/* profile completion */}
-					<p className="text-sm text-purple-600 font-medium ">
+					<p className="text-sm text-fuchsia-600 font-medium ">
 						Profile {profile?.completion}% Complete
 					</p>
 				</section>
 
 				{/* About Me */}
-				<section className="bg-white border rounded-xl p-6 mt-6">
-					<div className="flex items-start justify-between gap-4">
-						<div className="min-w-0">
-							<div className="flex items-center gap-2">
-								<h3 className="text-xl font-semibold text-gray-900 truncate">
-									{profile?.title}
-								</h3>
+				<section className="bg-white border rounded-xl p-6 mt-6 ">
+					<div className="flex items-start justify-between gap-4 ">
+						<div className="min-w-0  flex-grow">
+							{/* title */}
 
-								<button
-									type="button"
-									onClick={() => onEdit("title")}
-									className="w-7 h-7 rounded-full bg-purple-600 text-white flex items-center justify-center shrink-0"
-									aria-label="Edit title"
-								>
-									<i className="fa-solid fa-pencil text-sm"></i>
-								</button>
+							<div className="flex items-center gap-2">
+								{!isEditingTitle ? (
+									<div className="flex gap-2 justify-between w-full">
+										<div className="text-gray-900 w-1/2 text-3xl ">
+											{profile?.title}
+										</div>
+										{/* edit icon */}
+										<button
+											type="button"
+											onClick={() => setIsEditingTitle(true)}
+											className="w-7 h-7 rounded-full bg-fuchsia-800 text-white flex items-center justify-center shrink-0"
+											aria-label="Edit title"
+										>
+											<i className="fa-solid fa-pencil text-sm"></i>
+										</button>
+									</div>
+								) : (
+									// title input
+									<div className="flex gap-2 w-full">
+										<input
+											name="title"
+											value={titleDraft}
+											onChange={(e) => setTitleDraft(e.target.value)}
+											className=" h-8 w-3/4 rounded-md focus:outline-fuchsia-800 px-3 text-sm hover:outline-fuchsia-800 p-3"
+											placeholder="Title"
+											disabled={updateTitleMutation.isPending}
+										/>
+										{/* save & cancel */}
+										<button
+											type="button"
+											onClick={() => {
+												console.log("save title:", titleDraft);
+												const trimmed = titleDraft.trim();
+
+												setIsEditingTitle(false);
+												updateTitleMutation.mutate(trimmed);
+											}}
+											disabled={updateTitleMutation.isPending}
+											className="px-2 py-1 text-xs rounded bg-fuchsia-800 bg-opacity-60 hover:bg-opacity-70 text-white"
+										>
+											{updateTitleMutation.isPending ? "Saving..." : "Save"}
+										</button>
+
+										<button
+											type="button"
+											onClick={() => {
+												setTitleDraft(() => profile?.title || "");
+												setIsEditingTitle(false);
+											}}
+											disabled={updateTitleMutation.isPending}
+											className="px-2 py-1 text-xs rounded border border-fuchsia-800 text-fuchsia-800 hover:bg-slate-200 hover:bg-opacity-30 "
+										>
+											Cancel
+										</button>
+										{updateTitleMutation.isError && (
+											<p className="text-xs text-red-600 ml-2">
+												{updateTitleMutation.error?.message ||
+													"Failed to update title"}
+											</p>
+										)}
+									</div>
+								)}
 							</div>
 
+							{/* level */}
 							<div className="flex items-center gap-2 mt-4">
 								<p className="text-gray-700">{profile.level}</p>
 
@@ -171,7 +287,7 @@ export default function TalentProfile() {
 									<i className="fa-solid fa-pencil text-sm"></i>
 								</button>
 							</div>
-
+							{/* bio */}
 							<div className="flex items-start justify-between gap-4 mt-4">
 								<p className="text-gray-600 leading-relaxed">{profile.bio}</p>
 

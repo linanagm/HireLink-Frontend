@@ -14,6 +14,7 @@ export const AuthContext = createContext(null);
 const STORAGE_KEYS = {
 	token: "token",
 	user: "user",
+	jwt: "jwt",
 };
 
 // Read from localStorage first, if not found check sessionStorage

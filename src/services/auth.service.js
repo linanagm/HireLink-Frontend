@@ -33,7 +33,7 @@ export const login = ({ email, password }) =>
 	api("post", PATHS.auth.login, { email, password });
 
 
-export const refreshToken = () => api("get", PATHS.auth.refresh);
+export const getRefreshToken = () => api("get", PATHS.auth.refresh);
 
 
 export const requestPasswordReset = (email) =>
@@ -54,6 +54,6 @@ export const getUser = (token) =>
 		headers: { Authorization: `Bearer ${token}` },
 	});
 
-export const logout = () => api("post", PATHS.auth.logout);
+export const logoutRes = () => api("post", PATHS.auth.logout);
 
 export const logoutAll = () => api("post", PATHS.auth.logoutAll);

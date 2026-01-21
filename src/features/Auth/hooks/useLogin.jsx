@@ -13,7 +13,6 @@ export function useLogin() {
 	const navigate = useNavigate();
 	const { saveLogin, setUser } = useAuth();
 	const qc = useQueryClient();
-	//const { currentUser } = useAuth();
 	const [isLoading, setIsLoading] = useState(false);
 	const [apiError, setApiError] = useState("");
 
@@ -78,8 +77,6 @@ export function useLogin() {
 					finalUser = { ...(me?.data ?? me), avatarUrl };
 				}
 			}
-
-			console.log("final user: \n", finalUser);
 
 			// 5) SET USER ONCE
 			setUser(finalUser);

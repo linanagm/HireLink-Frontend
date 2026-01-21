@@ -1,4 +1,4 @@
-const ACCESS_KEY = "accessToken";
+const ACCESS_KEY = "token";
 
 export function getAccessToken() {
     return localStorage.getItem(ACCESS_KEY) || sessionStorage.getItem(ACCESS_KEY);
@@ -9,6 +9,9 @@ export function setAccessToken(token, rememberMe = false) {
     storage.setItem(ACCESS_KEY, token);
 }
 
+export function saveAccessToken(token) {
+    localStorage.setItem(ACCESS_KEY, token);
+}
 export function clearAccessToken() {
     localStorage.removeItem(ACCESS_KEY);
     sessionStorage.removeItem(ACCESS_KEY);

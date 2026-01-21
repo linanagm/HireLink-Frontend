@@ -18,6 +18,7 @@ export default function Login() {
 					className={` flex flex-col lg:flex-row items-center max-w-screen-xl mx-auto justify-between md:px-5 lg:px-0  py-64 md:py-7 px-7  gap-3 `}
 				>
 					{/* /*******************   image   ******************** */}
+
 					<div className=" w-1/2 items-center justify-center bg-blue-600 ">
 						<img src={loginImage} className="w-full h-auto " alt="sign up" />
 					</div>

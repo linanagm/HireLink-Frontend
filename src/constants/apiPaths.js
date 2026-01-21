@@ -12,12 +12,17 @@ export const PATHS = {
         logoutAll: "/auth/logout/all",
     },
     talent: {
-        profile: "/talent/profile",
-        avatar: "/talent/avatar",
-        skills: "/talent/skills",
-        jobs: "/talent/jobs",
+        profile: "/talent/profile",//get/put
+        avatar: "/talent/avatar",//put/get/delete
+        skills: "/talent/skills",//put
+        languages: "/talent/languages",//put
+        //jobs: "/talent/jobs",
         applications: "/talent/applications",
-        resume: "/talent/resume",
+        resume: "/talent/resume",//get/put/delete
+    },
+    skill: {
+        getSkillById: (id) => `/skills/${id}`,
+        putSkills: "/skills",
     },
     jobs: {
         jobsList: "/jobs",
@@ -25,7 +30,6 @@ export const PATHS = {
         jobPropsal: (id) => `/jobs/${id}/apply`,
 
     },
-    applications: {
-        getApplicationById: (id) => `/applications/${id}`,
-    }
+
 };
+

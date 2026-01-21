@@ -1,4 +1,4 @@
-import SuccessCard from "../../../../components/Main/SuccessCard.jsx";
+import SuccessCard from "../../../../components/UI/SuccessCard.jsx";
 import { getMailProviderUrl } from "../../../../utils/mail.js";
 
 export default function SignupSuccess({ onClose, email }) {
