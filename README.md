@@ -1,8 +1,5 @@
 # HireLink Frontend (React + Vite)
 
-This project is the frontend for **HireLink**, built using **React** and **Vite** with a focus on clean UI and scalable structure.
-
-It uses modern tooling for fast development, hot module replacement, and consistent code quality.
 
 ---
 
