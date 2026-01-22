@@ -1,53 +1,36 @@
+// config/axiosConfig.js
 import axios from "axios";
 import { PATHS } from "../constants/apiPaths";
 import {
+	clearAccessToken,
 	getAccessToken,
-	setAccessToken
+	setAccessToken,
 } from "../lib/tokenStore";
 
 const axiosClient = axios.create({
 	baseURL: import.meta.env.VITE_API_URL,
 	withCredentials: true,
-	headers: {
-		"Content-type": "application/json",
-	},
+	headers: { "Content-Type": "application/json" },
 });
 
-//Request Interceptor
+// Request interceptor: attach access token
 axiosClient.interceptors.request.use(
 	(config) => {
 		const token = getAccessToken();
-		//localStorage.getItem("token") || sessionStorage.getItem("token");
-
-		if (token) {
-			config.headers.Authorization = `Bearer ${token}`;
-		}
+		if (token) config.headers.Authorization = `Bearer ${token}`;
 		return config;
 	},
 	(error) => Promise.reject(error),
 );
 
-
 let isRefreshing = false;
 let failedQueue = [];
 
-/**
- * Processes the failed queue by resolving or rejecting the promises
- * depending on whether an error or token is provided.
- * If an error is provided, all promises in the queue are rejected
- * with the error. If a token is provided, all promises in the queue
- * are resolved with the token.
- * After processing the queue, the failed queue is reset to an empty array.
- */
 const processQueue = (error, token = null) => {
-	failedQueue.forEach((prom) => {
-		if (error) {
-			prom.reject(error);
-		} else {
-			prom.resolve(token);
-		}
+	failedQueue.forEach(({ resolve, reject }) => {
+		if (error) reject(error);
+		else resolve(token);
 	});
-
 	failedQueue = [];
 };
 
@@ -55,19 +38,20 @@ axiosClient.interceptors.response.use(
 	(response) => response,
 	async (error) => {
 		const originalRequest = error.config;
+		const status = error?.response?.status;
 
-		if (
-			error.response &&
-			error.response.status === 401 &&
-			!originalRequest._retry
-		) {
+		// لو مفيش response (network error / CORS / timeout) سيبيها تتعامل فوق
+		if (!status) return Promise.reject(error);
+
+		// امنعي loop: لو refresh نفسه فشل
+		const isRefreshCall = originalRequest?.url?.includes(PATHS.auth.refresh);
+
+		if (status === 401 && !originalRequest._retry && !isRefreshCall) {
 			if (isRefreshing) {
 				return new Promise((resolve, reject) => {
 					failedQueue.push({ resolve, reject });
 				}).then((token) => {
-					originalRequest.headers.Authorization = Bearer;
-					$;
-					token;
+					originalRequest.headers.Authorization = `Bearer ${token}`;
 					return axiosClient(originalRequest);
 				});
 			}
@@ -77,19 +61,30 @@ axiosClient.interceptors.response.use(
 
 			try {
 				const res = await axiosClient.get(PATHS.auth.refresh);
-				const newAccessToken = res.data.accessToken;
 
+				// حسب Bruno: res.body.data.token => axios: res.data.data.token
+				const newAccessToken = res?.data?.data?.token;
+
+				if (!newAccessToken) {
+					throw new Error("Refresh succeeded but token missing in response");
+				}
+
+				// حافظي على نفس storage (شوفي تعديل tokenStore تحت)
 				setAccessToken(newAccessToken);
+
 				processQueue(null, newAccessToken);
 
-				originalRequest.headers.Authorization = Bearer;
-				$;
-				newAccessToken;
-				return api(originalRequest);
+				originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+				return axiosClient(originalRequest);
 			} catch (err) {
 				processQueue(err, null);
-				//clearAccessToken();
-				//window.location.href = "/login";
+
+				// هنا قرار المنتج: لو refresh فشل، logout
+				clearAccessToken();
+				// ممكن كمان تمسحي كاش react-query من AuthProvider
+				// وممكن redirect:
+				// window.location.href = "/login";
+
 				return Promise.reject(err);
 			} finally {
 				isRefreshing = false;
@@ -99,4 +94,5 @@ axiosClient.interceptors.response.use(
 		return Promise.reject(error);
 	},
 );
+
 export default axiosClient;
