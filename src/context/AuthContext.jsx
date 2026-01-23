@@ -11,7 +11,7 @@ import {
 	getAccessToken,
 	setAccessToken,
 } from "../lib/tokenStore";
-import { logoutRes } from "../services/auth.service";
+import { getRefreshToken, getUser, logoutRes } from "../services/auth.service";
 
 // AuthContext will be used by the whole app to access auth data
 export const AuthContext = createContext(null);
@@ -42,7 +42,6 @@ const safeJsonParse = (value) => {
 /**
  * AuthProvider
  * ------------
- * This component wraps the app and controls authentication state.
  *
  * What it stores:
  * - token: auth token from backend
@@ -124,54 +123,44 @@ export function AuthProvider({ children }) {
 		});
 	}, []);
 
-	/**
-	 * On app start:
-	 * - read token and user from storage
-	 * - restore login state if exists
-	 */
 	useEffect(() => {
-		const savedToken = getAccessToken();
-		const savedUser = safeJsonParse(readFromStorage(STORAGE_KEYS.user));
+		const initAuth = async () => {
+			try {
+				const savedToken = getAccessToken();
+				const savedUser = safeJsonParse(readFromStorage("user"));
 
-		if (savedToken) setToken(savedToken);
-		if (savedUser) setCurrentUser(savedUser);
-		setIsAuthReady(true);
+				if (savedUser) setCurrentUser(savedUser);
+
+				if (savedToken) {
+					setToken(savedToken);
+					// user is not loaded yet
+					setIsAuthReady(true);
+					return;
+				}
+
+				// If no token, try to refresh
+				const refreshRes = await getRefreshToken();
+				if (refreshRes.ok) {
+					const newToken = refreshRes.data?.token;
+					if (newToken) {
+						setAccessToken(newToken);
+						setToken(newToken);
+
+						const meRes = await getUser();
+						if (meRes.ok) setCurrentUser(meRes.data);
+					}
+				} else {
+					clearAccessToken();
+					setToken(null);
+					setCurrentUser(null);
+				}
+			} finally {
+				setIsAuthReady(true); // auth is ready
+			}
+		};
+
+		initAuth();
 	}, []);
-
-	// useEffect(() => {
-	// 	const init = async () => {
-	// 		const savedToken = getAccessToken();
-	// 		const savedUser = safeJsonParse(readFromStorage(STORAGE_KEYS.user));
-
-	// 		if (savedUser) setCurrentUser(savedUser);
-	// 		if (savedToken) {
-	// 			setToken(savedToken);
-	// 			setIsAuthReady(true);
-	// 			return;
-	// 		}
-
-	// 		// No access token -> try refresh cookie
-	// 		const refreshRes = await getRefreshToken();
-	// 		if (refreshRes.ok) {
-	// 			const newToken = refreshRes.data?.token; // حسب backend
-	// 			if (newToken) {
-	// 				setAccessToken(newToken); // session by default (or keep same)
-	// 				setToken(newToken);
-
-	// 				const meRes = await getUser();
-	// 				if (meRes.ok) setCurrentUser(meRes.data);
-	// 			}
-	// 		} else {
-	// 			clearAccessToken();
-	// 			setToken(null);
-	// 			setCurrentUser(null);
-	// 		}
-
-	// 		setIsAuthReady(true);
-	// 	};
-
-	// 	init();
-	// }, []);
 
 	const hasUser = !!currentUser;
 
@@ -181,7 +170,8 @@ export function AuthProvider({ children }) {
 	 * - but we don’t have user data yet
 	 */
 	useCurrentUser({
-		enabled: !hasUser,
+		//enabled: !hasUser,
+		enabled: isAuthReady && !!token && !hasUser,
 		onUser: setUser,
 		onLogout: logout,
 	});

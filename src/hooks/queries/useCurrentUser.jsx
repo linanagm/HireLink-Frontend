@@ -12,10 +12,10 @@ import { getUser } from "../../services/auth.service";
  * @param {function} options.onLogout - A function to call on 401 error with no arguments.
  * @returns {UseQueryResult} The result object of the useQuery hook.
  */
-export function useCurrentUser({ enabled = true, onUser, onLogout }) {
+export function useCurrentUser({ token, enabled = true, onUser, onLogout }) {
 	return useQuery({
 		queryKey: queryKeys.currentUser,
-		queryFn: () => getUser(),
+		queryFn: () => getUser(token),
 		enabled,
 		retry: false,
 		refetchOnWindowFocus: false,
