@@ -1,9 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import Chip from "../../../components/UI/Chip";
-import { getJobs } from "../../../services/talent.service";
+import useJobs from "../../../hooks/queries/talent/useJobs";
 
 const PAGE_SIZE = 10;
 
@@ -26,18 +25,26 @@ export default function JobList() {
 		[skip],
 	);
 
+	// const {
+	// 	data: response,
+	// 	isLoading,
+	// 	isError,
+	// 	error,
+	// 	isFetching,
+	// } = useQuery({
+	// 	queryKey: ["jobs", queryParams],
+	// 	queryFn: () => getJobs(queryParams),
+	// 	staleTime: 60 * 1000,
+	// 	keepPreviousData: true,
+	// });
+
 	const {
 		data: response,
 		isLoading,
 		isError,
 		error,
 		isFetching,
-	} = useQuery({
-		queryKey: ["jobs", queryParams],
-		queryFn: () => getJobs(queryParams),
-		staleTime: 60 * 1000,
-		keepPreviousData: true,
-	});
+	} = useJobs({ queryParams });
 
 	const jobs = response?.data?.data ?? response?.data ?? [];
 	const safeJobs = Array.isArray(jobs) ? jobs : [];

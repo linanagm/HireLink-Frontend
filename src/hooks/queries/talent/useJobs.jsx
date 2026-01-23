@@ -1,3 +1,7 @@
+import { useQuery } from "@tanstack/react-query";
+import { queryKeys } from "../../../lib/queryKeys";
+import { getJobs } from "../../../services/talent.service";
+
 /**
  * A hook to fetch jobs from the server.
  *
@@ -10,7 +14,7 @@
  */
 export default function useJobs({ queryParams }) {
 	return useQuery({
-		queryKey: ["jobs", queryParams],
+		queryKey: [queryKeys.jobs, queryParams],
 		queryFn: () => getJobs(queryParams),
 		staleTime: 60 * 1000,
 		keepPreviousData: true,

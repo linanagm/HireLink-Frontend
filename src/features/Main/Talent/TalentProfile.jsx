@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import defaultProfileImage from "../../../assets/images/profile-image.png";
 import Loading from "../../../components/UI/Loading";
-import { useTalentProfileQuery } from "../../../hooks/queries/useTalentProfile";
+import { useTalentProfileQuery } from "../../../hooks/queries/talent/useTalentProfile";
 import { useProfileEdit } from "../../../hooks/useProfileEdit";
 import { useUploadAvatar } from "../../../hooks/useUploadAvatar";
 import { queryKeys } from "../../../lib/queryKeys";

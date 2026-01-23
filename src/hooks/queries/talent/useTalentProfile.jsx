@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { queryKeys } from "../../lib/queryKeys";
-import { getTalentProfile } from "../../services/talent.service";
-import { useAuth } from "../useAuth";
+import { queryKeys } from "../../../lib/queryKeys";
+import { getTalentProfile } from "../../../services/talent.service";
+import { useAuth } from "../../useAuth";
 
 export function useTalentProfileQuery() {
 	const { currentUser, isAuthenticated } = useAuth();
