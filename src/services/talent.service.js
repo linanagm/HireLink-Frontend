@@ -8,9 +8,9 @@ import { api } from "../lib/api";
  *  ========================================= */
 export const SKILL_LEVELS = ["BEGINNER", "INTERMEDIATE", "ADVANCED"];
 export const LANGUAGE_PROFICIENCY = [
-    "BASIC",
-    "INTERMEDIATE",
-    "FLUENT",
+    "FRESH",
+    "JUNIOR",
+    "SENIOR",
     "NATIVE",
 ];
 
@@ -37,7 +37,7 @@ export function updateTalentProfile(payload) {
  *   skills: [{ name: "Node.js", level: "INTERMEDIATE" }]
  * }
  */
-export function setTalentSkills(payload) {
+export function updateTalentSkills(payload) {
     return api("put", PATHS.talent.skills, payload);
 }
 

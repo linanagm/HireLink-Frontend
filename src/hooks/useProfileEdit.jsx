@@ -25,12 +25,6 @@ export function useProfileEdit({
 	return useMutation({
 		mutationFn,
 
-		/**
-		 * Called when the mutation is triggered.
-		 * Cancels the current query, updates the cache optimistically and returns the previous data.
-		 * @param {any} vars - variables passed to the mutation function
-		 * @returns {Promise<any>} previous data
-		 */
 		onMutate: async (vars) => {
 			await qc.cancelQueries({ queryKey });
 

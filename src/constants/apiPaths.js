@@ -38,8 +38,7 @@
 
 export const JOBS_MODES = {
     RECOMMENDED: "recommended",
-    // لو عندكم mode تاني للـ best matches استخدميه هنا لما تتأكدي من اسمه
-    // BEST_MATCHES: "best_matches",
+    BEST_MATCHES: "best_matches",
 };
 
 export const PATHS = {
@@ -87,7 +86,7 @@ export const PATHS = {
         putSkills: "/skills",
     },
 
-    // لو لاحقًا عندكم languages catalog:
+
     // language: {
     //   list: "/languages",
     //   getById: (id) => `/languages/${id}`,
