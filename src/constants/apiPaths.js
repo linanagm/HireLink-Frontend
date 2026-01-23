@@ -86,9 +86,25 @@ export const PATHS = {
         putSkills: "/skills",
     },
 
-
     // language: {
     //   list: "/languages",
     //   getById: (id) => `/languages/${id}`,
     // },
+
+    // src/constants/paths/employerPathsConstants.js
+
+    employer: {
+        base: "/employer",
+
+        profile: "/employer/profile",
+
+        logo: "/employer/logo",
+
+        jobs: "/employer/jobs",
+        jobById: (jobId) => `/employer/jobs/${jobId}`,
+
+        jobApplications: (jobId) => `/employer/jobs/${jobId}/applications`,
+        applicationById: (applicationId) => `/employer/applications/${applicationId}`,
+    },
+
 };
