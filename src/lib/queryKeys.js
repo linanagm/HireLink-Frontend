@@ -24,6 +24,9 @@ export const queryKeys = {
     // EMPLOYER
     employerProfile: ["employer-profile"],
     employerJobs: ["employer-jobs"],
+    employerDashboardStats: ["employer-dashboard-stats"],
+    employerJobSummary: ["employer-job-summary"],
+    employerRecentApplicants: ["employer-recent-applicants"],
 
     // ADMIN
     adminStats: ["admin-stats"],
