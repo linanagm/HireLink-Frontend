@@ -26,7 +26,7 @@ export const PATHS = {
     jobs: {
         jobsList: "/jobs",
         jobDetails: (id) => `/jobs/${id}`,
-        jobPropsal: (id) => `/jobs/${id}/apply`,
+        jobProposal: (id) => `/jobs/${id}/apply`,
 
     },
 

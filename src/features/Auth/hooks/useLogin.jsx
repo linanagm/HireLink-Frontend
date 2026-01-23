@@ -4,19 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
 import { queryKeys } from "../../../lib/queryKeys";
 import { getUser, login as loginApi } from "../../../services/auth.service";
-import {
-	getTalentAvatar,
-	getTalentProfile,
-} from "../../../services/talent.service";
+// import {
+// 	getTalentAvatar,
+// 	getTalentProfile,
+// } from "../../../services/talent.service";
 
-/**
- * Hook to access the login functionality.
- *
- * @param {email} The user's email address.
- * @param {password} The user's password.
- * @param {rememberMe} A boolean indicating whether to remember the user.
- * @returns {Object} An object containing three properties: doLogin, isLoading, apiError.
- */
+// handle login process and navigation
 export function useLogin() {
 	const navigate = useNavigate();
 	const { saveLogin, setUser } = useAuth();
@@ -34,15 +27,6 @@ export function useLogin() {
 		return navigate("/", { replace: true });
 	};
 
-	/**
-	 * Logs a user in with the given email and password.
-	 * Saves the token and final user data on success.
-	 * Navigates to the appropriate dashboard based on the user's role.
-	 *
-	 * @param {Object} data - The user's email and password.
-	 * @param {boolean} rememberMe - Whether to remember the user.
-	 * @returns {Promise<void>} A promise that resolves once the login process is complete.
-	 */
 	const doLogin = async ({ email, password }, rememberMe) => {
 		setIsLoading(true);
 		setApiError("");
@@ -62,54 +46,54 @@ export function useLogin() {
 
 			saveLogin(token, rememberMe);
 
-			// 3) FETCH SERVER CURRENT USER ONCE (source of truth)
-			// Using fetchQuery so it runs immediately
-
-			const me = await qc.fetchQuery({
+			// 3) FETCH USER DATA
+			const meRes = await qc.fetchQuery({
 				queryKey: queryKeys.currentUser,
-				queryFn: () => getUser(token),
+				queryFn: () => getUser(),
 			});
 
-			// Extract role
-			const role = me?.role || me?.data?.role;
-			if (!role) throw new Error("Role missing from current user response");
+			if (!meRes?.ok) throw new Error(meRes?.message || "Failed to load user");
+
+			const me = meRes.data;
+			const role = me?.role;
+			//if (!role) throw new Error("Role missing from /me");
 
 			// 4) Build user object
-			let finalUser = me?.data ?? me;
+			console.log("me:", me, role);
 
 			// 5) If user is TALENT, fetch extra data (profile + avatar)
 
-			if (role === "TALENT") {
-				let talentProfile = null;
-				try {
-					// Try to fetch talent profile
-					const profileRes = await getTalentProfile();
-					talentProfile =
-						profileRes?.data?.data ||
-						profileRes?.data?.data?.data ||
-						profileRes?.data?.data?.profile;
-				} catch {}
+			// if (role === "TALENT") {
+			// 	let talentProfile = null;
+			// 	try {
+			// 		// Try to fetch talent profile
+			// 		const profileRes = await getTalentProfile();
+			// 		talentProfile =
+			// 			profileRes?.data?.data ||
+			// 			profileRes?.data?.data?.data ||
+			// 			profileRes?.data?.data?.profile;
+			// 	} catch {}
 
-				let avatarUrl;
-				try {
-					// Try to fetch talent avatar
-					const avatarRes = await getTalentAvatar(80, 80);
-					avatarUrl = avatarRes?.data?.data?.avatar;
-				} catch {}
-				//if profile exists,use it as main user object
-				if (talentProfile && typeof talentProfile === "object") {
-					finalUser = { ...talentProfile, avatarUrl };
-				} else {
-					//otherwise use main user object -> fallback to basic user
-					finalUser = { ...(me?.data ?? me), avatarUrl };
-				}
-			}
+			// 	let avatarUrl;
+			// 	try {
+			// 		// Try to fetch talent avatar
+			// 		const avatarRes = await getTalentAvatar(80, 80);
+			// 		avatarUrl = avatarRes?.data?.data?.avatar;
+			// 	} catch {}
+			// 	//if profile exists,use it as main user object
+			// 	if (talentProfile && typeof talentProfile === "object") {
+			// 		me = { ...talentProfile, avatarUrl };
+			// 	} else {
+			// 		//otherwise use main user object -> fallback to basic user
+			// 		me = { ...(me?.data ?? me), avatarUrl };
+			// 	}
+			// }
 
 			// 5) SET USER ONCE
-			setUser(finalUser);
+			setUser(me);
 
 			// 6) NAVIGATE ONCE
-			return navigateByRole(finalUser?.role || role);
+			return navigateByRole(me.role);
 		} catch (err) {
 			setApiError(err?.message || "Something went wrong. Try again.");
 			throw err;

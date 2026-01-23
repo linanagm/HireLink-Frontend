@@ -6,6 +6,11 @@ import {
 	useState,
 } from "react";
 import { useCurrentUser } from "../hooks/queries/useCurrentUser";
+import {
+	clearAccessToken,
+	getAccessToken,
+	setAccessToken,
+} from "../lib/tokenStore";
 import { logoutRes } from "../services/auth.service";
 
 // AuthContext will be used by the whole app to access auth data
@@ -59,6 +64,9 @@ export function AuthProvider({ children }) {
 	// Simple boolean to know if user is logged in
 	const isAuthenticated = Boolean(token);
 
+	// Boolean to know if auth is ready
+	const [isAuthReady, setIsAuthReady] = useState(false);
+
 	/**
 	 * Save user data in state and storage
 	 * We detect which storage is used based on where the token exists
@@ -80,12 +88,15 @@ export function AuthProvider({ children }) {
 	 * Clears token and user from state and storage
 	 */
 	const logout = useCallback(async () => {
-		await logoutRes();
-		localStorage.clear();
-		sessionStorage.clear();
-
-		setToken(null);
-		setCurrentUser(null);
+		try {
+			await logoutRes();
+		} finally {
+			clearAccessToken();
+			localStorage.removeItem(STORAGE_KEYS.user);
+			sessionStorage.removeItem(STORAGE_KEYS.user);
+			setToken(null);
+			setCurrentUser(null);
+		}
 	}, []);
 
 	/**
@@ -119,12 +130,48 @@ export function AuthProvider({ children }) {
 	 * - restore login state if exists
 	 */
 	useEffect(() => {
-		const savedToken = readFromStorage(STORAGE_KEYS.token);
+		const savedToken = getAccessToken();
 		const savedUser = safeJsonParse(readFromStorage(STORAGE_KEYS.user));
 
 		if (savedToken) setToken(savedToken);
 		if (savedUser) setCurrentUser(savedUser);
+		setIsAuthReady(true);
 	}, []);
+
+	// useEffect(() => {
+	// 	const init = async () => {
+	// 		const savedToken = getAccessToken();
+	// 		const savedUser = safeJsonParse(readFromStorage(STORAGE_KEYS.user));
+
+	// 		if (savedUser) setCurrentUser(savedUser);
+	// 		if (savedToken) {
+	// 			setToken(savedToken);
+	// 			setIsAuthReady(true);
+	// 			return;
+	// 		}
+
+	// 		// No access token -> try refresh cookie
+	// 		const refreshRes = await getRefreshToken();
+	// 		if (refreshRes.ok) {
+	// 			const newToken = refreshRes.data?.token; // حسب backend
+	// 			if (newToken) {
+	// 				setAccessToken(newToken); // session by default (or keep same)
+	// 				setToken(newToken);
+
+	// 				const meRes = await getUser();
+	// 				if (meRes.ok) setCurrentUser(meRes.data);
+	// 			}
+	// 		} else {
+	// 			clearAccessToken();
+	// 			setToken(null);
+	// 			setCurrentUser(null);
+	// 		}
+
+	// 		setIsAuthReady(true);
+	// 	};
+
+	// 	init();
+	// }, []);
 
 	const hasUser = !!currentUser;
 
@@ -134,8 +181,7 @@ export function AuthProvider({ children }) {
 	 * - but we don’t have user data yet
 	 */
 	useCurrentUser({
-		token,
-		enabled: !!token && !hasUser,
+		enabled: !hasUser,
 		onUser: setUser,
 		onLogout: logout,
 	});
@@ -145,10 +191,8 @@ export function AuthProvider({ children }) {
 	 * rememberMe decides if token goes to localStorage or sessionStorage
 	 */
 	const saveLogin = useCallback((newToken, rememberMe) => {
-		const storage = rememberMe ? localStorage : sessionStorage;
-
 		setToken(newToken);
-		storage.setItem(STORAGE_KEYS.token, newToken);
+		setAccessToken(newToken, rememberMe);
 	}, []);
 
 	/**
@@ -160,6 +204,7 @@ export function AuthProvider({ children }) {
 			token,
 			currentUser,
 			updateCurrentUser,
+			isAuthReady,
 			isAuthenticated,
 			setUser,
 			saveLogin,
@@ -168,6 +213,7 @@ export function AuthProvider({ children }) {
 		[
 			token,
 			currentUser,
+			isAuthReady,
 			isAuthenticated,
 			updateCurrentUser,
 			setUser,

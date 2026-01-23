@@ -68,7 +68,7 @@ export function getJobById(id) {
 
 //apply to job -> job proposal
 export function applyToJob(id, payload) {
-    return api("post", PATHS.jobs.jobPropsal(id), payload);
+    return api("post", PATHS.jobs.jobProposal(id), payload);
 }
 
 // ********************** talent with applications services ********************
