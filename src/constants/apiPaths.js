@@ -1,5 +1,5 @@
 
-// export const PATHS = {
+
 //     auth: {
 //         register: "/auth/register",
 //         verify: "/auth/verify",
@@ -79,31 +79,24 @@ export const PATHS = {
         jobProposal: (id) => `/jobs/${id}/apply`, // POST
     },
 
-    // Optional (لو عندكم endpoints لكتالوج skills/languages)
-    // خليتهم لأنك غالبًا هتحتاجي dropdown/auto-complete بدل ما اليوزر يكتب من دماغه
+
     skill: {
         getSkillById: (id) => `/skills/${id}`,
         putSkills: "/skills",
     },
 
-    // language: {
-    //   list: "/languages",
-    //   getById: (id) => `/languages/${id}`,
-    // },
-
-    // src/constants/paths/employerPathsConstants.js
 
     employer: {
-        base: "/employer",
-
         profile: "/employer/profile",
 
         logo: "/employer/logo",
 
         jobs: "/employer/jobs",
+
         jobById: (jobId) => `/employer/jobs/${jobId}`,
 
         jobApplications: (jobId) => `/employer/jobs/${jobId}/applications`,
+
         applicationById: (applicationId) => `/employer/applications/${applicationId}`,
     },
 

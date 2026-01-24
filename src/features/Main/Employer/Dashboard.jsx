@@ -1,306 +1,331 @@
-import { useState } from "react";
+import {
+	Briefcase,
+	ExternalLink,
+	Layers,
+	Pencil,
+	Trash2,
+	Users,
+} from "lucide-react";
+import { Helmet } from "react-helmet";
+import { Link, useNavigate } from "react-router-dom";
+import headerImage from "../../../assets/images/layouts/header.svg";
+import { useDeleteEmployerJob } from "../../../hooks/mutations/employer/useDeleteEmployerJob"; // أو نفس الملف لو حطيتيه هناك
+import { useEmployerDashboardAggregated } from "../../../hooks/queries/employer/useEmployerQueries";
 
-const Dashboard = () => {
-	const [activeTab, setActiveTab] = useState("jobs");
-
-	const jobs = [
-		{
-			id: 1,
-			title: "UI/UX Designer",
-			posted: "Mar 20, 2025",
-			status: "Open",
-			applicants: 10,
-		},
-		{
-			id: 2,
-			title: "Frontend Developer",
-			posted: "Mar 5, 2025",
-			status: "Closed",
-			applicants: 52,
-		},
-		{
-			id: 3,
-			title: "Data Analyst",
-			posted: "Jun 5, 2025",
-			status: "Open",
-			applicants: 18,
-		},
-		{
-			id: 4,
-			title: "Sales Executive",
-			posted: "Aug 30, 2025",
-			status: "Open",
-			applicants: 20,
-		},
-		{
-			id: 5,
-			title: "Content Writer",
-			posted: "Sep 15, 2025",
-			status: "Pending",
-			applicants: 15,
-		},
-	];
-
-	const applicants = [
-		{
-			id: 1,
-			name: "Hana A.",
-			job: "UI/UX Designer",
-			date: "Apr 27, 2025",
-			status: "Under Review",
-		},
-		{
-			id: 2,
-			name: "Liam R.",
-			job: "Frontend Developer",
-			date: "Apr 30, 2025",
-			status: "Interview",
-		},
-		{
-			id: 3,
-			name: "Sofia M.",
-			job: "Product Manager",
-			date: "May 2, 2025",
-			status: "Received",
-		},
-		{
-			id: 4,
-			name: "Ethan K.",
-			job: "Data Analyst",
-			date: "May 5, 2025",
-			status: "Under Review",
-		},
-		{
-			id: 5,
-			name: "Aria J.",
-			job: "Marketing Specialist",
-			date: "May 8, 2025",
-			status: "Offer",
-		},
-	];
-
-	const talents = [
-		{
-			name: "Samantha K. Brown",
-			role: "UX/UI Designer",
-			desc: "Senior Software Engineer with 10 years experience in AI and Machine Learning",
-			skills: ["Figma", "Wireframing", "Prototyping"],
-			img: "https://i.pravatar.cc/100?img=12",
-		},
-		{
-			name: "James T. Lee",
-			role: "Product Designer",
-			desc: "Creative Product Designer with mobile focus",
-			skills: ["Sketch", "Interaction Design"],
-			img: "https://i.pravatar.cc/100?img=21",
-		},
-		{
-			name: "Olivia H. Carter",
-			role: "Web Developer",
-			desc: "React and responsive design",
-			skills: ["HTML", "JavaScript"],
-			img: "https://i.pravatar.cc/100?img=32",
-		},
-	];
-
+function StatCard({ icon: Icon, label, value }) {
 	return (
-		<div
-			style={{
-				padding: "20px",
-				backgroundColor: "#f5f5f5",
-				minHeight: "100vh",
-			}}
-		>
-			<h1 style={{ fontSize: "28px", marginBottom: "10px" }}>Job Dashboard</h1>
-			<p style={{ color: "#666", marginBottom: "20px" }}>
-				Manage jobs and applicants
-			</p>
-
-			<div style={{ marginBottom: "20px", borderBottom: "1px solid #ddd" }}>
-				<button
-					type="button"
-					onClick={() => setActiveTab("jobs")}
-					style={{
-						padding: "10px 20px",
-						backgroundColor: activeTab === "jobs" ? "white" : "transparent",
-						color: activeTab === "jobs" ? "#2563eb" : "#666",
-					}}
-				>
-					Jobs
-				</button>
-
-				<button
-					type="button"
-					onClick={() => setActiveTab("applicants")}
-					style={{
-						padding: "10px 20px",
-						backgroundColor:
-							activeTab === "applicants" ? "white" : "transparent",
-						color: activeTab === "applicants" ? "#2563eb" : "#666",
-					}}
-				>
-					Applicants
-				</button>
-
-				<button
-					type="button"
-					onClick={() => setActiveTab("talents")}
-					style={{
-						padding: "10px 20px",
-						backgroundColor: activeTab === "talents" ? "white" : "transparent",
-						color: activeTab === "talents" ? "#2563eb" : "#666",
-					}}
-				>
-					Talents
-				</button>
+		<div className="bg-white rounded-2xl border shadow-sm p-5 flex items-center gap-4">
+			<div className="w-20 h-20 rounded-full bg-fuchsia-200 text-fuchsia-700 flex items-center justify-center">
+				<Icon className="w-6 h-6 text-fuchsia-700" />
 			</div>
 
-			{/* JOBS */}
-			{activeTab === "jobs" && (
-				<div style={{ backgroundColor: "white", borderRadius: "8px" }}>
-					<div style={{ padding: "20px", borderBottom: "1px solid #eee" }}>
-						<h2 style={{ fontSize: "20px" }}>Jobs List</h2>
-					</div>
-
-					<div style={{ overflowX: "auto" }}>
-						<table style={{ width: "100%", borderCollapse: "collapse" }}>
-							<thead style={{ backgroundColor: "#f9fafb" }}>
-								<tr>
-									<th style={{ padding: "12px 16px" }}>Job Title</th>
-									<th style={{ padding: "12px 16px" }}>Posted On</th>
-									<th style={{ padding: "12px 16px" }}>Status</th>
-									<th style={{ padding: "12px 16px" }}>Applicants</th>
-								</tr>
-							</thead>
-							<tbody>
-								{jobs.map((job) => (
-									<tr key={job.id} style={{ borderBottom: "1px solid #eee" }}>
-										<td style={{ padding: "16px" }}>{job.title}</td>
-										<td style={{ padding: "16px" }}>{job.posted}</td>
-										<td style={{ padding: "16px" }}>{job.status}</td>
-										<td style={{ padding: "16px" }}>{job.applicants}</td>
-									</tr>
-								))}
-							</tbody>
-						</table>
-					</div>
+			<div>
+				<div className="text-2xl font-bold text-fuchsia-800 leading-none">
+					{value ?? "—"}
 				</div>
-			)}
-
-			{/* APPLICANTS */}
-			{activeTab === "applicants" && (
-				<div style={{ backgroundColor: "white", borderRadius: "8px" }}>
-					<div style={{ padding: "20px", borderBottom: "1px solid #eee" }}>
-						<h2 style={{ fontSize: "20px" }}>Recent Applicants</h2>
-					</div>
-
-					<div style={{ overflowX: "auto" }}>
-						<table style={{ width: "100%", borderCollapse: "collapse" }}>
-							<thead style={{ backgroundColor: "#f9fafb" }}>
-								<tr>
-									<th style={{ padding: "12px 16px" }}>Name</th>
-									<th style={{ padding: "12px 16px" }}>Job Applied</th>
-									<th style={{ padding: "12px 16px" }}>Date</th>
-									<th style={{ padding: "12px 16px" }}>Status</th>
-								</tr>
-							</thead>
-							<tbody>
-								{applicants.map((p) => (
-									<tr key={p.id} style={{ borderBottom: "1px solid #eee" }}>
-										<td style={{ padding: "16px" }}>{p.name}</td>
-										<td style={{ padding: "16px" }}>{p.job}</td>
-										<td style={{ padding: "16px" }}>{p.date}</td>
-										<td style={{ padding: "16px" }}>{p.status}</td>
-									</tr>
-								))}
-							</tbody>
-						</table>
-					</div>
+				<div className="text-sm text-fuchsia-800 font-sans font-thin mt-1">
+					{label}
 				</div>
-			)}
-
-			{/* TALENTS */}
-			{activeTab === "talents" && (
-				<div
-					style={{
-						backgroundColor: "white",
-						borderRadius: "12px",
-						padding: "20px",
-					}}
-				>
-					<p style={{ fontSize: "20px", marginBottom: "20px" }}>Talent List</p>
-
-					<div
-						style={{
-							display: "grid",
-							gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-							gap: "20px",
-						}}
-					>
-						{talents.map((t, i) => (
-							<div
-								key={i.id}
-								style={{
-									backgroundColor: "#f3e8ff",
-									padding: "15px",
-									borderRadius: "12px",
-								}}
-							>
-								<div
-									style={{ display: "flex", alignItems: "center", gap: "10px" }}
-								>
-									<img
-										src={t.img}
-										style={{
-											width: "50px",
-											height: "50px",
-											borderRadius: "50%",
-										}}
-										alt={t.name}
-									/>
-									<div>
-										<p style={{ fontWeight: "600" }}>{t.name}</p>
-										<p style={{ color: "#555", fontSize: "14px" }}>{t.role}</p>
-									</div>
-								</div>
-
-								<p
-									style={{ marginTop: "10px", color: "#555", fontSize: "14px" }}
-								>
-									{t.desc}
-								</p>
-
-								<div
-									style={{
-										marginTop: "10px",
-										display: "flex",
-										gap: "6px",
-										flexWrap: "wrap",
-									}}
-								>
-									{t.skills.map((s, j) => (
-										<span
-											key={j.id}
-											style={{
-												backgroundColor: "white",
-												border: "1px solid #d8b4fe",
-												padding: "4px 10px",
-												borderRadius: "20px",
-												fontSize: "12px",
-												color: "#6b21a8",
-											}}
-										>
-											{s}
-										</span>
-									))}
-								</div>
-							</div>
-						))}
-					</div>
-				</div>
-			)}
+			</div>
 		</div>
 	);
-};
+}
 
-export default Dashboard;
+function StatusPill({ status }) {
+	const normalized = (status || "").toLowerCase();
+
+	let cls = "bg-gray-100 text-gray-700";
+	if (normalized === "open") cls = "bg-green-50 text-green-700";
+	if (normalized === "draft") cls = "bg-gray-100 text-gray-700";
+	if (normalized === "closed") cls = "bg-red-50 text-red-700";
+
+	return (
+		<span
+			className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${cls}`}
+		>
+			{status || "—"}
+		</span>
+	);
+}
+
+function TableShell({ title, actionLabel, actionTo, children }) {
+	return (
+		<section className="bg-white rounded-2xl border shadow-sm">
+			<div className="p-5 flex items-center justify-between">
+				<h2 className="text-lg font-semibold text-gray-900">{title}</h2>
+
+				{actionTo ? (
+					<Link
+						to={actionTo}
+						className="text-sm font-medium text-purple-700 hover:text-purple-800 inline-flex items-center gap-2"
+					>
+						{actionLabel ?? "See more"} <span aria-hidden>→</span>
+					</Link>
+				) : null}
+			</div>
+
+			<div className="px-5 pb-5">{children}</div>
+		</section>
+	);
+}
+
+export default function EmployerDashboard() {
+	const navigate = useNavigate();
+
+	const { data, isLoading, isError, error } = useEmployerDashboardAggregated({
+		summaryLimit: 5,
+		recentLimit: 5,
+	});
+
+	const deleteJobMutation = useDeleteEmployerJob();
+
+	const stats = data?.stats ?? {
+		totalJobPosts: 0,
+		activeJobs: 0,
+		applicationsReceived: 0,
+	};
+
+	const jobs = data?.jobSummary ?? [];
+	const applicants = data?.recentApplicants ?? [];
+
+	if (isLoading) return <div className="p-6 text-gray-600">Loading...</div>;
+	if (isError)
+		return (
+			<div className="p-6 text-red-600">
+				{error?.message || "Something went wrong"}
+			</div>
+		);
+
+	return (
+		<>
+			<Helmet>
+				<title>Dashboard</title>
+			</Helmet>
+
+			<div className="min-h-screen bg-gray-50">
+				<div className="flex flex-col">
+					{/* Header + stats overlay */}
+					<div className="mb-5">
+						<div className="relative w-full h-[260px] sm:h-[300px] lg:h-[340px]">
+							<img
+								src={headerImage}
+								className="w-full h-full object-cover"
+								alt=""
+							/>
+
+							<div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-6xl px-4">
+								<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+									<StatCard
+										icon={Layers}
+										label="Total Job Posts"
+										value={stats.totalJobPosts}
+									/>
+									<StatCard
+										icon={Briefcase}
+										label="Active Jobs"
+										value={stats.activeJobs}
+									/>
+									<StatCard
+										icon={Users}
+										label="Applications Received"
+										value={stats.applicationsReceived}
+									/>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div className="relative -mt-16 px-4 pb-10">
+						<div className="max-w-6xl mx-auto">
+							<div className="mt-6 space-y-6">
+								{/* Job Summary */}
+								<TableShell
+									title="Job Summary Table"
+									actionLabel="See more"
+									actionTo="/employer/jobs"
+								>
+									<div className="overflow-x-auto">
+										<table className="w-full text-sm">
+											<thead>
+												<tr className="text-left text-gray-500 border-b">
+													<th className="py-3 pr-3">
+														<input
+															type="checkbox"
+															className="accent-purple-700"
+														/>
+													</th>
+													<th className="py-3 pr-3 font-medium">Job Title</th>
+													<th className="py-3 pr-3 font-medium">Posted On</th>
+													<th className="py-3 pr-3 font-medium">Status</th>
+													<th className="py-3 pr-3 font-medium">Applicants</th>
+													<th className="py-3 pr-3 font-medium text-right">
+														Actions
+													</th>
+												</tr>
+											</thead>
+
+											<tbody>
+												{jobs.length === 0 ? (
+													<tr>
+														<td
+															colSpan={6}
+															className="py-8 text-center text-gray-500"
+														>
+															No jobs yet.
+														</td>
+													</tr>
+												) : (
+													jobs.map((job) => (
+														<tr
+															key={job.id}
+															className="border-b last:border-b-0"
+														>
+															<td className="py-4 pr-3">
+																<input
+																	type="checkbox"
+																	className="accent-purple-700"
+																/>
+															</td>
+
+															<td className="py-4 pr-3 text-gray-900 font-medium">
+																{job.title}
+															</td>
+
+															<td className="py-4 pr-3 text-gray-600">
+																{job.postedOn
+																	? new Date(job.postedOn).toLocaleDateString()
+																	: "—"}
+															</td>
+
+															<td className="py-4 pr-3">
+																<StatusPill status={job.status} />
+															</td>
+
+															<td className="py-4 pr-3 text-gray-700">
+																{job.applicantsCount ?? 0}
+															</td>
+
+															<td className="py-4 pr-3">
+																<div className="flex justify-end gap-3">
+																	{/* EDIT: يروح لصفحة edit */}
+																	<button
+																		type="button"
+																		className="text-blue-600 hover:text-blue-800 disabled:opacity-50"
+																		title="Edit"
+																		onClick={() =>
+																			navigate(`/employer/jobs/${job.id}/edit`)
+																		}
+																	>
+																		<Pencil className="w-4 h-4" />
+																	</button>
+
+																	{/* DELETE: يضرب الباك */}
+																	<button
+																		type="button"
+																		className="text-red-600 hover:text-red-800 disabled:opacity-50"
+																		title="Delete"
+																		disabled={deleteJobMutation.isLoading}
+																		onClick={() => {
+																			const ok =
+																				window.confirm("Delete this job?");
+																			if (!ok) return;
+																			deleteJobMutation.mutate(job.id);
+																		}}
+																	>
+																		<Trash2 className="w-4 h-4" />
+																	</button>
+
+																	{/* VIEW */}
+																	<Link
+																		to={`/jobs/${job.id}`}
+																		className="text-gray-700 hover:text-gray-900"
+																		title="Open job"
+																	>
+																		<ExternalLink className="w-4 h-4" />
+																	</Link>
+																</div>
+															</td>
+														</tr>
+													))
+												)}
+											</tbody>
+										</table>
+
+										{deleteJobMutation.isError ? (
+											<div className="mt-3 text-sm text-red-600">
+												{deleteJobMutation.error?.message ||
+													"Failed to delete job"}
+											</div>
+										) : null}
+									</div>
+								</TableShell>
+
+								{/* Recent Applicants */}
+								<TableShell
+									title="Recent Applicants"
+									actionLabel="See more"
+									actionTo="/employer/applicants"
+								>
+									{applicants.length === 0 ? (
+										<div className="py-8 text-center text-gray-500">
+											No applicants yet.
+										</div>
+									) : (
+										<div className="overflow-x-auto">
+											<table className="w-full text-sm">
+												<thead>
+													<tr className="text-left text-gray-500 border-b">
+														<th className="py-3 pr-3 font-medium">Name</th>
+														<th className="py-3 pr-3 font-medium">
+															Job Applied
+														</th>
+														<th className="py-3 pr-3 font-medium">Date</th>
+														<th className="py-3 pr-3 font-medium">Status</th>
+														<th className="py-3 pr-3 font-medium text-right">
+															Actions
+														</th>
+													</tr>
+												</thead>
+												<tbody>
+													{applicants.map((a) => (
+														<tr key={a.id} className="border-b last:border-b-0">
+															<td className="py-4 pr-3 text-gray-900 font-medium">
+																{a.talentName || a.name || "—"}
+															</td>
+															<td className="py-4 pr-3 text-gray-600">
+																{a.jobTitle || "—"}
+															</td>
+															<td className="py-4 pr-3 text-gray-600">
+																{a.createdAt
+																	? new Date(a.createdAt).toLocaleDateString()
+																	: "—"}
+															</td>
+															<td className="py-4 pr-3">
+																<StatusPill status={a.status} />
+															</td>
+															<td className="py-4 pr-3">
+																<div className="flex justify-end">
+																	<Link
+																		to={`/employer/applicants/${a.id}`}
+																		className="text-gray-700 hover:text-gray-900"
+																		title="Open application"
+																	>
+																		<ExternalLink className="w-4 h-4" />
+																	</Link>
+																</div>
+															</td>
+														</tr>
+													))}
+												</tbody>
+											</table>
+										</div>
+									)}
+								</TableShell>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</>
+	);
+}
