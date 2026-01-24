@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet";
 import CardOverlay from "../../../components/UI/CardLoader";
 import Field from "../../../components/UI/Field";
 import Loading from "../../../components/UI/Loading";
+import PencilButton from "../../../components/UI/PencilIcon";
 import { useUpdateEmployerProfile } from "../../../hooks/mutations/employer/useUpdateEmployerMutation";
 import { useEmployerProfileQuery } from "../../../hooks/queries/employer/useEmployerQueries";
 import { useAuth } from "../../../hooks/useAuth";
@@ -11,22 +12,6 @@ import { queryKeys } from "../../../lib/queryKeys";
 import { updateEmployerLogo } from "../../../services/employer.service";
 import { buildAvatarUrl } from "../../../utils/Helpers/avatar";
 import { normalizeUrl } from "../../../utils/normalizeData";
-
-function PencilButton({ onClick, ariaLabel = "Edit", className = "" }) {
-	return (
-		<button
-			type="button"
-			onClick={onClick}
-			aria-label={ariaLabel}
-			className={
-				"w-10 h-10 rounded-full bg-purple-600 text-white flex items-center justify-center shadow-sm hover:bg-purple-700 transition " +
-				className
-			}
-		>
-			<i className="fa-solid fa-pen text-sm" />
-		</button>
-	);
-}
 
 function Row({ label, value, isLink = false }) {
 	return (
