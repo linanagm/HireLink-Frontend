@@ -1,101 +1,427 @@
-const EmployerProfile = () => {
+import { useEffect, useMemo, useState } from "react";
+import { Helmet } from "react-helmet";
+import { useUpdateEmployerProfile } from "../../../hooks/mutations/employer/useUpdateEmployerMutation";
+import { useEmployerProfileQuery } from "../../../hooks/queries/employer/useEmployerQueries";
+import { useUploadAvatar } from "../../../hooks/useUploadAvatar";
+import { queryKeys } from "../../../lib/queryKeys";
+import { updateEmployerLogo } from "../../../services/employer.service";
+
+// لو عندكم helper يبني URL من publicId استخدميه
+// import { buildAvatarUrl } from "../../../utils/Helpers/avatar";
+
+function PencilButton({ onClick, ariaLabel = "Edit", className = "" }) {
 	return (
-		<div className="min-h-screen bg-gray-50 p-4">
-			<div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8">
-				{/* Company Header */}
-				<div className="text-center mb-8">
-					<h1 className="text-3xl font-bold text-gray-800 mb-2">
-						TechNest Innovations Inc.
-					</h1>
-					<p className="text-lg text-gray-600 mb-1">
-						Information Technology & Services
-					</p>
-					<p className="text-gray-500">📍 New York, USA</p>
+		<button
+			type="button"
+			onClick={onClick}
+			aria-label={ariaLabel}
+			className={
+				"w-10 h-10 rounded-full bg-purple-600 text-white flex items-center justify-center shadow-sm hover:bg-purple-700 transition " +
+				className
+			}
+		>
+			<i className="fa-solid fa-pen text-sm" />
+		</button>
+	);
+}
+
+function Field({ label, value, onChange, placeholder }) {
+	return (
+		<div>
+			<p className="text-sm font-semibold text-gray-900">{label}</p>
+			<input
+				value={value}
+				onChange={(e) => onChange(e.target.value)}
+				className="mt-2 w-full rounded-xl border border-gray-200 bg-white p-3 text-sm outline-none focus:ring-2 focus:ring-purple-200"
+				placeholder={placeholder}
+			/>
+		</div>
+	);
+}
+
+function Row({ label, value, isLink = false }) {
+	return (
+		<div className="flex items-start gap-3">
+			<p className="w-40 text-gray-600 font-semibold">{label}:</p>
+			{isLink && value ? (
+				<a
+					href={value}
+					target="_blank"
+					rel="noreferrer"
+					className="text-purple-700 hover:underline break-all"
+				>
+					{value}
+				</a>
+			) : (
+				<p className="text-gray-800">
+					{value?.trim?.() ? value : <span className="text-gray-400">-</span>}
+				</p>
+			)}
+		</div>
+	);
+}
+
+export default function EmployerProfile() {
+	const { data: res, isLoading, isError, error } = useEmployerProfileQuery();
+	const updateMutation = useUpdateEmployerProfile();
+	const { fileRef, onPickAvatar, onAvatarChange, avatarError, avatarMutation } =
+		useUploadAvatar({
+			uploadFn: updateEmployerLogo,
+			fieldName: "logo",
+			invalidateKeys: [[queryKeys.employerProfile], [queryKeys.currentUser]],
+			getPublicId: (res) =>
+				res?.data?.employerProfile?.avatarPublicId ||
+				res?.data?.avatarPublicId ||
+				null,
+		});
+	const userData = useMemo(() => res?.data ?? null, [res]);
+	const profile = userData?.employerProfile ?? null;
+
+	const companyName = profile?.companyName ?? "";
+	const website = profile?.website ?? "";
+	const description = profile?.description ?? "";
+	const location = profile?.location ?? "";
+
+	const avatarPublicId = profile?.avatarPublicId ?? null;
+
+	// لو عندكم buildAvatarUrl
+	// const logoUrl = avatarPublicId ? buildAvatarUrl(avatarPublicId) : null;
+	const logoUrl = null; // لحد ما يكون عندكم URL builder أو endpoint يرجع URL
+
+	const [editingHeader, setEditingHeader] = useState(false);
+	const [headerDraft, setHeaderDraft] = useState({
+		companyName: "",
+		location: "",
+	});
+
+	const [editingAbout, setEditingAbout] = useState(false);
+	const [aboutDraft, setAboutDraft] = useState("");
+
+	const [editingOverview, setEditingOverview] = useState(false);
+	const [overviewDraft, setOverviewDraft] = useState({
+		website: "",
+	});
+
+	useEffect(() => {
+		setHeaderDraft({
+			companyName: companyName || "",
+			location: location || "",
+		});
+		setAboutDraft(description || "");
+		setOverviewDraft({ website: website || "" });
+	}, [companyName, location, description, website]);
+
+	const saveHeader = () => {
+		const cleaned = {
+			companyName: (headerDraft.companyName || "").trim(),
+			location: (headerDraft.location || "").trim() || null,
+		};
+		setEditingHeader(false);
+		updateMutation.mutate(cleaned);
+	};
+
+	const saveAbout = () => {
+		const cleaned = { description: (aboutDraft || "").trim() || null };
+		setEditingAbout(false);
+		updateMutation.mutate(cleaned);
+	};
+
+	const saveOverview = () => {
+		const cleaned = { website: (overviewDraft.website || "").trim() || null };
+		setEditingOverview(false);
+		updateMutation.mutate(cleaned);
+	};
+
+	if (isLoading) {
+		return (
+			<div className="min-h-[60vh] flex items-center justify-center">
+				<div className="text-gray-600">Loading…</div>
+			</div>
+		);
+	}
+
+	if (isError) {
+		return (
+			<div className="max-w-6xl mx-auto p-6">
+				<div className="rounded-xl border border-red-100 bg-red-50 p-4 text-sm text-red-700">
+					{error?.message || "Failed to load employer profile"}
 				</div>
+			</div>
+		);
+	}
 
-				{/* About Us Section */}
-				<div className="mb-8">
-					<h2 className="text-2xl font-semibold text-gray-800 mb-4">
-						About Us
-					</h2>
-					<p className="text-gray-700 leading-relaxed">
-						TechNest Innovations is a cutting-edge technology company delivering
-						high-quality web and mobile solutions to clients worldwide. Our team
-						of expert developers, designers, and strategists collaborate closely
-						with businesses to build scalable, user-focused products. We value
-						creativity, agility, and transparency.
-					</p>
-				</div>
+	return (
+		<div className="bg-gray-50 min-h-screen">
+			<Helmet>
+				<title>Employer Profile</title>
+			</Helmet>
 
-				{/* Company Overview */}
-				<div className="bg-gray-100 rounded-lg p-6">
-					<h2 className="text-2xl font-semibold text-gray-800 mb-4">
-						Company Overview
-					</h2>
+			<div className="max-w-6xl mx-auto px-4 py-8">
+				{/* Header card */}
+				<section className="bg-white border border-gray-200 rounded-2xl p-6">
+					<div className="flex items-center justify-between gap-4">
+						<div className="flex items-center gap-4">
+							{/* <div className="relative">
+								<div className="w-16 h-16 rounded-full bg-gray-100 overflow-hidden border border-gray-200 flex items-center justify-center">
+									{logoUrl ? (
+										<img
+											src={logoUrl}
+											alt="Company logo"
+											className="w-full h-full object-cover"
+										/>
+									) : (
+										<span className="text-gray-400 text-sm">Logo</span>
+									)}
+								</div>
 
-					<div className="space-y-3">
-						<div className="flex items-center">
-							<span className="font-medium text-gray-700 w-40">Website:</span>
-							<a
-								href="https://www.companysite.com"
-								className="text-blue-600 hover:text-blue-800 hover:underline"
-								target="_blank"
-								rel="noopener noreferrer"
-							>
-								www.companysite.com
-							</a>
-						</div>
-
-						<div className="flex items-center">
-							<span className="font-medium text-gray-700 w-40">
-								Company Size:
-							</span>
-							<span className="text-gray-700">51-200 employees</span>
-						</div>
-
-						<div className="flex items-center">
-							<span className="font-medium text-gray-700 w-40">Founded:</span>
-							<span className="text-gray-700">2017</span>
-						</div>
-
-						<div className="flex items-center">
-							<span className="font-medium text-gray-700 w-40">
-								Social Links:
-							</span>
-							<div className="flex space-x-4">
-								<a
-									href="#linkedin"
-									className="text-blue-700 hover:text-blue-900 hover:underline"
+								<button
+									type="button"
+									className="absolute -right-1 -bottom-1 w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center shadow hover:bg-purple-700 transition"
+									aria-label="Edit logo"
+									onClick={() => {
+										// هنا اربطي upload logo لما يكون عندكم endpoint
+										alert("Upload logo endpoint not wired yet");
+									}}
 								>
-									LinkedIn
-								</a>
-								<a
-									href="#x"
-									className="text-gray-700 hover:text-gray-900 hover:underline"
+									<i className="fa-solid fa-pen text-xs" />
+								</button>
+							</div> */}
+							<div className="relative">
+								{/* hidden input للملف */}
+								<input
+									ref={fileRef}
+									type="file"
+									accept="image/*"
+									className="hidden"
+									onChange={onAvatarChange}
+								/>
+
+								<div className="w-16 h-16 rounded-full bg-gray-100 overflow-hidden border border-gray-200 flex items-center justify-center">
+									{logoUrl ? (
+										<img
+											src={logoUrl}
+											alt="Company logo"
+											className="w-full h-full object-cover"
+										/>
+									) : (
+										<span className="text-gray-400 text-sm">Logo</span>
+									)}
+								</div>
+
+								<button
+									type="button"
+									className="absolute -right-1 -bottom-1 w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center shadow hover:bg-purple-700 transition disabled:opacity-60"
+									aria-label="Edit logo"
+									onClick={onPickAvatar}
+									disabled={avatarMutation.isPending}
 								>
-									X
-								</a>
-								<a
-									href="#facebook"
-									className="text-blue-600 hover:text-blue-800 hover:underline"
-								>
-									Facebook
-								</a>
+									{avatarMutation.isPending ? (
+										<i className="fa-solid fa-spinner animate-spin text-xs" />
+									) : (
+										<i className="fa-solid fa-pen text-xs" />
+									)}
+								</button>
+
+								{/* error صغيرة تحت الصورة لو حصل مشكلة */}
+								{avatarError ? (
+									<p className="mt-2 text-xs text-red-600 absolute left-0 top-[72px] w-56">
+										{avatarError}
+									</p>
+								) : null}
+							</div>
+
+							<div>
+								{!editingHeader ? (
+									<>
+										<h1 className="text-xl font-bold text-gray-900">
+											{companyName || "Company name"}
+										</h1>
+										<p className="text-sm text-gray-600 mt-1">Employer</p>
+										<div className="flex items-center gap-2 mt-2 text-sm text-gray-600">
+											<i className="fa-solid fa-location-dot text-purple-600" />
+											<span>{location || "Location"}</span>
+										</div>
+									</>
+								) : (
+									<div className="space-y-3">
+										<Field
+											label="Company Name"
+											value={headerDraft.companyName}
+											onChange={(v) =>
+												setHeaderDraft((p) => ({ ...p, companyName: v }))
+											}
+											placeholder="Company name"
+										/>
+										<Field
+											label="Location"
+											value={headerDraft.location}
+											onChange={(v) =>
+												setHeaderDraft((p) => ({ ...p, location: v }))
+											}
+											placeholder="New York, USA"
+										/>
+										<div className="flex items-center gap-2">
+											<button
+												type="button"
+												onClick={saveHeader}
+												disabled={updateMutation.isPending}
+												className="px-4 py-2 rounded-xl bg-purple-600 text-white text-sm font-semibold hover:bg-purple-700 transition disabled:opacity-60"
+											>
+												Save
+											</button>
+											<button
+												type="button"
+												onClick={() => {
+													setEditingHeader(false);
+													setHeaderDraft({
+														companyName: companyName || "",
+														location: location || "",
+													});
+												}}
+												className="px-4 py-2 rounded-xl border border-gray-200 text-gray-700 text-sm font-semibold hover:bg-gray-50 transition"
+											>
+												Cancel
+											</button>
+										</div>
+									</div>
+								)}
 							</div>
 						</div>
-					</div>
-				</div>
 
-				{/* Footer */}
-				<div className="mt-8 pt-6 border-t border-gray-200 text-center text-gray-500 text-sm">
-					<p>
-						© {new Date().getFullYear()} TechNest Innovations Inc. All rights
-						reserved.
-					</p>
+						{!editingHeader && (
+							<button
+								type="button"
+								className="px-5 py-2.5 rounded-full bg-purple-600 text-white text-sm font-semibold hover:bg-purple-700 transition"
+								onClick={() => setEditingHeader(true)}
+							>
+								Edit Profile
+							</button>
+						)}
+					</div>
+				</section>
+
+				{/* About Us */}
+				<section className="bg-white border border-gray-200 rounded-2xl p-6 mt-6">
+					<div className="flex items-center justify-between">
+						<h2 className="text-lg font-bold text-gray-900">About Us</h2>
+						{!editingAbout && (
+							<PencilButton
+								ariaLabel="Edit About Us"
+								onClick={() => setEditingAbout(true)}
+							/>
+						)}
+					</div>
+
+					<div className="mt-4 border-t pt-4">
+						{!editingAbout ? (
+							<p className="text-sm text-gray-600 leading-6 whitespace-pre-line">
+								{description?.trim()?.length ? (
+									description
+								) : (
+									<span className="text-gray-400">
+										Add a short description about your company…
+									</span>
+								)}
+							</p>
+						) : (
+							<div>
+								<textarea
+									value={aboutDraft}
+									onChange={(e) => setAboutDraft(e.target.value)}
+									rows={5}
+									className="w-full rounded-xl border border-gray-200 bg-white p-3 text-sm outline-none focus:ring-2 focus:ring-purple-200"
+									placeholder="Write a short description about your company…"
+								/>
+								<div className="mt-3 flex items-center gap-2">
+									<button
+										type="button"
+										onClick={saveAbout}
+										disabled={updateMutation.isPending}
+										className="px-4 py-2 rounded-xl bg-purple-600 text-white text-sm font-semibold hover:bg-purple-700 transition disabled:opacity-60"
+									>
+										Save
+									</button>
+									<button
+										type="button"
+										onClick={() => {
+											setEditingAbout(false);
+											setAboutDraft(description || "");
+										}}
+										className="px-4 py-2 rounded-xl border border-gray-200 text-gray-700 text-sm font-semibold hover:bg-gray-50 transition"
+									>
+										Cancel
+									</button>
+								</div>
+							</div>
+						)}
+					</div>
+				</section>
+
+				{/* Company Overview */}
+				<section className="bg-white border border-gray-200 rounded-2xl p-6 mt-6">
+					<div className="flex items-center justify-between">
+						<h2 className="text-lg font-bold text-gray-900">
+							Company Overview
+						</h2>
+						{!editingOverview && (
+							<PencilButton
+								ariaLabel="Edit Company Overview"
+								onClick={() => setEditingOverview(true)}
+							/>
+						)}
+					</div>
+
+					<div className="mt-4 border-t pt-5">
+						{!editingOverview ? (
+							<div className="space-y-3 text-sm">
+								<Row label="Website" value={website} isLink />
+								<Row label="Location" value={location} />
+							</div>
+						) : (
+							<div className="space-y-4">
+								<Field
+									label="Website"
+									value={overviewDraft.website}
+									onChange={(v) => setOverviewDraft({ website: v })}
+									placeholder="https://www.company.com"
+								/>
+
+								<div className="pt-2 flex items-center gap-2">
+									<button
+										type="button"
+										onClick={saveOverview}
+										disabled={updateMutation.isPending}
+										className="px-4 py-2 rounded-xl bg-purple-600 text-white text-sm font-semibold hover:bg-purple-700 transition disabled:opacity-60"
+									>
+										Save
+									</button>
+									<button
+										type="button"
+										onClick={() => {
+											setEditingOverview(false);
+											setOverviewDraft({ website: website || "" });
+										}}
+										className="px-4 py-2 rounded-xl border border-gray-200 text-gray-700 text-sm font-semibold hover:bg-gray-50 transition"
+									>
+										Cancel
+									</button>
+								</div>
+							</div>
+						)}
+					</div>
+				</section>
+
+				{updateMutation.isPending && (
+					<div className="mt-4 text-sm text-gray-600">Saving…</div>
+				)}
+
+				{/* Debug note for missing fields */}
+				<div className="mt-10 text-xs text-gray-400">
+					Missing in API: companySize, foundedYear, socialLinks. Add them in
+					backend if you want them like the mock. AvatarPublicId:{" "}
+					{avatarPublicId || "null"} (needs URL builder or endpoint)
 				</div>
 			</div>
 		</div>
 	);
-};
-
-export default EmployerProfile;
+}

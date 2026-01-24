@@ -13,18 +13,40 @@ import {
 const axiosClient = axios.create({
 	baseURL: import.meta.env.VITE_API_URL,
 	withCredentials: true,
-	headers: { "Content-Type": "application/json" },
+	//headers: { "Content-Type": "application/json" },
+	headers: {}
 });
 
 // Request interceptor: run before every request
 // If access token exists, add it to authorization header
+// axiosClient.interceptors.request.use(
+// 	(config) => {
+// 		const token = getAccessToken();
+// 		if (token) config.headers.Authorization = `Bearer ${token}`;
+// 		return config;
+// 	},
+// 	// Forward request errors
+// 	(error) => Promise.reject(error),
+// );
+
+
 axiosClient.interceptors.request.use(
 	(config) => {
 		const token = getAccessToken();
 		if (token) config.headers.Authorization = `Bearer ${token}`;
+
+		const isFormData = config.data instanceof FormData;
+
+		if (isFormData) {
+			// مهم جدًا: سيبي axios يحط multipart + boundary بنفسه
+			delete config.headers["Content-Type"];
+		} else {
+			// للطلبات العادية
+			config.headers["Content-Type"] = "application/json";
+		}
+
 		return config;
 	},
-	// Forward request errors
 	(error) => Promise.reject(error),
 );
 

@@ -11,6 +11,7 @@ import { useAuth } from "./useAuth";
  */
 export function useUploadAvatar({
 	uploadFn,
+	fieldName = "avatar",
 	invalidateKeys = [], // ✅ array of queryKeys
 	validationOptions = {
 		allowedTypes: ["image/jpeg", "image/png", "image/jpg"],
@@ -28,7 +29,11 @@ export function useUploadAvatar({
 	const mutation = useMutation({
 		mutationFn: async (file) => {
 			const formData = new FormData();
-			formData.append("avatar", file);
+			formData.append(fieldName, file);
+			console.log("Uploading avatar...");
+			console.log("FormData has avatar?", formData.has(fieldName));
+			console.log("FieldName:", fieldName);
+
 			return uploadFn(formData);
 		},
 

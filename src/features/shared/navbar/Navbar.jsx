@@ -39,18 +39,6 @@ export default function NavbarComponent() {
 		[currentUser?.role],
 	);
 
-	// const avatar = `${buildAvatarUrl(
-	// 	currentUser?.talentProfile?.avatarPublicId,
-	// )}?v=${currentUser?.talentProfile?.updatedAt || Date.now()}`;
-
-	// const avatar = useMemo(() => {
-	// 	return currentUser?.avatarUrl || defaultProfileImage;
-	// }, [currentUser?.avatarUrl]);
-
-	// const avatar = useMemo(() => {
-	// 	return currentUser?.avatarUrl;
-	// }, [currentUser?.avatarUrl]);
-
 	const avatar = useMemo(() => {
 		if (currentUser?.avatarUrl) return currentUser.avatarUrl;
 
@@ -82,7 +70,7 @@ export default function NavbarComponent() {
 	}, [logout, navigate, closeMenus]);
 
 	return (
-		<nav className="fixed top-0 left-0 right-0 flex flex-wrap w-full h-20 max-w-screen-2xl bg-neutral-100 hover:bg-neutral-50 z-200 border-b border-default mx-auto p-4 pb-7 justify-between items-center">
+		<nav className="fixed top-0 left-0 right-0 z-50 flex flex-wrap w-full h-20 max-w-screen-2xl bg-neutral-100 hover:bg-neutral-50 z-200 border-b border-default mx-auto p-4 pb-7 justify-between items-center">
 			{/* LEFT SECTION */}
 			<div className="flex items-center gap-7 w-1/2">
 				<Brand />
