@@ -2,16 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { queryKeys } from "../../../lib/queryKeys";
 import {
+	getEmployerProfile,
 	listEmployerJobs,
 	listJobApplications,
 } from "../../../services/employer.service";
 
 /**
  * Hook to fetch employer's jobs with derived data (stats and job summary)
- *
- * @returns {Object} An object containing the original query data, the derived data (stats and job summary), and the query status.
- * @example
- *
  * const { data, error, isLoading } = useEmployerDashboardJobs();
  */
 export function useEmployerDashboardJobs() {
@@ -153,3 +150,28 @@ export function useEmployerDashboardAggregated({
 		},
 	});
 }
+
+/**
+ * Hook to fetch employer's profile with derived data (stats and job summary)
+ * const { data, error, isLoading } = useEmployerProfileQuery();
+ */
+
+export function useEmployerProfileQuery() {
+	return useQuery({
+		queryKey: [queryKeys.employerProfile],
+		queryFn: getEmployerProfile,
+		staleTime: 60 * 1000,
+		retry: false,
+		refetchOnWindowFocus: false,
+	});
+}
+
+/**
+ * Hook to update employer's profile with derived data (stats and job summary)
+ * const { mutate: updateProfile } = useUpdateEmployerProfile();
+ * updateProfile(profileData).then(() => {
+ *   // Handle success
+ * }).catch((error) => {
+ *   // Handle error
+ * });
+ */

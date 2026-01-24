@@ -4,10 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
 import { queryKeys } from "../../../lib/queryKeys";
 import { getUser, login as loginApi } from "../../../services/auth.service";
-// import {
-// 	getTalentAvatar,
-// 	getTalentProfile,
-// } from "../../../services/talent.service";
 
 // handle login process and navigation
 export function useLogin() {
@@ -41,9 +37,6 @@ export function useLogin() {
 			const token = loginRes?.data?.token;
 			if (!token) throw new Error("Token missing from login response");
 
-			// 2) SAVE TOKEN (so next requests include Authorization header)
-			// This allows axios to send Authorization header automatically
-
 			saveLogin(token, rememberMe);
 
 			// 3) FETCH USER DATA
@@ -56,38 +49,9 @@ export function useLogin() {
 
 			const me = meRes.data;
 			const role = me?.role;
-			//if (!role) throw new Error("Role missing from /me");
 
 			// 4) Build user object
 			console.log("me:", me, role);
-
-			// 5) If user is TALENT, fetch extra data (profile + avatar)
-
-			// if (role === "TALENT") {
-			// 	let talentProfile = null;
-			// 	try {
-			// 		// Try to fetch talent profile
-			// 		const profileRes = await getTalentProfile();
-			// 		talentProfile =
-			// 			profileRes?.data?.data ||
-			// 			profileRes?.data?.data?.data ||
-			// 			profileRes?.data?.data?.profile;
-			// 	} catch {}
-
-			// 	let avatarUrl;
-			// 	try {
-			// 		// Try to fetch talent avatar
-			// 		const avatarRes = await getTalentAvatar(80, 80);
-			// 		avatarUrl = avatarRes?.data?.data?.avatar;
-			// 	} catch {}
-			// 	//if profile exists,use it as main user object
-			// 	if (talentProfile && typeof talentProfile === "object") {
-			// 		me = { ...talentProfile, avatarUrl };
-			// 	} else {
-			// 		//otherwise use main user object -> fallback to basic user
-			// 		me = { ...(me?.data ?? me), avatarUrl };
-			// 	}
-			// }
 
 			// 5) SET USER ONCE
 			setUser(me);

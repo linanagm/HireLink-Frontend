@@ -61,12 +61,10 @@ export function getTalentAvatar(params = {}) {
  * PUT /talent/avatar (multipart/form-data)
  * field name MUST be "avatar"
  */
-export function uploadTalentAvatar(file) {
-    const form = new FormData();
-    form.append("avatar", file);
+export function uploadTalentAvatar(formData) {
 
-    return api("put", PATHS.talent.avatar, form, {
-        headers: { "Content-Type": "multipart/form-data" },
+    return api("put", PATHS.talent.avatar, formData, {
+
     });
 }
 
@@ -86,12 +84,8 @@ export function getTalentResume() {
  * field name MUST be "resume"
  */
 export function uploadTalentResume(file) {
-    const form = new FormData();
-    form.append("resume", file);
 
-    return api("put", PATHS.talent.resume, form, {
-        headers: { "Content-Type": "multipart/form-data" },
-    });
+    return api("put", PATHS.talent.resume, form, file);
 }
 
 // DELETE /talent/resume
