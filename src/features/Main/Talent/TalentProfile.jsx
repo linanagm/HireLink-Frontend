@@ -164,27 +164,7 @@ export default function TalentProfile() {
 	const profileAvatar = talentProfile?.avatarPublicId
 		? buildAvatarUrl(talentProfile?.avatarPublicId)
 		: defaultProfileImage;
-	// const profile = {
-	// 	name: `${talentProfile?.firstName}  ${talentProfile?.lastName}`,
-	// 	location: talentProfile?.location ?? "_",
-	// 	completion: 70,
-	// 	avatarUrl: talentProfile?.avatarPublicId
-	// 		? buildAvatarUrl(talentProfile?.avatarPublicId)
-	// 		: defaultProfileImage,
-	// 	title: talentProfile?.headline ?? "Title",
-	// 	level: "Expert",
-	// 	bio: talentProfile?.bio,
-	// 	bullets: talentProfile?.skills?.map((s) => s) ?? [],
-	// 	work: talentProfile?.workExperience ?? "No experience",
-	// 	chips: talentProfile?.certifications ?? [],
-	// 	cert: {
-	// 		title: talentProfile?.certificates?.name ?? "None",
-	// 		provider: talentProfile?.certificates?.issuer ?? "None",
-	// 		issued:
-	// 			talentProfile?.certificates?.issueDate ?? "Certificate Issued Date",
-	// 		id: talentProfile?.certificates?.certificationId ?? "Certificate ID",
-	// 	},
-	// };
+
 	// handle title
 	useEffect(() => {
 		if (!isEditingTitle) {
