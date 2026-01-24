@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
+import CardOverlay from "../../../components/UI/CardLoader";
+import Field from "../../../components/UI/Field";
 import Loading from "../../../components/UI/Loading";
 import { useUpdateEmployerProfile } from "../../../hooks/mutations/employer/useUpdateEmployerMutation";
 import { useEmployerProfileQuery } from "../../../hooks/queries/employer/useEmployerQueries";
@@ -8,6 +10,7 @@ import { useUploadAvatar } from "../../../hooks/useUploadAvatar";
 import { queryKeys } from "../../../lib/queryKeys";
 import { updateEmployerLogo } from "../../../services/employer.service";
 import { buildAvatarUrl } from "../../../utils/Helpers/avatar";
+import { normalizeUrl } from "../../../utils/normalizeData";
 
 function PencilButton({ onClick, ariaLabel = "Edit", className = "" }) {
 	return (
@@ -22,20 +25,6 @@ function PencilButton({ onClick, ariaLabel = "Edit", className = "" }) {
 		>
 			<i className="fa-solid fa-pen text-sm" />
 		</button>
-	);
-}
-
-function Field({ label, value, onChange, placeholder }) {
-	return (
-		<div>
-			<p className="text-sm font-semibold text-gray-900">{label}</p>
-			<input
-				value={value}
-				onChange={(e) => onChange(e.target.value)}
-				className="mt-2 w-full rounded-xl border border-gray-200 bg-white p-3 text-sm outline-none focus:ring-2 focus:ring-purple-200"
-				placeholder={placeholder}
-			/>
-		</div>
 	);
 }
 
@@ -62,7 +51,13 @@ function Row({ label, value, isLink = false }) {
 }
 
 export default function EmployerProfile() {
-	const { data: res, isLoading, isError, error } = useEmployerProfileQuery();
+	const {
+		data: res,
+		isLoading,
+		isFetching,
+		isError,
+		error,
+	} = useEmployerProfileQuery();
 	const updateMutation = useUpdateEmployerProfile();
 	const { currentUser } = useAuth();
 	const { fileRef, onPickAvatar, onAvatarChange, avatarError, avatarMutation } =
@@ -84,7 +79,6 @@ export default function EmployerProfile() {
 	const description = profile?.description ?? "";
 	const location = profile?.location ?? "";
 
-	const avatarPublicId = profile?.avatarPublicId ?? null;
 	const liveAvatarUrl = currentUser?.avatarUrl || null;
 	const profileAvatarUrl = profile?.avatarPublicId
 		? `${buildAvatarUrl(profile.avatarPublicId)}?v=${profile?.updatedAt || ""}`
@@ -106,13 +100,15 @@ export default function EmployerProfile() {
 		website: "",
 	});
 
+	const isProfileLoading = isFetching || updateMutation.isPending || isLoading;
+
 	useEffect(() => {
 		setHeaderDraft({
 			companyName: companyName || "",
 			location: location || "",
 		});
 		setAboutDraft(description || "");
-		setOverviewDraft({ website: website || "" });
+		setOverviewDraft((p) => ({ ...p, website: website || "" }));
 	}, [companyName, location, description, website]);
 
 	const saveHeader = () => {
@@ -131,7 +127,9 @@ export default function EmployerProfile() {
 	};
 
 	const saveOverview = () => {
-		const cleaned = { website: (overviewDraft.website || "").trim() || null };
+		const cleaned = {
+			website: normalizeUrl(overviewDraft.website).trim() || "-",
+		};
 		setEditingOverview(false);
 		updateMutation.mutate(cleaned);
 	};
@@ -159,43 +157,43 @@ export default function EmployerProfile() {
 			<Helmet>
 				<title>Employer Profile</title>
 			</Helmet>
+			<CardOverlay loading={isProfileLoading} label="Updating...">
+				<div className="max-w-6xl mx-auto px-4 py-8">
+					{/* Header card */}
+					<section className="bg-white border border-gray-200 rounded-2xl p-12 ">
+						<div className="flex items-center justify-between gap-4 ">
+							<div className="flex flex-grow items-center gap-4 ">
+								<div className="relative flex flex-col items-center gap-2 ">
+									{/* hidden input */}
+									<input
+										ref={fileRef}
+										type="file"
+										accept="image/*"
+										className="hidden w-full "
+										onChange={onAvatarChange}
+									/>
 
-			<div className="max-w-6xl mx-auto px-4 py-8">
-				{/* Header card */}
-				<section className="bg-white border border-gray-200 rounded-2xl p-6 ">
-					<div className="flex items-center justify-between gap-4 ">
-						<div className="flex flex-grow items-center gap-4 ">
-							<div className="relative flex flex-col items-center gap-2 ">
-								{/* hidden input */}
-								<input
-									ref={fileRef}
-									type="file"
-									accept="image/*"
-									className="hidden w-full "
-									onChange={onAvatarChange}
-								/>
+									{/* Avatar wrapper */}
+									<div className="relative group">
+										<div className="w-28 h-28 rounded-full shadow-md bg-gray-100 overflow-hidden border border-gray-200 flex items-center justify-center">
+											{logoUrl ? (
+												<img
+													src={logoUrl}
+													alt="Company logo"
+													className="w-full h-full object-cover"
+												/>
+											) : (
+												<span className="text-gray-400 text-xs">Logo</span>
+											)}
+										</div>
 
-								{/* Avatar wrapper */}
-								<div className="relative group">
-									<div className="w-28 h-28 rounded-full shadow-md bg-gray-100 overflow-hidden border border-gray-200 flex items-center justify-center">
-										{logoUrl ? (
-											<img
-												src={logoUrl}
-												alt="Company logo"
-												className="w-full h-full object-cover"
-											/>
-										) : (
-											<span className="text-gray-400 text-xs">Logo</span>
-										)}
-									</div>
-
-									{/* Edit button overlay */}
-									<button
-										type="button"
-										aria-label="Edit logo"
-										onClick={onPickAvatar}
-										disabled={avatarMutation.isPending}
-										className="
+										{/* Edit button overlay */}
+										<button
+											type="button"
+											aria-label="Edit logo"
+											onClick={onPickAvatar}
+											disabled={avatarMutation.isPending}
+											className="
 											absolute bottom-4 -right-1
 											w-7 h-7 rounded-full
 											bg-purple-600 text-white
@@ -204,216 +202,217 @@ export default function EmployerProfile() {
 											hover:bg-purple-700
 											transition
 											disabled:opacity-60
+											
 										"
-									>
-										{avatarMutation.isPending ? (
-											<i className="fa-solid fa-spinner animate-spin text-xs" />
-										) : (
-											<i className="fa-solid fa-pen text-[10px]" />
-										)}
-									</button>
+										>
+											{avatarMutation.isPending ? (
+												<i className="fa-solid fa-spinner animate-spin text-xs" />
+											) : (
+												<i className="fa-solid fa-pen text-[10px]" />
+											)}
+										</button>
+									</div>
+
+									{/* Error message */}
+									{avatarError && (
+										<p className="text-xs text-red-600 text-center max-w-[160px] leading-tight">
+											{avatarError}
+										</p>
+									)}
 								</div>
 
-								{/* Error message */}
-								{avatarError && (
-									<p className="text-xs text-red-600 text-center max-w-[160px] leading-tight">
-										{avatarError}
-									</p>
-								)}
+								<div>
+									{!editingHeader ? (
+										<>
+											<h1 className="text-xl font-bold text-gray-900">
+												{companyName || "Company name"}
+											</h1>
+											<p className="text-sm text-gray-600 mt-1">Company</p>
+											<div className="flex items-center gap-2 mt-2 text-sm text-gray-600">
+												<i className="fa-solid fa-location-dot text-purple-600" />
+												<span>{location || "Location"}</span>
+											</div>
+										</>
+									) : (
+										<div className="space-y-3 ">
+											<Field
+												label="Company Name"
+												value={headerDraft.companyName}
+												onChange={(v) =>
+													setHeaderDraft((p) => ({ ...p, companyName: v }))
+												}
+												placeholder="Company name"
+											/>
+											<Field
+												label="Location"
+												value={headerDraft.location}
+												onChange={(v) =>
+													setHeaderDraft((p) => ({ ...p, location: v }))
+												}
+												placeholder="New York, USA"
+											/>
+											<div className="flex items-center gap-2">
+												<button
+													type="button"
+													onClick={saveHeader}
+													disabled={updateMutation.isPending}
+													className="px-4 py-2 rounded-xl bg-purple-600 text-white text-sm font-semibold hover:bg-purple-700 transition disabled:opacity-60"
+												>
+													Save
+												</button>
+												<button
+													type="button"
+													onClick={() => {
+														setEditingHeader(false);
+														setHeaderDraft({
+															companyName: companyName || "",
+															location: location || "",
+														});
+													}}
+													className="px-4 py-2 rounded-xl border border-gray-200 text-gray-700 text-sm font-semibold hover:bg-gray-50 transition"
+												>
+													Cancel
+												</button>
+											</div>
+										</div>
+									)}
+								</div>
 							</div>
 
-							<div>
-								{!editingHeader ? (
-									<>
-										<h1 className="text-xl font-bold text-gray-900">
-											{companyName || "Company name"}
-										</h1>
-										<p className="text-sm text-gray-600 mt-1">Company</p>
-										<div className="flex items-center gap-2 mt-2 text-sm text-gray-600">
-											<i className="fa-solid fa-location-dot text-purple-600" />
-											<span>{location || "Location"}</span>
-										</div>
-									</>
-								) : (
-									<div className="space-y-3 ">
-										<Field
-											label="Company Name"
-											value={headerDraft.companyName}
-											onChange={(v) =>
-												setHeaderDraft((p) => ({ ...p, companyName: v }))
-											}
-											placeholder="Company name"
-										/>
-										<Field
-											label="Location"
-											value={headerDraft.location}
-											onChange={(v) =>
-												setHeaderDraft((p) => ({ ...p, location: v }))
-											}
-											placeholder="New York, USA"
-										/>
-										<div className="flex items-center gap-2">
-											<button
-												type="button"
-												onClick={saveHeader}
-												disabled={updateMutation.isPending}
-												className="px-4 py-2 rounded-xl bg-purple-600 text-white text-sm font-semibold hover:bg-purple-700 transition disabled:opacity-60"
-											>
-												Save
-											</button>
-											<button
-												type="button"
-												onClick={() => {
-													setEditingHeader(false);
-													setHeaderDraft({
-														companyName: companyName || "",
-														location: location || "",
-													});
-												}}
-												className="px-4 py-2 rounded-xl border border-gray-200 text-gray-700 text-sm font-semibold hover:bg-gray-50 transition"
-											>
-												Cancel
-											</button>
-										</div>
-									</div>
-								)}
-							</div>
+							{!editingHeader && (
+								<button
+									type="button"
+									className="px-5 py-2.5 rounded-full bg-purple-600 text-white text-sm font-semibold hover:bg-purple-700 transition"
+									onClick={() => setEditingHeader(true)}
+								>
+									Edit Profile
+								</button>
+							)}
+						</div>
+					</section>
+
+					{/* About Us */}
+					<section className="bg-white border border-gray-200 rounded-2xl p-12 mt-6">
+						<div className="flex items-center justify-between">
+							<h2 className="text-lg font-bold text-gray-900">About Us</h2>
+							{!editingAbout && (
+								<PencilButton
+									ariaLabel="Edit About Us"
+									onClick={() => setEditingAbout(true)}
+								/>
+							)}
 						</div>
 
-						{!editingHeader && (
-							<button
-								type="button"
-								className="px-5 py-2.5 rounded-full bg-purple-600 text-white text-sm font-semibold hover:bg-purple-700 transition"
-								onClick={() => setEditingHeader(true)}
-							>
-								Edit Profile
-							</button>
-						)}
-					</div>
-				</section>
-
-				{/* About Us */}
-				<section className="bg-white border border-gray-200 rounded-2xl p-6 mt-6">
-					<div className="flex items-center justify-between">
-						<h2 className="text-lg font-bold text-gray-900">About Us</h2>
-						{!editingAbout && (
-							<PencilButton
-								ariaLabel="Edit About Us"
-								onClick={() => setEditingAbout(true)}
-							/>
-						)}
-					</div>
-
-					<div className="mt-4 border-t pt-4">
-						{!editingAbout ? (
-							<p className="text-sm text-gray-600 leading-6 whitespace-pre-line">
-								{description?.trim()?.length ? (
-									description
-								) : (
-									<span className="text-gray-400">
-										Add a short description about your company…
-									</span>
-								)}
-							</p>
-						) : (
-							<div>
-								<textarea
-									value={aboutDraft}
-									onChange={(e) => setAboutDraft(e.target.value)}
-									rows={5}
-									className="w-full rounded-xl border border-gray-200 bg-white p-3 text-sm outline-none focus:ring-2 focus:ring-purple-200"
-									placeholder="Write a short description about your company…"
-								/>
-								<div className="mt-3 flex items-center gap-2">
-									<button
-										type="button"
-										onClick={saveAbout}
-										disabled={updateMutation.isPending}
-										className="px-4 py-2 rounded-xl bg-purple-600 text-white text-sm font-semibold hover:bg-purple-700 transition disabled:opacity-60"
-									>
-										Save
-									</button>
-									<button
-										type="button"
-										onClick={() => {
-											setEditingAbout(false);
-											setAboutDraft(description || "");
-										}}
-										className="px-4 py-2 rounded-xl border border-gray-200 text-gray-700 text-sm font-semibold hover:bg-gray-50 transition"
-									>
-										Cancel
-									</button>
+						<div className="mt-4 border-t pt-4">
+							{!editingAbout ? (
+								<p className="text-sm text-gray-600 leading-6 whitespace-pre-line">
+									{description?.trim()?.length ? (
+										description
+									) : (
+										<span className="text-gray-400">
+											Add a short description about your company…
+										</span>
+									)}
+								</p>
+							) : (
+								<div>
+									<textarea
+										value={aboutDraft}
+										onChange={(e) => setAboutDraft(e.target.value)}
+										rows={5}
+										className="w-full rounded-xl border border-gray-200 bg-white p-3 text-sm outline-none focus:ring-2 focus:ring-purple-200"
+										placeholder="Write a short description about your company…"
+									/>
+									<div className="mt-3 flex items-center gap-2">
+										<button
+											type="button"
+											onClick={saveAbout}
+											disabled={updateMutation.isPending}
+											className="px-4 py-2 rounded-xl bg-purple-600 text-white text-sm font-semibold hover:bg-purple-700 transition disabled:opacity-60"
+										>
+											Save
+										</button>
+										<button
+											type="button"
+											onClick={() => {
+												setEditingAbout(false);
+												setAboutDraft(description || "");
+											}}
+											className="px-4 py-2 rounded-xl border border-gray-200 text-gray-700 text-sm font-semibold hover:bg-gray-50 transition"
+										>
+											Cancel
+										</button>
+									</div>
 								</div>
-							</div>
-						)}
-					</div>
-				</section>
+							)}
+						</div>
+					</section>
 
-				{/* Company Overview */}
-				<section className="bg-white border border-gray-200 rounded-2xl p-6 mt-6">
-					<div className="flex items-center justify-between">
-						<h2 className="text-lg font-bold text-gray-900">
-							Company Overview
-						</h2>
-						{!editingOverview && (
-							<PencilButton
-								ariaLabel="Edit Company Overview"
-								onClick={() => setEditingOverview(true)}
-							/>
-						)}
-					</div>
+					{/* Company Overview */}
 
-					<div className="mt-4 border-t pt-5">
-						{!editingOverview ? (
-							<div className="space-y-3 text-sm">
-								<Row label="Website" value={website} isLink />
-								<Row label="Location" value={location} />
-							</div>
-						) : (
-							<div className="space-y-4">
-								<Field
-									label="Website"
-									value={overviewDraft.website}
-									onChange={(v) => setOverviewDraft({ website: v })}
-									placeholder="https://www.company.com"
+					<section className="bg-white border border-gray-200 rounded-2xl p-12 mt-6">
+						<div className="flex items-center justify-between">
+							<h2 className="text-lg font-bold text-gray-900">
+								Company Overview
+							</h2>
+							{!editingOverview && (
+								<PencilButton
+									ariaLabel="Edit Company Overview"
+									onClick={() => setEditingOverview(true)}
 								/>
+							)}
+						</div>
 
-								<div className="pt-2 flex items-center gap-2">
-									<button
-										type="button"
-										onClick={saveOverview}
-										disabled={updateMutation.isPending}
-										className="px-4 py-2 rounded-xl bg-purple-600 text-white text-sm font-semibold hover:bg-purple-700 transition disabled:opacity-60"
-									>
-										Save
-									</button>
-									<button
-										type="button"
-										onClick={() => {
-											setEditingOverview(false);
-											setOverviewDraft({ website: website || "" });
-										}}
-										className="px-4 py-2 rounded-xl border border-gray-200 text-gray-700 text-sm font-semibold hover:bg-gray-50 transition"
-									>
-										Cancel
-									</button>
+						<div className="mt-4 border-t pt-5">
+							{!editingOverview ? (
+								<div className="space-y-3 text-sm">
+									<Row label="Website" value={website} isLink />
+									<Row label="Location" value={location} />
 								</div>
-							</div>
-						)}
-					</div>
-				</section>
+							) : (
+								<div className="space-y-4">
+									<Field
+										label="Website"
+										value={overviewDraft.website}
+										onChange={(v) =>
+											setOverviewDraft((p) => ({ ...p, website: v }))
+										}
+										placeholder="https://www.company.com"
+									/>
 
-				{updateMutation.isPending && (
-					<div className="mt-4 text-sm text-gray-600">Saving…</div>
-				)}
+									<div className="pt-2 flex items-center gap-2">
+										<button
+											type="button"
+											onClick={saveOverview}
+											disabled={updateMutation.isPending}
+											className="px-4 py-2 rounded-xl bg-purple-600 text-white text-sm font-semibold hover:bg-purple-700 transition disabled:opacity-60"
+										>
+											Save
+										</button>
+										<button
+											type="button"
+											onClick={() => {
+												setEditingOverview(false);
+												setOverviewDraft((p) => ({
+													...p,
+													website: website || "",
+												}));
+											}}
+											className="px-4 py-2 rounded-xl border border-gray-200 text-gray-700 text-sm font-semibold hover:bg-gray-50 transition"
+										>
+											Cancel
+										</button>
+									</div>
+								</div>
+							)}
+						</div>
+					</section>
 
-				{/* Debug note for missing fields */}
-				<div className="mt-10 text-xs text-gray-400">
-					Missing in API: companySize, foundedYear, socialLinks. Add them in
-					backend if you want them like the mock. AvatarPublicId:{" "}
-					{avatarPublicId || "null"} (needs URL builder or endpoint)
+					{updateMutation.isPending && (
+						<div className="mt-4 text-sm text-gray-600">Saving…</div>
+					)}
 				</div>
-			</div>
+			</CardOverlay>
 		</div>
 	);
 }

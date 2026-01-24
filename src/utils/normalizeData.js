@@ -25,3 +25,23 @@ export function normalizeUser(user) {
         avatarUrl: defaultProfileImage,
     };
 }
+
+
+export function normalizeUrl(input) {
+    const raw = (input || "").trim();
+    if (!raw) return null;
+
+    const lowered = raw.toLowerCase();
+    if (lowered.startsWith("javascript:") || lowered.startsWith("data:")) {
+        return null;
+    }
+
+
+    if (/^https?:\/\//i.test(raw)) return raw;
+
+
+    if (raw.startsWith("//")) return `https:${raw}`;
+
+
+    return `https://${raw}`;
+}
