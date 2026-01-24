@@ -3,9 +3,7 @@
 import { JOBS_MODES, PATHS } from "../constants/apiPaths";
 import { api } from "../lib/api";
 
-/** =========================================
- *  Enums (عشان اليوزر يختار مش يكتب)
- *  ========================================= */
+
 export const SKILL_LEVELS = ["BEGINNER", "INTERMEDIATE", "ADVANCED"];
 export const LANGUAGE_PROFICIENCY = [
     "FRESH",

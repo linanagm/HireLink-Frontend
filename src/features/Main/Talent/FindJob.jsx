@@ -25,19 +25,6 @@ export default function JobList() {
 		[skip],
 	);
 
-	// const {
-	// 	data: response,
-	// 	isLoading,
-	// 	isError,
-	// 	error,
-	// 	isFetching,
-	// } = useQuery({
-	// 	queryKey: ["jobs", queryParams],
-	// 	queryFn: () => getJobs(queryParams),
-	// 	staleTime: 60 * 1000,
-	// 	keepPreviousData: true,
-	// });
-
 	const {
 		data: response,
 		isLoading,

@@ -11,26 +11,8 @@
 //  * @param {Object} [config] - Optional config for the request
 //  * @returns {Promise<Object>} A promise that resolves with the normalized response object
 //  */
-// export async function api(method, url, data = null, config = {}) {
-//     try {
-//         const response = await axiosClient[method](url, data, config);
 
-//         // normalize response so frontend always sees:
-//         // { ok: true, data: response.data.data }
-//         return {
-//             ok: true,
-//             message: response?.data?.message ?? null,
-//             data: response?.data?.data ?? null,
-//         };
-//     } catch (error) {
-//         console.log('api', error);
-
-//         return;
-
-//     }
-// }
-
-import axiosClient from "../config/axiosClient"; // تأكدي من الاسم الصحيح
+import axiosClient from "../config/axiosClient";
 
 export async function api(method, url, data = null, config = {}) {
     try {
@@ -44,7 +26,7 @@ export async function api(method, url, data = null, config = {}) {
         return {
             ok: true,
             message: response?.data?.message ?? null,
-            data: response?.data?.data ?? null,
+            data: response?.data?.data ?? response?.data?.paylod ?? null,
             status: response?.status ?? 200,
         };
     } catch (error) {

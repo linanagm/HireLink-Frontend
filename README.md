@@ -97,5 +97,86 @@ src/
 ## Roadmap
 - [ ] Complete Talent Profile sections (bio, skills, links, resume, etc.)
 - [ ] Settings page (change password, email, delete account...)
-- [ ] Privacy page
 - [ ] Reuse upload pattern for Employer logo/avatar
+
+### Employer
+
+## Employer Dashboard
+
+The Employer Dashboard provides employers with a high-level overview of their activity on the platform, including job postings and applications.
+
+This dashboard is implemented **without a dedicated backend dashboard endpoint**.  
+Instead, it aggregates data from existing employer APIs on the frontend.
+
+---
+
+### Backend APIs Used
+
+The dashboard relies on the following endpoints:
+
+- **List Employer Jobs**
+Returns all jobs created by the authenticated employer.
+
+- **List Applications for a Job**
+Returns all applications submitted for a specific job.
+
+---
+
+### How the Dashboard Data Is Built
+
+Since there is no single API that returns dashboard statistics, the frontend aggregates the data as follows:
+
+#### 1. Job Statistics
+Derived from `GET /employer/jobs`:
+
+- **Total Job Posts**
+- Total number of jobs returned.
+- **Active Jobs**
+- Jobs where `publishedAt` is not null.
+
+#### 2. Applications Received
+- For each job, the frontend fetches:
+
+- The total number of applications is calculated by summing applications across all jobs.
+
+#### 3. Job Summary Table
+- Displays the most recent jobs (default: last 5).
+- For each job:
+- Job title
+- Posted date
+- Status (`Open` if published, otherwise `Draft`)
+- Number of applicants (calculated from job applications)
+
+#### 4. Recent Applicants
+- Applications from all jobs are combined into a single list.
+- The list is sorted by `createdAt` in descending order.
+- The most recent applications (default: last 5) are displayed.
+
+---
+
+### Frontend Implementation
+
+- The dashboard uses a custom React Query hook:
+- `useEmployerDashboardAggregated`
+- This hook:
+- Fetches employer jobs
+- Fetches applications for each job
+- Aggregates statistics and recent applicants
+- React Query caching is used to keep the dashboard responsive and reduce unnecessary refetching.
+
+---
+
+### Notes & Limitations
+
+- The dashboard currently performs **multiple API requests (N+1 pattern)**:
+- One request to fetch jobs
+- One request per job to fetch applications
+- For employers with a large number of jobs, a dedicated backend dashboard endpoint is recommended for better performance.
+- Job views are not included, as there is no backend support for tracking views yet.
+
+---
+
+### Future Improvements
+
+- Add a backend endpoint to return aggregated dashboard data in a single request.
+- Add job views tracking and analytics.
