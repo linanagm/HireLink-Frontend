@@ -1,403 +1,153 @@
-import React, { useState } from "react";
+import { Helmet } from "react-helmet";
+import Badge from "../../../components/UI/Badge";
+import { useAccountSecurityMutations } from "../../../hooks/mutations/useAccountSettingsMutation";
+import { useAuth } from "../../../hooks/useAuth";
 
-const AccountSettingsForm = () => {
-	// State for general settings
-	const [generalSettings, setGeneralSettings] = useState({
-		companyName: "",
-		adminContactEmail: "",
-		phoneNumber: "",
-		timeZone: "",
-		defaultCurrency: "",
-		languagePreference: "",
-		industryTag: "",
-	});
+function LockIcon({ className = "w-5 h-5" }) {
+	return (
+		<svg
+			className={className}
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth="1.5"
+		>
+			<title>security</title>
+			<path
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				d="M16.5 10.5V7.875a4.5 4.5 0 10-9 0V10.5m-.75 0h10.5a2.25 2.25 0 012.25 2.25v6A2.25 2.25 0 0117.25 21H6.75A2.25 2.25 0 014.5 18.75v-6A2.25 2.25 0 016.75 10.5z"
+			/>
+		</svg>
+	);
+}
 
-	// Separate state for password settings
-	const [passwordSettings, setPasswordSettings] = useState({
-		oldPassword: "",
-		newPassword: "",
-		confirmPassword: "",
-	});
+export default function AccountSettings() {
+	const { currentUser } = useAuth();
+	const { logoutMutation, logoutAllMutation, resetPasswordMutation } =
+		useAccountSecurityMutations();
 
-	const handleGeneralSettingsChange = (e) => {
-		const { name, value } = e.target;
-		setGeneralSettings((prev) => ({
-			...prev,
-			[name]: value,
-		}));
+	const email = currentUser?.email || "";
+	const role = currentUser?.role || "";
+	const isEmailVerified = Boolean(currentUser?.isEmailVerified);
+
+	const onSignOut = () => logoutMutation.mutate();
+	const onSignOutAll = () => {
+		const ok = window.confirm(
+			"Sign out from all devices?\nThis will log you out everywhere.",
+		);
+		if (ok) logoutAllMutation.mutate();
 	};
 
-	const handlePasswordChange = (e) => {
-		const { name, value } = e.target;
-		setPasswordSettings((prev) => ({
-			...prev,
-			[name]: value,
-		}));
+	const onSendReset = () => {
+		if (!email) return;
+		resetPasswordMutation.mutate();
 	};
 
-	const handleGeneralSettingsSubmit = (e) => {
-		e.preventDefault();
-		console.log("General settings submitted:", generalSettings);
-
-		// You can add API call here
-		// Example: saveGeneralSettings(generalSettings);
-
-		alert("General settings saved successfully!");
-	};
-
-	const handlePasswordSubmit = (e) => {
-		e.preventDefault();
-
-		// Validate password fields
-		if (!passwordSettings.oldPassword) {
-			alert("Please enter your current password");
-			return;
-		}
-
-		if (!passwordSettings.newPassword) {
-			alert("Please enter a new password");
-			return;
-		}
-
-		if (passwordSettings.newPassword !== passwordSettings.confirmPassword) {
-			alert("New password does not match confirmation");
-			return;
-		}
-
-		if (passwordSettings.newPassword.length < 6) {
-			alert("Password must be at least 6 characters long");
-			return;
-		}
-
-		console.log("Password update submitted:", passwordSettings);
-
-		// You can add API call here
-		// Example: updatePassword(passwordSettings);
-
-		// Clear password fields after successful submission
-		setPasswordSettings({
-			oldPassword: "",
-			newPassword: "",
-			confirmPassword: "",
-		});
-
-		alert("Password updated successfully!");
-	};
-
-	const handleDeleteAccount = () => {
-		const confirmDelete = document.getElementById("confirmDelete")?.checked;
-
-		if (!confirmDelete) {
-			alert("Please check the confirmation box first");
-			return;
-		}
-
-		if (
-			window.confirm("Are you absolutely sure? This action cannot be undone!")
-		) {
-			console.log("Deleting account...");
-			// Add your delete account API call here
-			alert("Account deletion request submitted.");
-		}
-	};
+	const busy =
+		logoutMutation.isPending ||
+		logoutAllMutation.isPending ||
+		resetPasswordMutation.isPending;
 
 	return (
-		<div className="min-h-screen bg-gray-50 py-8 px-4">
-			<div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6">
-				<h1 className="text-2xl font-bold text-gray-800 mb-6">
-					Account Settings
-				</h1>
+		<div className="min-h-screen bg-slate-100">
+			<Helmet>
+				<title>Account Settings | HireLink</title>
+			</Helmet>
 
-				{/* General Settings Form */}
-				<form onSubmit={handleGeneralSettingsSubmit} className="space-y-6">
-					{/* Company Information Section */}
-					<div className="border-b pb-6">
-						<h2 className="text-lg font-semibold text-gray-700 mb-4">
-							Company Information
+			<div className="max-w-5xl mx-auto px-4 py-8">
+				<h1 className="text-2xl font-bold text-gray-900">Account Settings</h1>
+				<p className="text-sm text-gray-600 mt-1">
+					Manage your account settings & security.
+				</p>
+
+				{/* Account Overview */}
+				<section className="bg-white border rounded-xl p-6 mt-6">
+					<div className="flex items-center justify-between gap-3">
+						<h2 className="text-lg font-semibold text-gray-900">
+							Account Overview
 						</h2>
 
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-							<div>
-								<label
-									htmlFor="companyName"
-									className="block text-sm font-medium text-gray-700 mb-1"
-								>
-									Company Name *
-								</label>
-								<input
-									type="text"
-									id="companyName"
-									name="companyName"
-									value={generalSettings.companyName}
-									onChange={handleGeneralSettingsChange}
-									placeholder="Enter company name"
-									className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-									required
-								/>
-							</div>
-
-							<div>
-								<label
-									htmlFor="adminContactEmail"
-									className="block text-sm font-medium text-gray-700 mb-1"
-								>
-									Admin Contact Email *
-								</label>
-								<input
-									type="email"
-									id="adminContactEmail"
-									name="adminContactEmail"
-									value={generalSettings.adminContactEmail}
-									onChange={handleGeneralSettingsChange}
-									placeholder="Enter admin contact email"
-									className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-									required
-								/>
-							</div>
-						</div>
-
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-							<div>
-								<label
-									htmlFor="phoneNumber"
-									className="block text-sm font-medium text-gray-700 mb-1"
-								>
-									Phone Number
-								</label>
-								<input
-									type="tel"
-									id="phoneNumber"
-									name="phoneNumber"
-									value={generalSettings.phoneNumber}
-									onChange={handleGeneralSettingsChange}
-									placeholder="Enter phone number"
-									className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-								/>
-							</div>
-
-							<div>
-								<label
-									htmlFor="timeZone"
-									className="block text-sm font-medium text-gray-700 mb-1"
-								>
-									Time Zone
-								</label>
-								<select
-									id="timeZone"
-									name="timeZone"
-									value={generalSettings.timeZone}
-									onChange={handleGeneralSettingsChange}
-									className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-								>
-									<option value="">Select Time Zone</option>
-									<option value="GMT">GMT (Greenwich Mean Time)</option>
-									<option value="EST">EST (Eastern Standard Time)</option>
-									<option value="CET">CET (Central European Time)</option>
-									<option value="EET">EET (Eastern European Time)</option>
-								</select>
-							</div>
+						<div className="flex items-center gap-2">
+							<Badge tone="gray">{role || "USER"}</Badge>
+							{isEmailVerified ? (
+								<Badge tone="green">Email verified</Badge>
+							) : (
+								<Badge tone="yellow">Email not verified</Badge>
+							)}
 						</div>
 					</div>
 
-					{/* Preferences Section */}
-					<div className="border-b pb-6">
-						<h2 className="text-lg font-semibold text-gray-700 mb-4">
-							Preferences
-						</h2>
-
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-							<div>
-								<label
-									htmlFor="defaultCurrency"
-									className="block text-sm font-medium text-gray-700 mb-1"
-								>
-									Default Currency
-								</label>
-								<select
-									id="defaultCurrency"
-									name="defaultCurrency"
-									value={generalSettings.defaultCurrency}
-									onChange={handleGeneralSettingsChange}
-									className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-								>
-									<option value="">Select Currency</option>
-									<option value="EUR">Euro (€)</option>
-									<option value="USD">US Dollar ($)</option>
-									<option value="EGP">Egyptian Pound (E£)</option>
-								</select>
-							</div>
-
-							<div>
-								<label
-									htmlFor="languagePreference"
-									className="block text-sm font-medium text-gray-700 mb-1"
-								>
-									Language Preference
-								</label>
-								<select
-									id="languagePreference"
-									name="languagePreference"
-									value={generalSettings.languagePreference}
-									onChange={handleGeneralSettingsChange}
-									className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-								>
-									<option value="">Select Language</option>
-									<option value="en">English</option>
-									<option value="fr">French</option>
-									<option value="ar">Arabic</option>
-								</select>
-							</div>
+					<div className="mt-5 border-t pt-5 grid gap-4 sm:grid-cols-2">
+						<div>
+							<p className="text-xs text-gray-500">Email</p>
+							<p className="text-sm font-semibold text-gray-900 break-all">
+								{email || "—"}
+							</p>
+							<p className="text-xs text-gray-500 mt-1">
+								Email change is not available yet.
+							</p>
 						</div>
 
-						<div className="mt-4">
-							<label
-								htmlFor="industryTag"
-								className="block text-sm font-medium text-gray-700 mb-1"
-							>
-								Industry Tag
-							</label>
-							<input
-								type="text"
-								id="industryTag"
-								name="industryTag"
-								value={generalSettings.industryTag}
-								onChange={handleGeneralSettingsChange}
-								placeholder="e.g., Technology, Finance, Healthcare"
-								className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-							/>
+						<div className="sm:text-right">
+							<p className="text-xs text-gray-500">Password</p>
+							<p className="text-sm font-semibold text-gray-900">
+								Reset via email
+							</p>
+							<p className="text-xs text-gray-500 mt-1">
+								We’ll send a reset link to your email.
+							</p>
 						</div>
 					</div>
 
-					{/* Save Button for General Settings */}
-					<div className="flex justify-end">
+					<div className="mt-5 flex flex-wrap gap-3 justify-start sm:justify-end">
 						<button
-							type="submit"
-							className="px-6 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+							type="button"
+							disabled={!email || resetPasswordMutation.isPending}
+							onClick={onSendReset}
+							className="px-4 py-2 rounded-lg border border-purple-600 text-purple-700 hover:bg-purple-50 disabled:opacity-50 disabled:cursor-not-allowed"
 						>
-							Save General Settings
+							{resetPasswordMutation.isPending
+								? "Sending..."
+								: "Send reset email"}
 						</button>
 					</div>
-				</form>
+				</section>
 
-				{/* Privacy & Security Section */}
-				<div className="border-t pt-6 mt-6">
-					<h2 className="text-xl font-bold text-gray-800 mb-4">
-						Privacy & Security
-					</h2>
+				{/* Security */}
+				<section className="bg-white border rounded-xl p-6 mt-6">
+					<div className="flex items-center gap-2">
+						<LockIcon className="w-5 h-5 text-purple-700" />
+						<h2 className="text-lg font-semibold text-gray-900">Security</h2>
+					</div>
 
-					<form onSubmit={handlePasswordSubmit} className="space-y-4">
-						<div>
-							<label
-								htmlFor="oldPassword"
-								className="block text-sm font-medium text-gray-700 mb-1"
-							>
-								Current Password *
-							</label>
-							<input
-								type="password"
-								id="oldPassword"
-								name="oldPassword"
-								value={passwordSettings.oldPassword}
-								onChange={handlePasswordChange}
-								placeholder="Enter your current password"
-								className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-								required
-							/>
-						</div>
+					<p className="text-sm text-gray-600 mt-2">
+						Sign out of this device or all devices.
+					</p>
 
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-							<div>
-								<label
-									htmlFor="newPassword"
-									className="block text-sm font-medium text-gray-700 mb-1"
-								>
-									New Password *
-								</label>
-								<input
-									type="password"
-									id="newPassword"
-									name="newPassword"
-									value={passwordSettings.newPassword}
-									onChange={handlePasswordChange}
-									placeholder="Enter new password"
-									className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-									required
-								/>
-								<p className="text-xs text-gray-500 mt-1">
-									Minimum 6 characters
-								</p>
-							</div>
-
-							<div>
-								<label
-									htmlFor="confirmPassword"
-									className="block text-sm font-medium text-gray-700 mb-1"
-								>
-									Confirm New Password *
-								</label>
-								<input
-									type="password"
-									id="confirmPassword"
-									name="confirmPassword"
-									value={passwordSettings.confirmPassword}
-									onChange={handlePasswordChange}
-									placeholder="Confirm new password"
-									className="w-full p-2 border border-gray-300 rounded-md focus:ring-purple-500 focus:border-purple-500"
-									required
-								/>
-							</div>
-						</div>
-
-						<div className="flex justify-end">
-							<button
-								type="submit"
-								className="px-6 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-							>
-								Update Password
-							</button>
-						</div>
-					</form>
-				</div>
-
-				{/* Delete Account Section */}
-				<div className="border-t pt-6 mt-6">
-					<div className="bg-red-50 border border-red-200 rounded-lg p-4">
-						<h2 className="text-xl font-bold text-red-700 mb-2">
-							Delete Company Account
-						</h2>
-						<p className="text-gray-600 mb-3">
-							Once you delete your account, all your company data will be
-							permanently deleted.
-						</p>
-
-						<div className="flex items-start mb-4">
-							<div className="flex items-center h-5">
-								<input
-									type="checkbox"
-									id="confirmDelete"
-									className="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500"
-								/>
-							</div>
-							<label
-								htmlFor="confirmDelete"
-								className="ml-2 text-sm text-gray-700"
-							>
-								I understand this action is irreversible
-							</label>
-						</div>
+					<div className="mt-5 border-t pt-5 flex flex-wrap gap-3">
+						<button
+							type="button"
+							onClick={onSignOut}
+							disabled={busy}
+							className="px-4 py-2 rounded-lg bg-purple-700 text-white hover:bg-purple-800 disabled:opacity-50 disabled:cursor-not-allowed"
+						>
+							{logoutMutation.isPending ? "Signing out..." : "Sign out"}
+						</button>
 
 						<button
 							type="button"
-							onClick={handleDeleteAccount}
-							className="px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+							onClick={onSignOutAll}
+							disabled={busy}
+							className="px-4 py-2 rounded-lg border border-purple-700 text-purple-700 hover:bg-purple-50 disabled:opacity-50 disabled:cursor-not-allowed"
 						>
-							Delete Account
+							{logoutAllMutation.isPending
+								? "Signing out..."
+								: "Sign out from all devices"}
 						</button>
 					</div>
-				</div>
+				</section>
 			</div>
 		</div>
 	);
-};
-
-export default AccountSettingsForm;
+}

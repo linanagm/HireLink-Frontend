@@ -14,7 +14,7 @@ export function useAccountSecurityMutations() {
 	const logoutMutation = useMutation({
 		mutationFn: logout,
 		onSuccess: async () => {
-			// يفضّل تستدعي logout() بتاعت AuthProvider اللي بتشيل التوكن وتعمل redirect
+			await qc.cancelQueries();
 			authLogout?.();
 			qc.clear();
 			toast.success("Signed out");
