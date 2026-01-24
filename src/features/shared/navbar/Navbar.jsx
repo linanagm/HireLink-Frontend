@@ -46,7 +46,7 @@ export default function NavbarComponent() {
 			currentUser?.role === "TALENT"
 				? currentUser?.talentProfile?.avatarPublicId
 				: currentUser?.role === "EMPLOYER"
-					? currentUser?.employerProfile?.logoPublicId
+					? currentUser?.employerProfile?.avatarPublicId
 					: null;
 
 		return publicId ? buildAvatarUrl(publicId) : defaultProfileImage;
