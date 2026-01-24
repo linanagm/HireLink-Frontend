@@ -1,60 +1,79 @@
-import axiosClient from "../config/axiosClient";
-import { handleError } from "../utils/helpers";
+//import axiosClient from "../config/axiosClient";
+import { PATHS } from "../constants/apiPaths";
+import { api } from "../lib/api";
 
-const endpoints = {
-	register: "/auth/register",
-	verify: "/auth/verify",
-	login: "/auth/login",
-	refresh: "/auth/refresh",
-	resetRequest: "/auth/reset/request",
-	reset: "/auth/reset",
-	me: "/auth/me",
-	logout: "/auth/logout",
-	logoutAll: "/auth/logout/all",
-};
 
-async function request(method, url, data = null, config = {}) {
-	try {
-		const response = await axiosClient[method](url, data, config);
 
-		// normalize response so frontend always sees:
-		// { ok: true, data: response.data.data }
-		return {
-			ok: true,
-			message: response.data.message,
-			data: response.data.data ?? null,
-		};
-	} catch (error) {
-		return handleError(error);
-	}
-}
 
-export const register = (values) =>
-	request("post", endpoints.register, values, { timeout: 60000 });
+// export async function request(method, url, data = null, config = {}) {
+// 	try {
+// 		const response = await axiosClient[method](url, data, config);
+
+// 		// normalize response so frontend always sees:
+// 		// { ok: true, data: response.data.data }
+// 		return {
+// 			ok: true,
+// 			message: response.data.message,
+// 			data: response.data.data ?? null,
+// 		};
+// 	} catch (error) {
+// 		console.log('request error: ', error);
+
+// 		return error;
+// 	}
+// }
+
+
+export const register = (values) => api("post", PATHS.auth.register, values);
+
 
 export const verifyEmail = (verificationToken) =>
-	request("post", endpoints.verify, { verificationToken });
+	api("post", PATHS.auth.verify, { verificationToken });
 
+
+/**
+ * Logs a user in with the given email and password.
+ * Returns a promise that resolves with the response data from the server.
+ * @param {Object} data - The user's email and password.
+ * @returns {Promise<object>} A promise that resolves with the response data from the server.
+ */
 export const login = ({ email, password }) =>
-	request("post", endpoints.login, { email, password });
+	api("post", PATHS.auth.login, { email, password });
 
-export const refreshToken = () => request("get", endpoints.refresh);
+
+export const getRefreshToken = () => api("get", PATHS.auth.refresh);
+
 
 export const requestPasswordReset = (email) =>
-	request("post", endpoints.resetRequest, { email });
+	api("post", PATHS.auth.resetRequest, { email });
 
+
+
+/**
+ * Resets the password for the user.
+ * @param {string} verificationToken - The verification token obtained from the password reset request.
+ * @param {string} newPassword - The new password to set.
+ * @param {string} oldPassword - The old password to compare with. If not given, the server will not check the old password.
+ * @returns {Promise<object>} A promise that resolves with the response data from the server.
+ */
 export const resetPassword = (verificationToken, newPassword, oldPassword) =>
-	request("put", endpoints.reset, {
+	api("put", PATHS.auth.reset, {
 		verificationToken,
 		newPassword,
 		oldPassword,
 	});
 
+
+/**
+ * Fetches the current user's data from the server.
+ * @param {string} token - The authentication token.
+ * @returns {Promise<object>} A promise that resolves with the user data or null if not found.
+ */
 export const getUser = (token) =>
-	request("get", endpoints.me, {
+	api("get", PATHS.auth.me, {
 		headers: { Authorization: `Bearer ${token}` },
 	});
 
-export const logout = () => request("post", endpoints.logout);
+export const logoutRes = () => api("post", PATHS.auth.logout);
 
-export const logoutAll = () => request("post", endpoints.logoutAll);
+export const logoutAll = () => api("post", PATHS.auth.logoutAll);

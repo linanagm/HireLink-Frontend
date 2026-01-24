@@ -1,3 +1,8 @@
+/**
+ * Given an email address, returns the URL of the corresponding mail provider
+ * @param {string} email - The email address to get the mail provider URL for
+ * @returns {string|null} - The URL of the mail provider, or null if the domain is not recognized
+ */
 export function getMailProviderUrl(email) {
 	console.log("getMailProvrider: email -> ", email);
 

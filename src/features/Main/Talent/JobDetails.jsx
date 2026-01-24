@@ -1,0 +1,238 @@
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
+import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import InfoItem from "../../../components/UI/InfoItem";
+import Loading from "../../../components/UI/Loading";
+import {
+	getJobById,
+	getMyApplications,
+} from "../../../services/talent.service";
+import { prettyEnum } from "../../../utils/formatter";
+
+/**
+ * JobDetails is a page that displays the details of a job.
+ * It fetches the job data using the `useQuery` hook from `@tanstack/react-query`.
+ * It also fetches the user's applications for the job using the `useQuery` hook.
+ * If the job is not found, it renders a "Job not found" message.
+ * If the job is found, it renders the job details, including the title, description, payment type, budget, work arrangement, experience level, location, responsibilities, and skills.
+ * If the user has already applied for the job, it renders the application status and read-only details.
+ * If the user has not already applied for the job, it renders an "Apply Now" button.
+ */
+export default function JobDetails() {
+	const { id: jobId } = useParams();
+	const navigate = useNavigate();
+
+	// 1) Job query
+	const {
+		data: jobRes,
+		isLoading: jobLoading,
+		isError: jobIsError,
+		error: jobError,
+	} = useQuery({
+		queryKey: ["job", jobId],
+		queryFn: () => getJobById(jobId),
+		enabled: !!jobId,
+		staleTime: 60 * 1000,
+	});
+
+	// 2) My applications query (polling to reflect status updates)
+	const {
+		data: appsRes,
+		isLoading: appsLoading,
+		isError: appsIsError,
+		error: appsError,
+		isFetching: appsFetching,
+	} = useQuery({
+		queryKey: ["my-applications"],
+		queryFn: () => getMyApplications(),
+		staleTime: 10 * 1000,
+		refetchInterval: 15_000,
+		refetchOnWindowFocus: true,
+		enabled: !!jobId,
+	});
+
+	// Job extraction
+	const job = jobRes?.data?.data ?? jobRes?.data ?? null;
+
+	// Applications extraction
+	const applications = appsRes?.data?.data ?? appsRes?.data ?? [];
+
+	// Find my application for this job
+	// Using useMemo to avoid unnecessary re-renders
+	const myAppForThisJob = useMemo(() => {
+		if (!Array.isArray(applications)) return null;
+		return applications.find((a) => a.jobId === jobId) || null;
+	}, [applications, jobId]);
+
+	const alreadyApplied = !!myAppForThisJob;
+
+	// Loading / Error states
+	if (jobLoading || appsLoading) return <Loading />;
+
+	if (jobIsError) {
+		return (
+			<div className="px-10 py-10 text-red-600">
+				{jobError?.message || "Failed to load job."}
+			</div>
+		);
+	}
+
+	if (appsIsError) {
+		return (
+			<div className="px-10 py-10 text-red-600">
+				{appsError?.message || "Failed to load your applications."}
+			</div>
+		);
+	}
+
+	if (!job) return <div className="px-10 py-10">Job not found</div>;
+
+	// Derived UI values
+	const paymentType = job.salary ? "Salary" : "Hourly";
+	const budget =
+		job.salary ?? (job.hoursPerWeek ? `${job.hoursPerWeek} hrs/week` : null);
+	const workArrangement = prettyEnum(job.jobType);
+	const experienceLevel = prettyEnum(job.experienceLevel);
+	const location = job.location;
+
+	const responsibilities = Array.isArray(job.responsibilities)
+		? job.responsibilities
+		: [];
+
+	const skills = Array.isArray(job.skills)
+		? job.skills
+		: Array.isArray(job.tags)
+			? job.tags
+			: [];
+
+	return (
+		<div className="px-10 py-10">
+			{/* Back */}
+			<button
+				type="button"
+				onClick={() => navigate(-1)}
+				className="text-purple-600 hover:underline mb-6"
+			>
+				← Back to Jobs
+			</button>
+
+			{/* MAIN CARD */}
+			<div className="bg-white mx-auto max-w-4xl p-10 rounded-2xl shadow-sm border">
+				{/* TITLE */}
+				<div className="flex items-start justify-between gap-4">
+					<div>
+						<h1 className="text-3xl font-bold mb-4">{job.title}</h1>
+						<p className="text-gray-600 leading-relaxed mb-8">
+							{job.description}
+						</p>
+					</div>
+
+					{/* Heart placeholder */}
+					<button type="button" className="text-gray-400 hover:text-purple-600">
+						♡
+					</button>
+				</div>
+
+				{/* INFO ROW */}
+				<div className="grid grid-cols-2 md:grid-cols-5 gap-6 mb-10">
+					<InfoItem value={paymentType} label="Payment Type" />
+					<InfoItem value={budget} label="Budget" />
+					<InfoItem value={workArrangement} label="Work Arrangement" />
+					<InfoItem value={experienceLevel} label="Experience Level" />
+					<InfoItem value={location} label="Location" />
+				</div>
+
+				{/* RESPONSIBILITIES */}
+				<h2 className="text-xl font-semibold mb-2">Responsibilities:</h2>
+				{responsibilities.length > 0 ? (
+					<ul className="list-disc ml-6 space-y-1 mb-8 text-gray-700">
+						{responsibilities.map((item, idx) => (
+							<li key={`${jobId}-resp-${idx}`}>{item}</li>
+						))}
+					</ul>
+				) : (
+					<p className="text-gray-500 mb-8">No responsibilities listed.</p>
+				)}
+
+				{/* SKILLS */}
+				<h2 className="text-xl font-semibold mb-2">Skills</h2>
+				{skills.length > 0 ? (
+					<div className="flex flex-wrap gap-2 mb-8">
+						{skills.map((skill, idx) => (
+							<span
+								key={`${jobId}-skill-${idx}`}
+								className="px-3 py-1 text-sm bg-gray-100 rounded-full"
+							>
+								{skill}
+							</span>
+						))}
+					</div>
+				) : (
+					<p className="text-gray-500 mb-8">No skills listed.</p>
+				)}
+
+				{/* ✅ APPLICATION STATUS + READ-ONLY DETAILS (بدون تغيير الديزاين العام) */}
+				{alreadyApplied && (
+					<>
+						<div className="mb-6 p-4 rounded-xl border bg-yellow-50 text-yellow-800">
+							You already applied for this job.
+							<div className="mt-2 font-semibold">
+								Status: {String(myAppForThisJob.status).replaceAll("_", " ")}
+								{appsFetching ? (
+									<span className="ml-2 text-xs text-gray-500">
+										(refreshing...)
+									</span>
+								) : null}
+							</div>
+						</div>
+
+						<div className="mb-8 p-6 rounded-2xl border bg-white">
+							<h3 className="text-lg font-semibold mb-4">Your Application</h3>
+
+							<div className="mb-4">
+								<p className="text-sm text-gray-500">Cover Letter</p>
+								<p className="text-gray-800 whitespace-pre-wrap">
+									{myAppForThisJob.coverLetter || "—"}
+								</p>
+							</div>
+
+							<div className="mb-2">
+								<p className="text-sm text-gray-500">Resume</p>
+								{myAppForThisJob.resumeUrl ? (
+									<a
+										href={myAppForThisJob.resumeUrl}
+										target="_blank"
+										rel="noreferrer"
+										className="text-purple-600 hover:underline"
+									>
+										View resume
+									</a>
+								) : (
+									<p className="text-gray-800">—</p>
+								)}
+							</div>
+
+							<p className="text-xs text-gray-500 mt-4">
+								Applied on{" "}
+								{new Date(myAppForThisJob.createdAt).toLocaleString()}
+							</p>
+						</div>
+					</>
+				)}
+
+				{/* APPLY BUTTON (يختفي لو alreadyApplied) */}
+				{!alreadyApplied && (
+					<div className="text-center">
+						<Link
+							to={`/talent/jobs/${jobId}/apply`}
+							className="px-8 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 duration-200 inline-block"
+						>
+							Apply Now
+						</Link>
+					</div>
+				)}
+			</div>
+		</div>
+	);
+}

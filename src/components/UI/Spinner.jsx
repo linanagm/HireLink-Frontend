@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 
 export default function Spinner({
 	size = "w-8 h-8",
@@ -8,7 +8,7 @@ export default function Spinner({
 
 	useEffect(() => {}, []);
 	return (
-		<div role="status" aria-live="polite" className="inline-flex items-center">
+		<div role="img" aria-live="polite" className="inline-flex items-center">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				viewBox="0 0 100 101"

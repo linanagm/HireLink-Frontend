@@ -1,0 +1,107 @@
+import { useFormik } from "formik";
+import { useState } from "react";
+import Button from "../../../../components/UI/Button.jsx";
+import FormInput from "../../../../components/UI/FormInput.jsx";
+import { requestPasswordReset } from "../../../../services/auth.service.js";
+import { getMailProviderUrl } from "../../../../utils/mail.js";
+import { emailschema } from "../../../../utils/validation/authValidationjs";
+
+/**
+ * ForgotPasswordModal is a component that handles the forgot password functionality.
+ * It shows a form with an email field and a submit button.
+ * When the user clicks the submit button, the requestPasswordReset function from the auth.service is called.
+ * If the request password reset is successful, a success message is shown to the user.
+ * If the request password reset fails, an error message is shown to the user.
+ * It shows a link to the mail provider's website if the user has submitted their email address.
+ * It shows a loading indicator while the request password reset is in progress.
+ * It shows an error message if the API returns an error.
+ * @param {function} onClose - A function to be called when the modal is closed.
+ */
+export default function ForgotPasswordModal({ onClose }) {
+	const [message, setMessage] = useState("");
+	const [error, setError] = useState("");
+	const [loading, setLoading] = useState(false);
+	const [submittedEmail, setSubmittedEmail] = useState("");
+
+	const formik = useFormik({
+		initialValues: { email: "" },
+		validationSchema: emailschema,
+		onSubmit: handleResetPassword,
+	});
+
+	async function handleResetPassword() {
+		setLoading(true);
+		setMessage("");
+		setError("");
+
+		const response = await requestPasswordReset(formik.values.email);
+
+		if (response.ok) {
+			setMessage(response.message);
+			setSubmittedEmail(formik.values.email);
+		} else {
+			setError(response.message || "Something went wrong");
+		}
+
+		setLoading(false);
+	}
+	const providerUrl = getMailProviderUrl(submittedEmail);
+
+	return (
+		<div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[99999]">
+			<div className="relative bg-white rounded-xl shadow-lg p-6 w-full max-w-md ">
+				{/* Close button */}
+				<button
+					type="button"
+					onClick={onClose}
+					className="absolute top-3 right-4 text-gray-500 hover:text-gray-900 text-2xl"
+				>
+					×
+				</button>
+
+				<h1 className="text-2xl font-bold mb-4 text-center">Forgot Password</h1>
+
+				{/* Form */}
+				{message === "" && (
+					<form onSubmit={formik.handleSubmit} className="space-y-4">
+						<FormInput
+							label="Email"
+							type="email"
+							name="email"
+							placeholder="Enter your email"
+							value={formik.values.email}
+							onChange={formik.handleChange}
+							onBlur={formik.handleBlur}
+							required
+						/>
+
+						<Button type="submit" loading={loading}>
+							Send Reset Link
+						</Button>
+					</form>
+				)}
+
+				{/* Success or Error */}
+
+				{message && (
+					<>
+						<p className="text-green-600 mt-4 text-center">{message}</p>
+
+						{providerUrl && (
+							<a
+								href={providerUrl}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="block mt-4 text-center bg-fuchsia-700 text-white py-2 rounded-xl hover:bg-fuchsia-500"
+							>
+								Open Email
+							</a>
+						)}
+					</>
+				)}
+
+				{error && <p className="text-red-600 mt-4 text-center">{error}</p>}
+			</div>
+		</div>
+	);
+}

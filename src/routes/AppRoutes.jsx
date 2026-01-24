@@ -1,6 +1,6 @@
 import { lazy, Suspense } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Loading from "../pages/Main/Public/Loading";
+import Loading from "../components/UI/Loading";
 
 // Guards
 const ProtectedRoute = lazy(() => import("./GuardRoutes/ProtectedRoute"));
@@ -15,63 +15,87 @@ const DashboardLayout = lazy(
 );
 
 // Public Pages
-const Home = lazy(() => import("../pages/Main/Public/Home"));
-const About = lazy(() => import("../pages/Main/Public/About"));
-const Contact = lazy(() => import("../pages/Main/Public/Contact"));
+const Home = lazy(() => import("../features/Main/Public/Home"));
+const About = lazy(() => import("../features/Main/Public/About"));
+const Contact = lazy(() => import("../features/Main/Public/Contact"));
 
-const NotFound = lazy(() => import("../pages/Main/Public/NotFound"));
-const Unauthorized = lazy(() => import("../pages/Main/Public/Unauthorized"));
+const NotFound = lazy(() => import("../features/Main/Public/NotFound"));
+const Unauthorized = lazy(() => import("../features/Main/Public/Unauthorized"));
 
 // Auth Pages
-const Register = lazy(() => import("../pages/Auth/Register"));
-const Login = lazy(() => import("../pages/Auth/Login"));
-const VerifyEmail = lazy(() => import("../pages/Auth/VerifyEmail")); //modal
+const Register = lazy(() => import("../features/Auth/pages/Register"));
+const Login = lazy(() => import("../features/Auth/pages/Login"));
+const VerifyEmail = lazy(() => import("../features/Auth/pages/VerifyEmail")); //modal
 
 //modal
-const ResetPassword = lazy(() => import("../pages/Auth/ResetPassword"));
-
-// Talent pages
-const TalentProfile = lazy(() => import("../pages/Main/talent/TalentProfile"));
-
-const EditTalentProfile = lazy(
-	() => import("../pages/Main/talent/EditTalentProfile"),
+const ResetPassword = lazy(
+	() => import("../features/Auth/pages/ResetPassword"),
 );
 
-const FindJob = lazy(() => import("../pages/Main/talent/FindJob"));
+// ************************* Talent pages *****************************
 
+// 1- findjob page
+const FindJob = lazy(() => import("../features/Main/talent/FindJob"));
+// 2- job details page
+const JobDetails = lazy(() => import("../features/Main/Talent/JobDetails"));
+//3- job proposal page
+const JobProposal = lazy(() => import("../features/Main/talent/JobProposal"));
+//4- my applications page
 const MyApplications = lazy(
-	() => import("../pages/Main/talent/MyApplications"),
+	() => import("../features/Main/Talent/MyApplications"),
+);
+//5- profile page / account
+const TalentProfile = lazy(
+	() => import("../features/Main/talent/TalentProfile"),
 );
 
-const JobProposal = lazy(() => import("../pages/Main/talent/JobProposal"));
+// const EditTalentProfile = lazy(
+// 	() => import("../features/Main/Talent/EditTalentProfile"),
+// );
+
 const TalentAccountSettings = lazy(
-	() => import("../pages/Main/talent/TalentAccountSettings"),
+	() => import("../features/Main/Talent/TalentAccountSettings"),
 );
 
-// Employer routes
+// **************** Employer routes ************************
 const EmployerDashboard = lazy(
-	() => import("../pages/Main/Employer/Dashboard"),
+	() => import("../features/Main/Employer/Dashboard"),
 );
 const EmployerProfile = lazy(
-	() => import("../pages/Main/employer/EmployerProfile"),
+	() => import("../features/Main/employer/EmployerProfile"),
 );
-const EditProfile = lazy(() => import("../pages/Main/employer/EditProfile"));
+const EditProfile = lazy(() => import("../features/Main/employer/EditProfile"));
 
 const EmployerAccountSettings = lazy(
-	() => import("../pages/Main/Employer/AccountSettings"),
+	() => import("../features/Main/Employer/AccountSettings"),
 );
-const PostAJob = lazy(() => import("../pages/Main/employer/PostAJob"));
-const JobsList = lazy(() => import("../pages/Main/Public/JobList"));
-const JobDetails = lazy(() => import("../pages/Main/employer/JobDetails"));
-const MyApplicants = lazy(() => import("../pages/Main/employer/MyApplicants"));
-const EditJob = lazy(() => import("../pages/Main/employer/EditJob"));
+const PostAJob = lazy(() => import("../features/Main/employer/PostAJob"));
 
-const SearchTalent = lazy(() => import("../pages/Main/Employer/SearchTalent"));
+const MyApplicants = lazy(
+	() => import("../features/Main/employer/MyApplicants"),
+);
+const EditJob = lazy(() => import("../features/Main/employer/EditJob"));
+
+const SearchTalent = lazy(
+	() => import("../features/Main/Employer/SearchTalent"),
+);
 
 // Moderator pages
-const AdminLogin = lazy(() => import("../pages/Main/Admin/AdminLogin"));
-const AdminDashboard = lazy(() => import("../pages/Main/Admin/AdminDashboard"));
+const AdminLogin = lazy(() => import("../features/Main/Moderator/AdminLogin"));
+const AdminDashboard = lazy(
+	() => import("../features/Main/Moderator/AdminDashboard"),
+);
 
+/**
+ * AppRoutes is the main routes component of the application.
+ * It defines all the routes of the application, including public,
+ * auth, talent, employer, and admin routes.
+ * It uses the React Router library to define the routes and
+ * redirect the user to the correct page based on their role and
+ * the current path.
+ *
+ * @returns {JSX.Element} The AppRoutes component.
+ */
 export default function AppRoutes() {
 	const router = createBrowserRouter([
 		// 1) Public routes
@@ -117,16 +141,15 @@ export default function AppRoutes() {
 			children: [
 				{ index: true, element: <FindJob /> },
 				{ path: "findjob", element: <FindJob /> },
-
-				{ path: "profile", element: <TalentProfile /> },
-				// modal
-				{ path: "profile/edit", element: <EditTalentProfile /> },
-
-				{ path: "profile/settings", element: <TalentAccountSettings /> },
-
+				{ path: "jobs/:id", element: <JobDetails /> },
+				{ path: "jobs/:id/apply", element: <JobProposal /> },
 				{ path: "applications", element: <MyApplications /> },
 
-				{ path: "jobs/:jobId/proposal", element: <JobProposal /> },
+				{ path: "profile", element: <TalentProfile /> },
+
+				// { path: "profile/edit", element: <EditTalentProfile /> },
+
+				{ path: "profile/settings", element: <TalentAccountSettings /> },
 			],
 		},
 
@@ -150,7 +173,6 @@ export default function AppRoutes() {
 				// modal
 				{ path: "profile/edit", element: <EditProfile /> },
 
-				{ path: "jobs", element: <JobsList /> },
 				{ path: "jobs/new", element: <PostAJob /> },
 
 				{ path: "jobs/:jobId", element: <JobDetails /> },

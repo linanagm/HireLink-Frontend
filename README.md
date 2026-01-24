@@ -1,53 +1,39 @@
-# HireLink Frontend (React + Vite)
+## Features
 
+### Talent
+- Browse jobs (Find Job tab)
+- Apply to jobs
+- Application status refresh (UI stays in sync after applying)
 
----
+### Talent Profile
+- Upload/Update avatar  (Cloudinary)
+- Update headline
+- Navbar reflects profile updates (avatar/headline) immediately
+- Data fetching/caching via React Query + toast notifications
 
-## Tech Stack
+## Tech Stack & Architecture
+- React + Vite
+- React Router
+- TanStack React Query for server state (queries/mutations, cache invalidation)
+- Toast notifications (Toaster)
+- Feature-based folder structure (src/features/...)
 
-- **React**
-- **Vite**
-- **JavaScript**
-- **Tailwind CSS**
-- **Biome** (for code formatting, linting, and import organization)
+## Folder Structure (high level)
+src/
+  features/
+    Auth/
+    Talent/
+      FindJob/
+      Applications/
+      Profile/
+    shared/
+  services/
+  hooks/
+  lib/
+  utils/
 
----
-
-## Development
-
-### Install dependencies
-```bash
-npm install
-```
-### Run the development server
-```bash
-npm run dev
-```
-### Code Quality & Formatting:
-
-This project uses Biome as a single tool for:
-- Code formatting
-- Linting
-- Organizing imports
-
-### Useful commands
-```bash
-npm run check
-npm run check:write
-```
-
-#### Notes:
-ESLint and Prettier have been fully removed in favor of Biome.
-
-The Admin section UI (Login & Dashboard) is implemented before backend integration.
-
-Backend integration for Talent and Employer roles will be added incrementally.
-
-### Build
-```bash
-npm run build
-```
-### Preview production build
-```bash
-npm run preview
-```
+## Roadmap
+- [ ] Complete Talent Profile sections (bio, skills, links, resume, etc.)
+- [ ] Settings page (change password, email, delete account...)
+- [ ] Privacy page
+- [ ] Reuse upload pattern for Employer logo/avatar

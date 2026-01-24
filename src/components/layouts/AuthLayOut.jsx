@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
-import CircleFrame from "../Main/CircleFrame";
-import Footer from "../Main/Footer";
+import CircleFrame from "../UI/CircleFrame";
 
 export default function AuthLayOut() {
 	const [Count, SetCount] = useState();
