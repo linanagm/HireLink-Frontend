@@ -16,16 +16,18 @@ export function useCurrentUser({ token, enabled = true, onUser, onLogout }) {
 	return useQuery({
 		queryKey: queryKeys.currentUser,
 		queryFn: () => getUser(token),
-		enabled: enabled && !!token,
+		enabled,
 		retry: false,
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false,
 		staleTime: 5 * 60 * 1000,
-		onSuccess: (res) => onUser?.(res?.data ?? res),
-		onError: (error) => {
-			if (error?.response?.status === 401) {
-				onLogout?.();
-			}
+		onSuccess: (res) => {
+			//	onUser?.(res?.data ?? res)
+			if (res?.ok) onUser?.(res?.data);
+			else onLogout?.(); //if failed /me
+		},
+		onError: () => {
+			onLogout?.();
 		},
 	});
 }

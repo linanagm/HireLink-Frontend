@@ -1,82 +1,141 @@
-import { PATHS } from "../constants/apiPaths";
+
+// services/talent.service.js
+import { JOBS_MODES, PATHS } from "../constants/apiPaths";
 import { api } from "../lib/api";
 
+/** =========================================
+ *  Enums (عشان اليوزر يختار مش يكتب)
+ *  ========================================= */
+export const SKILL_LEVELS = ["BEGINNER", "INTERMEDIATE", "ADVANCED"];
+export const LANGUAGE_PROFICIENCY = [
+    "FRESH",
+    "JUNIOR",
+    "SENIOR",
+    "NATIVE",
+];
 
-// *********************** talent profile services ***********
-//get profile
+
+// GET /talent/profile
 export function getTalentProfile() {
     return api("get", PATHS.talent.profile);
 }
 
-//update profile
+/**
+ * PUT /talent/profile
+ * payload example:
+ * { headline, bio, location }
+ */
 export function updateTalentProfile(payload) {
     return api("put", PATHS.talent.profile, payload);
 }
 
-//update skills
-export function setTalentSkills(payload) {
+
+/**
+ * PUT /talent/skills
+ * payload example:
+ * {
+ *   skills: [{ name: "Node.js", level: "INTERMEDIATE" }]
+ * }
+ */
+export function updateTalentSkills(payload) {
     return api("put", PATHS.talent.skills, payload);
 }
 
-//update languages
+
+/**
+ * PUT /talent/languages
+ * payload example:
+ * {
+ *   languages: [{ name: "English", proficiency: "NATIVE" }]
+ * }
+ */
 export function setTalentLanguages(payload) {
     return api("put", PATHS.talent.languages, payload);
 }
-//get profile picture
-export function getTalentAvatar() {
-    return api("get", "/talent/profile");
+
+
+// GET /talent/avatar?width=200&height=200
+export function getTalentAvatar(params = {}) {
+    return api("get", PATHS.talent.avatar, null, { params });
 }
 
-// upload profile picture
+/**
+ * PUT /talent/avatar (multipart/form-data)
+ * field name MUST be "avatar"
+ */
 export function uploadTalentAvatar(file) {
+    const form = new FormData();
+    form.append("avatar", file);
 
-    return api("put", PATHS.talent.avatar, file, {
+    return api("put", PATHS.talent.avatar, form, {
         headers: { "Content-Type": "multipart/form-data" },
     });
 }
 
-// upload resume
+// DELETE /talent/avatar
+export function deleteTalentAvatar() {
+    return api("delete", PATHS.talent.avatar);
+}
+
+
+// GET /talent/resume
+export function getTalentResume() {
+    return api("get", PATHS.talent.resume);
+}
+
+/**
+ * PUT /talent/resume (multipart/form-data)
+ * field name MUST be "resume"
+ */
 export function uploadTalentResume(file) {
     const form = new FormData();
     form.append("resume", file);
+
     return api("put", PATHS.talent.resume, form, {
         headers: { "Content-Type": "multipart/form-data" },
     });
 }
 
-//get resume
-export function getTalentResume() {
-    return api("get", PATHS.talent.resume);
-}
-
-//delete
+// DELETE /talent/resume
 export function deleteTalentResume() {
     return api("delete", PATHS.talent.resume);
 }
 
 
-// *********************** talent with jobs services *********************** 
-//get jobs
+/*****************  Jobs (Talent browsing) *********************/
+
+
+// GET /jobs (supports params: mode, search, page, etc.)
 export function getJobs(params = {}) {
     return api("get", PATHS.jobs.jobsList, null, { params });
-};
+}
 
-//get job by id -> job details
+// GET /jobs?mode=recommended
+export function getRecommendedJobs(params = {}) {
+    return getJobs({ ...params, mode: JOBS_MODES.RECOMMENDED });
+}
+
+
+// GET /jobs?mode=best_matches
+export function getBestMatchJobs(params = {}) {
+    return getJobs({ ...params, mode: JOBS_MODES.BEST_MATCHES });
+}
+
+
+// GET /jobs/:id
 export function getJobById(id) {
     return api("get", PATHS.jobs.jobDetails(id));
 }
 
-//apply to job -> job proposal
+// POST /jobs/:id/apply
 export function applyToJob(id, payload) {
-    return api("post", PATHS.jobs.jobPropsal(id), payload);
+    return api("post", PATHS.jobs.jobProposal(id), payload);
 }
 
-// ********************** talent with applications services ********************
-// get applications
+
+/**************************  Applications (Talent) ******************/
+
+// GET /talent/applications
 export function getMyApplications(params = {}) {
     return api("get", PATHS.talent.applications, null, { params });
 }
-
-
-
-

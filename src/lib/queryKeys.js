@@ -8,7 +8,7 @@ export const queryKeys = {
     // TALENT
     talentProfile: ["talent-profile"],
     talentProfileById: (id) => ["talent-profile", id],
-
+    talentSkills: ["talent-skills"],
     // AVATAR
     talentAvatar: ["talent-avatar"],
 
