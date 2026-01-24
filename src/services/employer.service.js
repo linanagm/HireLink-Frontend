@@ -46,16 +46,10 @@ export function deleteEmployerLogo(config = {}) {
     return api("delete", PATHS.employer.logo, null, config);
 }
 
-export function updateEmployerLogo(file, config = {}) {
-    const formData = new FormData();
-    formData.append("logo", file);
 
-    return api("put", PATHS.employer.logo, formData, {
-        ...config,
-        headers: { ...(config.headers || {}), "Content-Type": "multipart/form-data" },
-    });
+export function updateEmployerLogo(formData) {
+    return api("put", PATHS.employer.logo, formData);
 }
-
 /**
  * Applications
  * 

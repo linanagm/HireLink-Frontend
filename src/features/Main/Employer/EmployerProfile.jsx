@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
+import Loading from "../../../components/UI/Loading";
 import { useUpdateEmployerProfile } from "../../../hooks/mutations/employer/useUpdateEmployerMutation";
 import { useEmployerProfileQuery } from "../../../hooks/queries/employer/useEmployerQueries";
+import { useAuth } from "../../../hooks/useAuth";
 import { useUploadAvatar } from "../../../hooks/useUploadAvatar";
 import { queryKeys } from "../../../lib/queryKeys";
 import { updateEmployerLogo } from "../../../services/employer.service";
-
-// لو عندكم helper يبني URL من publicId استخدميه
-// import { buildAvatarUrl } from "../../../utils/Helpers/avatar";
+import { buildAvatarUrl } from "../../../utils/Helpers/avatar";
 
 function PencilButton({ onClick, ariaLabel = "Edit", className = "" }) {
 	return (
@@ -64,6 +64,7 @@ function Row({ label, value, isLink = false }) {
 export default function EmployerProfile() {
 	const { data: res, isLoading, isError, error } = useEmployerProfileQuery();
 	const updateMutation = useUpdateEmployerProfile();
+	const { currentUser } = useAuth();
 	const { fileRef, onPickAvatar, onAvatarChange, avatarError, avatarMutation } =
 		useUploadAvatar({
 			uploadFn: updateEmployerLogo,
@@ -76,6 +77,7 @@ export default function EmployerProfile() {
 		});
 	const userData = useMemo(() => res?.data ?? null, [res]);
 	const profile = userData?.employerProfile ?? null;
+	console.log("employer profile", profile);
 
 	const companyName = profile?.companyName ?? "";
 	const website = profile?.website ?? "";
@@ -83,10 +85,12 @@ export default function EmployerProfile() {
 	const location = profile?.location ?? "";
 
 	const avatarPublicId = profile?.avatarPublicId ?? null;
+	const liveAvatarUrl = currentUser?.avatarUrl || null;
+	const profileAvatarUrl = profile?.avatarPublicId
+		? `${buildAvatarUrl(profile.avatarPublicId)}?v=${profile?.updatedAt || ""}`
+		: null;
 
-	// لو عندكم buildAvatarUrl
-	// const logoUrl = avatarPublicId ? buildAvatarUrl(avatarPublicId) : null;
-	const logoUrl = null; // لحد ما يكون عندكم URL builder أو endpoint يرجع URL
+	const logoUrl = liveAvatarUrl || profileAvatarUrl;
 
 	const [editingHeader, setEditingHeader] = useState(false);
 	const [headerDraft, setHeaderDraft] = useState({
@@ -135,7 +139,7 @@ export default function EmployerProfile() {
 	if (isLoading) {
 		return (
 			<div className="min-h-[60vh] flex items-center justify-center">
-				<div className="text-gray-600">Loading…</div>
+				<Loading />
 			</div>
 		);
 	}
@@ -158,76 +162,64 @@ export default function EmployerProfile() {
 
 			<div className="max-w-6xl mx-auto px-4 py-8">
 				{/* Header card */}
-				<section className="bg-white border border-gray-200 rounded-2xl p-6">
-					<div className="flex items-center justify-between gap-4">
-						<div className="flex items-center gap-4">
-							{/* <div className="relative">
-								<div className="w-16 h-16 rounded-full bg-gray-100 overflow-hidden border border-gray-200 flex items-center justify-center">
-									{logoUrl ? (
-										<img
-											src={logoUrl}
-											alt="Company logo"
-											className="w-full h-full object-cover"
-										/>
-									) : (
-										<span className="text-gray-400 text-sm">Logo</span>
-									)}
-								</div>
-
-								<button
-									type="button"
-									className="absolute -right-1 -bottom-1 w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center shadow hover:bg-purple-700 transition"
-									aria-label="Edit logo"
-									onClick={() => {
-										// هنا اربطي upload logo لما يكون عندكم endpoint
-										alert("Upload logo endpoint not wired yet");
-									}}
-								>
-									<i className="fa-solid fa-pen text-xs" />
-								</button>
-							</div> */}
-							<div className="relative">
-								{/* hidden input للملف */}
+				<section className="bg-white border border-gray-200 rounded-2xl p-6 ">
+					<div className="flex items-center justify-between gap-4 ">
+						<div className="flex flex-grow items-center gap-4 ">
+							<div className="relative flex flex-col items-center gap-2 ">
+								{/* hidden input */}
 								<input
 									ref={fileRef}
 									type="file"
 									accept="image/*"
-									className="hidden"
+									className="hidden w-full "
 									onChange={onAvatarChange}
 								/>
 
-								<div className="w-16 h-16 rounded-full bg-gray-100 overflow-hidden border border-gray-200 flex items-center justify-center">
-									{logoUrl ? (
-										<img
-											src={logoUrl}
-											alt="Company logo"
-											className="w-full h-full object-cover"
-										/>
-									) : (
-										<span className="text-gray-400 text-sm">Logo</span>
-									)}
+								{/* Avatar wrapper */}
+								<div className="relative group">
+									<div className="w-28 h-28 rounded-full shadow-md bg-gray-100 overflow-hidden border border-gray-200 flex items-center justify-center">
+										{logoUrl ? (
+											<img
+												src={logoUrl}
+												alt="Company logo"
+												className="w-full h-full object-cover"
+											/>
+										) : (
+											<span className="text-gray-400 text-xs">Logo</span>
+										)}
+									</div>
+
+									{/* Edit button overlay */}
+									<button
+										type="button"
+										aria-label="Edit logo"
+										onClick={onPickAvatar}
+										disabled={avatarMutation.isPending}
+										className="
+											absolute bottom-4 -right-1
+											w-7 h-7 rounded-full
+											bg-purple-600 text-white
+											flex items-center justify-center
+											shadow-md
+											hover:bg-purple-700
+											transition
+											disabled:opacity-60
+										"
+									>
+										{avatarMutation.isPending ? (
+											<i className="fa-solid fa-spinner animate-spin text-xs" />
+										) : (
+											<i className="fa-solid fa-pen text-[10px]" />
+										)}
+									</button>
 								</div>
 
-								<button
-									type="button"
-									className="absolute -right-1 -bottom-1 w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center shadow hover:bg-purple-700 transition disabled:opacity-60"
-									aria-label="Edit logo"
-									onClick={onPickAvatar}
-									disabled={avatarMutation.isPending}
-								>
-									{avatarMutation.isPending ? (
-										<i className="fa-solid fa-spinner animate-spin text-xs" />
-									) : (
-										<i className="fa-solid fa-pen text-xs" />
-									)}
-								</button>
-
-								{/* error صغيرة تحت الصورة لو حصل مشكلة */}
-								{avatarError ? (
-									<p className="mt-2 text-xs text-red-600 absolute left-0 top-[72px] w-56">
+								{/* Error message */}
+								{avatarError && (
+									<p className="text-xs text-red-600 text-center max-w-[160px] leading-tight">
 										{avatarError}
 									</p>
-								) : null}
+								)}
 							</div>
 
 							<div>
@@ -236,14 +228,14 @@ export default function EmployerProfile() {
 										<h1 className="text-xl font-bold text-gray-900">
 											{companyName || "Company name"}
 										</h1>
-										<p className="text-sm text-gray-600 mt-1">Employer</p>
+										<p className="text-sm text-gray-600 mt-1">Company</p>
 										<div className="flex items-center gap-2 mt-2 text-sm text-gray-600">
 											<i className="fa-solid fa-location-dot text-purple-600" />
 											<span>{location || "Location"}</span>
 										</div>
 									</>
 								) : (
-									<div className="space-y-3">
+									<div className="space-y-3 ">
 										<Field
 											label="Company Name"
 											value={headerDraft.companyName}

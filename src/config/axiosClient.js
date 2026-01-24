@@ -17,17 +17,6 @@ const axiosClient = axios.create({
 	headers: {}
 });
 
-// Request interceptor: run before every request
-// If access token exists, add it to authorization header
-// axiosClient.interceptors.request.use(
-// 	(config) => {
-// 		const token = getAccessToken();
-// 		if (token) config.headers.Authorization = `Bearer ${token}`;
-// 		return config;
-// 	},
-// 	// Forward request errors
-// 	(error) => Promise.reject(error),
-// );
 
 
 axiosClient.interceptors.request.use(
@@ -38,10 +27,10 @@ axiosClient.interceptors.request.use(
 		const isFormData = config.data instanceof FormData;
 
 		if (isFormData) {
-			// مهم جدًا: سيبي axios يحط multipart + boundary بنفسه
+			// for file upload
 			delete config.headers["Content-Type"];
 		} else {
-			// للطلبات العادية
+			// for json
 			config.headers["Content-Type"] = "application/json";
 		}
 
