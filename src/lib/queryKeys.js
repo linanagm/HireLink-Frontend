@@ -30,6 +30,9 @@ export const queryKeys = {
     // employerDashboardStats: "employerDashboardStats",
     // employerJobSummary: "employerJobSummary",
     // employerRecentApplicants: "employerRecentApplicants",
+    moderationStats: ["moderation", "stats"],
+    moderationUsers: (params) => ["moderation", "users", params],
+    moderationJobs: (params) => ["moderation", "jobs", params],
 
     // ADMIN
     adminStats: ["admin-stats"],
