@@ -1,4 +1,4 @@
-import { cx } from "../../../utils/formatter";
+import { cx } from "../../../../../utils/formatter";
 import Icon from "./Icon";
 
 function SidebarItem({ icon, label, active }) {
