@@ -99,5 +99,15 @@ export const PATHS = {
 
         applicationById: (applicationId) => `/employer/applications/${applicationId}`,
     },
+    moderation: {
+        stats: "/moderation/stats",
+
+        users: "/moderation/users",
+        userById: (userId) => `/moderation/users/${userId}`,
+        userActive: (userId) => `/moderation/users/${userId}/active`,
+
+        jobs: "/moderation/jobs",
+        jobById: (jobId) => `/moderation/jobs/${jobId}`,
+    },
 
 };

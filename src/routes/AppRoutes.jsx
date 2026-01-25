@@ -178,7 +178,8 @@ export default function AppRoutes() {
 				{ path: "jobs/:jobId", element: <JobDetails /> },
 				{ path: "jobs/:jobId/edit", element: <EditJob /> },
 				{ path: "jobs/:jobId/applicants", element: <MyApplicants /> },
-				{ path: "jobs/:jobId/applicants/search", element: <SearchTalent /> },
+				{ path: "applicants/search", element: <SearchTalent /> },
+				//{ path: "jobs/:jobId/applicants/search", element: <SearchTalent /> },
 			],
 		},
 
@@ -193,7 +194,7 @@ export default function AppRoutes() {
 			element: (
 				<ProtectedRoute redirect="/admin/login">
 					<RoleRoute
-						allowed={["MODERATOR"]}
+						allowed={["MODERATOR", "ADMIN"]}
 						redirect="/admin/login"
 						forbidden="/unauthorized"
 					>

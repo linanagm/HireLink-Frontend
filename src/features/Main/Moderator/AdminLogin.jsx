@@ -22,7 +22,7 @@ import AdminLogo from "./components/AdminLogo";
  * @returns {React.Component} A React component that handles the admin login functionality.
  */
 export default function AdminLogin() {
-	const { saveLogin } = useAuth();
+	const { saveLogin, setUser } = useAuth();
 	const navigate = useNavigate();
 	const [isLoading, setIsLoading] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
@@ -60,7 +60,7 @@ export default function AdminLogin() {
 			}
 
 			// Save token first
-			await saveLogin(token, rememberMeChecked, null);
+			await saveLogin(token, rememberMeChecked);
 
 			// Fetch full user info including role
 			const me = await getUser();
@@ -73,10 +73,10 @@ export default function AdminLogin() {
 			}
 
 			// Save full user info
-			await saveLogin(token, rememberMeChecked, me.data);
+			await saveLogin(token, rememberMeChecked);
 
 			//console.log("admin me:", me.data);
-
+			setUser(me.data);
 			navigateAdmin(me.data);
 		} catch (err) {
 			console.log("admin login error:", err);
