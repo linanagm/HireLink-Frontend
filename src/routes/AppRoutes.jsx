@@ -64,12 +64,12 @@ const EmployerDashboard = lazy(
 const EmployerProfile = lazy(
 	() => import("../features/Main/employer/EmployerProfile"),
 );
-const EditProfile = lazy(() => import("../features/Main/employer/EditProfile"));
+//const EditProfile = lazy(() => import("../features/Main/employer/EditProfile"));
 
 const EmployerAccountSettings = lazy(
 	() => import("../features/Main/Employer/AccountSettings"),
 );
-const PostAJob = lazy(() => import("../features/Main/employer/PostAJob"));
+const PostAJob = lazy(() => import("../features/Main/Employer/PostAJob"));
 
 const MyApplicants = lazy(
 	() => import("../features/Main/employer/MyApplicants"),
@@ -171,7 +171,7 @@ export default function AppRoutes() {
 
 				{ path: "profile/settings", element: <EmployerAccountSettings /> },
 				// modal
-				{ path: "profile/edit", element: <EditProfile /> },
+				//{ path: "profile/edit", element: <EditProfile /> },
 
 				{ path: "jobs/new", element: <PostAJob /> },
 
