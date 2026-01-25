@@ -94,6 +94,17 @@ export const PATHS = {
         jobs: "/employer/jobs",
 
         jobById: (jobId) => `/employer/jobs/${jobId}`,
+        updateJob: (jobId) => `/employer/jobs/${jobId}`,
+
+        jobSkill: (jobId) => `/employer/jobs/${jobId}/skills`,
+        //removeJobSkill: (jobId) => `/employer/jobs/${jobId}/skills`,
+
+        Job: (jobId) => `/employer/jobs/${jobId}`,
+        //removeJob: (jobId) => `/employer/jobs/${jobId}`,
+
+
+        jobLanguage: (jobId) => `/employer/jobs/${jobId}/languages`,
+        //removeLanguage: (jobId) => `/employer/jobs/${jobId}/languages`,
 
         jobApplications: (jobId) => `/employer/jobs/${jobId}/applications`,
 

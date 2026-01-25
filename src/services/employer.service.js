@@ -7,19 +7,35 @@ import { api } from "../lib/api";
 export function listEmployerJobs(config = {}) {
     return api("get", PATHS.employer.jobs, null, config);
 }
-
 export function getEmployerJob(jobId, config = {}) {
     return api("get", PATHS.employer.jobById(jobId), null, config);
 }
 
+// post ajob 
 export function createEmployerJob(payload, config = {}) {
     return api("post", PATHS.employer.jobs, payload, config);
 }
+
 
 export function updateEmployerJob(jobId, payload, config = {}) {
     return api("put", PATHS.employer.jobById(jobId), payload, config);
 }
 
+export function upsertEmployerJobSkill(jobId, payload, config = {}) {
+    return api("post", PATHS.employer.jobSkill(jobId), payload, config);
+}
+
+export function removeEmployerJobSkill(jobId, payload, config = {}) {
+    return api("delete", PATHS.employer.jobSkill(jobId), payload, config);
+}
+
+export function upsertEmployerJobLanguage(jobId, payload, config = {}) {
+    return api("post", PATHS.employer.jobLanguage(jobId), payload, config);
+}
+
+export function removeEmployerJobLanguage(jobId, payload, config = {}) {
+    return api("delete", PATHS.employer.jobLanguage(jobId), payload, config);
+}
 export function deleteEmployerJob(jobId, config = {}) {
     return api("delete", PATHS.employer.jobById(jobId), null, config);
 }
