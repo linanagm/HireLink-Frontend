@@ -22,6 +22,8 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use(
 	(config) => {
 		const token = getAccessToken();
+		console.log("REQ", config.method?.toUpperCase(), config.url, "token", !!token);
+
 		if (token) config.headers.Authorization = `Bearer ${token}`;
 
 		const isFormData = config.data instanceof FormData;
@@ -119,8 +121,12 @@ axiosClient.interceptors.response.use(
 			} catch (err) {
 				// Refresh failed -> logout
 				processQueue(err, null);
-				clearAccessToken();
 
+				//prevent logout if it is network glitch
+				const refreshStatus = err?.response?.status;
+				if (refreshStatus === 401 || refreshStatus === 403) {
+					clearAccessToken();
+				}
 				// optional:
 				// - clear react-query cache
 				// - redirect to login

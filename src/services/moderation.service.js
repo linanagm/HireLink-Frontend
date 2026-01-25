@@ -1,6 +1,7 @@
 // src/services/moderation.service.js
-import api from "../lib/api";
-import { PATHS } from "../lib/paths";
+
+import { PATHS } from "../constants/apiPaths";
+import { api } from "../lib/api";
 
 /* ===================== STATS ===================== */
 
@@ -17,21 +18,11 @@ export function listModerationUsers(config = {}) {
 
 export function setModerationUserActive(userId, payload, config = {}) {
     // payload = { isActive: boolean }
-    return api(
-        "patch",
-        PATHS.moderation.userActive(userId),
-        payload,
-        config
-    );
+    return api("patch", PATHS.moderation.userActive(userId), payload, config);
 }
 
 export function deleteModerationUser(userId, config = {}) {
-    return api(
-        "delete",
-        PATHS.moderation.userById(userId),
-        null,
-        config
-    );
+    return api("delete", PATHS.moderation.userById(userId), null, config);
 }
 
 /* ===================== JOBS ===================== */
@@ -41,10 +32,5 @@ export function listModerationJobs(config = {}) {
 }
 
 export function deleteModerationJob(jobId, config = {}) {
-    return api(
-        "delete",
-        PATHS.moderation.jobById(jobId),
-        null,
-        config
-    );
+    return api("delete", PATHS.moderation.jobById(jobId), null, config);
 }

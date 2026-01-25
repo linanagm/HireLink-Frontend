@@ -39,6 +39,7 @@ export default function NavbarComponent() {
 		[currentUser?.role],
 	);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <>
 	const avatar = useMemo(() => {
 		if (currentUser?.avatarUrl) return currentUser.avatarUrl;
 

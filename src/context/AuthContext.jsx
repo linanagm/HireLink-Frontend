@@ -89,6 +89,7 @@ export function AuthProvider({ children }) {
 	const logout = useCallback(async () => {
 		try {
 			await logoutRes();
+			clearAccessToken();
 		} finally {
 			clearAccessToken();
 			localStorage.removeItem(STORAGE_KEYS.user);
