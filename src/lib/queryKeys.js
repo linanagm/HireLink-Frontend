@@ -26,6 +26,7 @@ export const queryKeys = {
     employerJobs: ["employer-jobs"],
 
     employerDashboardAggregated: "employerDashboardAggregated",
+    employerDashboard: "employerDashboard",
 
     // employerDashboardStats: "employerDashboardStats",
     // employerJobSummary: "employerJobSummary",

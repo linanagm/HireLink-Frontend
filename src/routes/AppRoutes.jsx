@@ -170,13 +170,19 @@ export default function AppRoutes() {
 				{ path: "profile", element: <EmployerProfile /> },
 
 				{ path: "profile/settings", element: <EmployerAccountSettings /> },
+
 				// modal
 				//{ path: "profile/edit", element: <EditProfile /> },
 
 				{ path: "jobs/new", element: <PostAJob /> },
+				//edit job
+				{ path: "jobs/:jobId/edit", element: <PostAJob /> },
 
+				//modal -> delet
 				{ path: "jobs/:jobId", element: <JobDetails /> },
+				//delete
 				{ path: "jobs/:jobId/edit", element: <EditJob /> },
+
 				{ path: "jobs/:jobId/applicants", element: <MyApplicants /> },
 				{ path: "applicants/search", element: <SearchTalent /> },
 				//{ path: "jobs/:jobId/applicants/search", element: <SearchTalent /> },
