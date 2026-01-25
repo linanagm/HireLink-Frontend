@@ -27,6 +27,6 @@ export const resetPassword = ({ email, verificationToken, newPassword, oldPasswo
 
 export const getUser = () => api("get", PATHS.auth.me, null, {});
 
-export const logoutRes = () => api("post", PATHS.auth.logout);
+export const logoutRes = (config = []) => api("post", PATHS.auth.logout, {}, config);
 
-export const logoutAll = () => api("post", PATHS.auth.logoutAll);
+export const logoutAll = (config = []) => api("post", PATHS.auth.logoutAll, config);
