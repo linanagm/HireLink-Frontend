@@ -1,5 +1,5 @@
 import { useFormik } from "formik";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
 	useCreateEmployerJobMutation,
@@ -38,19 +38,13 @@ function FieldError({ formik, name }) {
 	return <p className="mt-2 text-sm text-red-600">{error}</p>;
 }
 
-export default function PostJobPage() {
-	const navigate = useNavigate();
-	const { jobId } = useParams();
-	const isEdit = !!jobId;
-	const [submitError, setSubmitError] = useState("");
-	const createMutation = useCreateEmployerJobMutation();
-	const updateMutation = useUpdateEmployerJobMutation(jobId);
-	const jobQuery = useEmployerJobQuery(jobId, { enabled: isEdit });
-
-	const [apiError, setApiError] = useState("");
-
-	const formik = useFormik({
-		initialValues: {
+/**
+ * Map API job -> Formik values
+ * عدّلي الماب ده لو أسماء الحقول في الباك مختلفة عندك
+ */
+function mapApiJobToFormik(job) {
+	if (!job) {
+		return {
 			title: "",
 			description: "",
 			location: "",
@@ -59,7 +53,72 @@ export default function PostJobPage() {
 			salary: "",
 			requiredSkills: [],
 			requiredLanguages: [],
-		},
+		};
+	}
+
+	return {
+		title: job.title ?? "",
+		description: job.description ?? "",
+		location: job.location ?? "",
+		jobType: job.jobType ?? "FULL_TIME",
+		experienceLevel: job.experienceLevel ?? "FRESH",
+		salary: job.salary ?? "",
+		requiredSkills: Array.isArray(job.requiredSkills) ? job.requiredSkills : [],
+		requiredLanguages: Array.isArray(job.requiredLanguages)
+			? job.requiredLanguages
+			: [],
+	};
+}
+
+export default function PostJobPage() {
+	const navigate = useNavigate();
+	const { jobId } = useParams();
+	const isEdit = Boolean(jobId);
+
+	const [submitError, setSubmitError] = useState("");
+
+	const createMutation = useCreateEmployerJobMutation();
+	const updateMutation = useUpdateEmployerJobMutation(jobId);
+
+	// ✅ fetch job details only in edit mode
+	const jobQuery = useEmployerJobQuery(jobId, { enabled: isEdit });
+
+	// ✅ initial values: empty in create, hydrated in edit (after fetch)
+	const initialValues = useMemo(() => {
+		if (!isEdit) {
+			return {
+				title: "",
+				description: "",
+				location: "",
+				jobType: "FULL_TIME",
+				experienceLevel: "FRESH",
+				salary: "",
+				requiredSkills: [],
+				requiredLanguages: [],
+			};
+		}
+
+		if (!jobQuery.data) {
+			return {
+				title: "",
+				description: "",
+				location: "",
+				jobType: "FULL_TIME",
+				experienceLevel: "FRESH",
+				salary: "",
+				requiredSkills: [],
+				requiredLanguages: [],
+			};
+		}
+
+		// IMPORTANT:
+		// لو jobQuery بيرجع wrapper: { ok, data }
+		// mapApiJobToFormik(jobQuery.data?.data)
+		return mapApiJobToFormik(jobQuery.data);
+	}, [isEdit, jobQuery.data]);
+
+	const formik = useFormik({
+		initialValues,
 		validationSchema: postJobSchema,
 		enableReinitialize: true,
 		onSubmit: async (values, { setSubmitting }) => {
@@ -69,17 +128,18 @@ export default function PostJobPage() {
 				const payload = mapFormikToJobPayload(values);
 
 				if (isEdit) {
+					ا;
 					await updateMutation.mutateAsync(payload);
 				} else {
 					await createMutation.mutateAsync(payload);
 				}
 
-				// ✅ نجاح → رجوع للداشبورد
+				//
 				navigate("/employer/dashboard");
 			} catch (err) {
-				// ✅ فشل → رسالة لليوزر
 				const message =
 					err?.response?.data?.message ||
+					err?.message ||
 					"Something went wrong. Please try again.";
 
 				setSubmitError(message);
@@ -88,17 +148,6 @@ export default function PostJobPage() {
 			}
 		},
 	});
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <>
-	useEffect(() => {
-		if (!isEdit) return;
-		if (!jobQuery.data) return;
-		const hydrated = mapApiJobToFormik(jobQuery.data);
-		formik.setValues(hydrated);
-	}, [isEdit, jobQuery.data]);
-
-	const busy =
-		jobQuery.isLoading || createMutation.isPending || updateMutation.isPending;
 
 	// ---- Skills handlers (Formik array) ----
 	const [skillInput, setSkillInput] = useState("");
@@ -184,15 +233,46 @@ export default function PostJobPage() {
 		);
 	}, [formik.values.title, formik.values.description]);
 
+	const busy =
+		(isEdit && jobQuery.isLoading) ||
+		createMutation.isPending ||
+		updateMutation.isPending ||
+		formik.isSubmitting;
+
+	// ---- Loading ----
+	if (isEdit && jobQuery.isLoading) {
+		return (
+			<div className="min-h-screen bg-gray-50">
+				<div className="mx-auto max-w-6xl px-4 py-10">
+					<div className="rounded-2xl border border-gray-200 bg-white p-6 md:p-10">
+						<p className="text-gray-600">Loading job details…</p>
+					</div>
+				</div>
+			</div>
+		);
+	}
+
+	if (isEdit && jobQuery.isError) {
+		return (
+			<div className="min-h-screen bg-gray-50">
+				<div className="mx-auto max-w-6xl px-4 py-10">
+					<div className="rounded-2xl border border-red-200 bg-red-50 p-6 md:p-10 text-red-700">
+						Failed to load job for edit.
+					</div>
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<div className="min-h-screen bg-gray-50">
-			{submitError && (
-				<div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-					{submitError}
-				</div>
-			)}
-
 			<div className="mx-auto max-w-6xl px-4 py-10">
+				{submitError ? (
+					<div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+						{submitError}
+					</div>
+				) : null}
+
 				<div className="flex items-center justify-between">
 					<h1 className="text-2xl font-bold text-gray-900">
 						{isEdit ? "Edit Job" : "Post a Job"}
@@ -203,12 +283,6 @@ export default function PostJobPage() {
 					onSubmit={formik.handleSubmit}
 					className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 md:p-10"
 				>
-					{apiError ? (
-						<div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-							{apiError}
-						</div>
-					) : null}
-
 					<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
 						{/* Job Title */}
 						<div className="md:col-span-2">
@@ -467,7 +541,7 @@ export default function PostJobPage() {
 							disabled={busy || !canSubmit}
 							className="rounded-xl bg-fuchsia-700 px-8 py-3 text-sm font-semibold text-white hover:bg-fuchsia-800 disabled:cursor-not-allowed disabled:opacity-60"
 						>
-							{busy ? "Saving..." : isEdit ? "Save" : "Post"}
+							{busy ? "Saving..." : isEdit ? "Update" : "Post"}
 						</button>
 
 						<button
@@ -478,13 +552,6 @@ export default function PostJobPage() {
 							Cancel
 						</button>
 					</div>
-
-					{/* Edit load error */}
-					{jobQuery.isError ? (
-						<p className="mt-4 text-sm text-red-600">
-							Failed to load job for edit.
-						</p>
-					) : null}
 				</form>
 			</div>
 		</div>
