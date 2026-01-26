@@ -1,79 +1,66 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
 import { useSearchParams } from "react-router-dom";
-import { JOBS_MODES } from "../../../../constants/apiPaths";
+import { JOB_MODES, normalizeJobsMode } from "../../../../constants/jobs";
 import JobCard from "./components/JobCard";
 import Pagination from "./components/Pagination";
 import TabButton from "./components/TabButton";
-import useJobs from "./hooks/queries/useJobsMode";
+import useJobs from "./hooks/queries/useJobs";
 
 const PAGE_SIZE = 10;
-export const JOB_MODES = {
-	RECENT: "recent",
-	RECOMMENDED: "recommended",
-};
-
-export function normalizeJobsMode(value) {
-	return value === JOB_MODES.RECOMMENDED
-		? JOB_MODES.RECOMMENDED
-		: JOB_MODES.RECENT;
-}
-
-/**
- * Find Jobs (Talent)
- *
- * Goals:
- * - Tabs switch between backend modes (recent vs recommended/best matches).
- * - Keep code DRY: one query, one list renderer, no duplicated logic.
- * - Easy to read: explicit mapping + small helpers.
- */
 export default function JobList() {
-	const [searcParams, setSearchParams] = useSearchParams();
+	const [searchParams, setSearchParams] = useSearchParams();
 
-	// read initial tab from URL (default recent)
-	const tabFromUrl = searcParams.get("tab");
-	const initialTab =
-		tabFromUrl === "recommended" || tabFromUrl === "recent"
-			? tabFromUrl
-			: "recent";
+	// URL state
+	const tabFromUrl = searchParams.get("tab");
+	const qFromUrl = searchParams.get("q") ?? "";
+	const q = qFromUrl.trim(); // safe string
 
-	// UI tab state (what the user sees)
-
+	// UI state
+	const initialTab = normalizeJobsMode(tabFromUrl);
 	const [tab, setTab] = useState(initialTab);
 	const [page, setPage] = useState(1);
 
-	// keep URL in sync with tab state
+	// If user is searching, force "recent" tab (search intent > recommendations)
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <>
 	useEffect(() => {
-		setSearchParams(
-			(prev) => {
-				const next = new URLSearchParams(prev);
-				next.set("tab", tab);
-				return next;
-			},
-			{ replace: true },
-		); // replace عشان ما يكدّس history
-	}, [tab, setSearchParams]);
+		if (!q) return;
 
-	// Backend mode derived from tab.
-	// Why: keep the UI labels independent from backend query values.
-	//const mode = tab === "best" ? "recommended" : "recent";
+		if (tab !== JOB_MODES.RECENT) {
+			setTab(JOB_MODES.RECENT);
+			setPage(1);
+		}
 
-	// Pagination values
+		const next = new URLSearchParams(searchParams);
+		if (next.get("tab") !== JOB_MODES.RECENT) {
+			next.set("tab", JOB_MODES.RECENT);
+			setSearchParams(next, { replace: true });
+		}
+	}, [q]);
+
+	// Keep URL tab in sync with state (when NOT searching)
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <>
+	useEffect(() => {
+		if (q) return; // don't fight the effect above
+		const next = new URLSearchParams(searchParams);
+		next.set("tab", tab);
+		setSearchParams(next, { replace: true });
+	}, [tab, q]);
+
 	const skip = (page - 1) * PAGE_SIZE;
 
-	/**
-	 * Query params are memoized to avoid unnecessary renders
-	 * and to keep React Query key stable between renders.
-	 *
-	 * Important: tab/mode is included, so switching tabs triggers a new request.
-	 */
+	// IMPORTANT:
+	// If q exists, we search within RECENT jobs only (frontend filtering),
+	// so request recent from backend even if tab was something else.
+	const effectiveMode = q ? JOB_MODES.RECENT : tab;
+
 	const queryParams = useMemo(
 		() => ({
 			limit: PAGE_SIZE,
 			skip,
-			mode: tab, // <-- this is the only thing that changes between tabs
+			mode: effectiveMode,
 		}),
-		[skip, tab],
+		[skip, effectiveMode],
 	);
 
 	const {
@@ -86,29 +73,45 @@ export default function JobList() {
 		queryParams,
 	});
 
-	/**
-	 * Normalize jobs response shape.
-	 * Why: your backend/axios wrappers sometimes return data in different nesting:
-	 * - response.data.data
-	 * - response.data
-	 */
 	const jobs = useMemo(() => {
 		const raw = response?.data?.data ?? response?.data ?? [];
 		return Array.isArray(raw) ? raw : [];
 	}, [response]);
 
-	/**
-	 * Single tab switch handler.
-	 * Why: DRY and consistent behavior:
-	 * - switch tab
-	 * - reset pagination to first page
-	 */
-	const onChangeTab = useCallback((nextTab) => {
-		setTab(nextTab);
-		setPage(1);
-	}, []);
+	// Frontend search filtering (no backend q)
+	const filteredJobs = useMemo(() => {
+		const s = q.toLowerCase();
+		if (!s) return jobs;
 
-	// ------- UI states -------
+		return jobs.filter((job) => {
+			const title = (job.title ?? "").toLowerCase();
+			const desc = (job.description ?? "").toLowerCase();
+			const company = (
+				job.employer?.companyName ??
+				job.companyName ??
+				""
+			).toLowerCase();
+
+			return title.includes(s) || desc.includes(s) || company.includes(s);
+		});
+	}, [jobs, q]);
+
+	const onChangeTab = useCallback(
+		(nextTab) => {
+			if (q) return; // block switching while searching (keeps UX predictable)
+			setTab(nextTab);
+			setPage(1);
+		},
+		[q],
+	);
+
+	const emptyText =
+		effectiveMode === JOB_MODES.RECOMMENDED
+			? "Please, add your skills and languages."
+			: "No jobs available right now.";
+
+	// ... keep your loading/error UI the same
+
 	if (isLoading) {
 		return (
 			<div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -127,12 +130,6 @@ export default function JobList() {
 		);
 	}
 
-	// Empty states depend on tab (because expectation differs)
-	const emptyText =
-		tab === JOBS_MODES.RECOMMENDED
-			? "Please, add your skills and languages."
-			: "No jobs available right now.";
-
 	return (
 		<>
 			<Helmet>
@@ -140,13 +137,11 @@ export default function JobList() {
 			</Helmet>
 
 			<div className="bg-gray-50 min-h-screen">
-				{/* BANNER */}
 				<div
 					className="w-full h-96 bg-cover bg-center"
 					style={{ backgroundImage: "url(/images/talent-findjob.svg)" }}
 				/>
 
-				{/* TABS */}
 				<div className="mt-6 px-10 flex items-center gap-6 border-b pb-2 text-gray-600">
 					<TabButton
 						active={tab === JOB_MODES.RECENT}
@@ -159,29 +154,27 @@ export default function JobList() {
 						active={tab === JOB_MODES.RECOMMENDED}
 						onClick={() => onChangeTab(JOB_MODES.RECOMMENDED)}
 					>
-						Recommended for you
+						Recommended Jobs
 					</TabButton>
 
-					{/* isFetching can be true when switching tabs or changing page */}
 					{isFetching && (
 						<span className="ml-auto text-sm text-gray-400">Refreshing...</span>
 					)}
 				</div>
 
-				{/* JOB LIST */}
 				<div className="px-10 mt-6 space-y-6">
-					{jobs.map((job) => (
+					{filteredJobs.map((job) => (
 						<JobCard
 							key={job.id}
 							job={job}
 							showMatch={tab === JOB_MODES.RECOMMENDED}
 						/>
 					))}
-
-					{jobs.length === 0 && <p className="text-gray-500">{emptyText}</p>}
+					{filteredJobs.length === 0 && (
+						<p className="text-gray-500">{emptyText}</p>
+					)}
 				</div>
 
-				{/* PAGINATION */}
 				<Pagination page={page} onPageChange={setPage} />
 			</div>
 		</>
