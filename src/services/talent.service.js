@@ -84,8 +84,11 @@ export function getTalentResume() {
  * field name MUST be "resume"
  */
 export function uploadTalentResume(file) {
+    const formData = new FormData();
+    formData.append("resume", file);
+    // لازم الاسم يطابق multer.single("resume") في الباك اند
 
-    return api("put", PATHS.talent.resume, form, file);
+    return api("put", PATHS.talent.resume, formData);
 }
 
 // DELETE /talent/resume
@@ -106,12 +109,6 @@ export function getJobs(params = {}) {
 export function getJobsByMode(mode, params = {}) {
     return getJobs({ ...params, mode });
 }
-
-
-// // GET /jobs?mode=best_matches
-// export function getBestMatchJobs(params = {}) {
-//     return getJobs({ ...params, mode: JOBS_MODES.BEST_MATCHES });
-// }
 
 
 // GET /jobs/:id
