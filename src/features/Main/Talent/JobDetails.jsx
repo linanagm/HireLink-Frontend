@@ -12,13 +12,13 @@ import {
 import { prettyEnum } from "../../../utils/formatter";
 
 /**
- * JobDetails is a page that displays the details of a job.
- * It fetches the job data using the `useQuery` hook from `@tanstack/react-query`.
- * It also fetches the user's applications for the job using the `useQuery` hook.
- * If the job is not found, it renders a "Job not found" message.
- * If the job is found, it renders the job details, including the title, description, payment type, budget, work arrangement, experience level, location, responsibilities, and skills.
- * If the user has already applied for the job, it renders the application status and read-only details.
- * If the user has not already applied for the job, it renders an "Apply Now" button.
+ * JobDetails component displays the details of a job
+ * It fetches the job data using the useQuery hook from @tanstack/react-query
+ * It also fetches the user's applications for the job using the useQuery hook
+ * If the job is not found, it renders a "Job not found" message
+ * If the job is found, it renders the job details, including the title, description, payment type, budget, work arrangement, experience level, location, responsibilities, and skills
+ * If the user has already applied for the job, it renders the application status and read-only details
+ * If the user has not already applied for the job, it renders an "Apply Now" button
  */
 export default function JobDetails() {
 	const { id: jobId } = useParams();

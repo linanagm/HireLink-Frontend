@@ -51,10 +51,6 @@ const TalentProfile = lazy(
 	() => import("../features/Main/talent/TalentProfile"),
 );
 
-// const EditTalentProfile = lazy(
-// 	() => import("../features/Main/Talent/EditTalentProfile"),
-// );
-
 const TalentAccountSettings = lazy(
 	() => import("../features/Main/Talent/TalentAccountSettings"),
 );

@@ -10,6 +10,11 @@ import { buildCloudinaryUrl } from "../../../utils/Helpers/cloudinary";
 import { formatName } from "../../../utils/tools";
 import { proposalSchema } from "../../../utils/validation/jobs.validators";
 
+/**
+ * Job proposal form component.
+ * Handles the job proposal form submission and resume upload.
+ * Displays the job description, form fields, and submission status.
+ */
 export default function JobProposal() {
   const [resumeFile, setResumeFile] = useState(null);
   const [isUploadingResume, setIsUploadingResume] = useState(false);
@@ -342,7 +347,7 @@ async function handleUploadResume() {
               )}
             </div>
           </div>
-
+        {/* Submit Button */}
           <div className="flex gap-4 mt-10">
             <button
               type="submit"
