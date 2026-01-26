@@ -35,7 +35,9 @@ const ResetPassword = lazy(
 // ************************* Talent pages *****************************
 
 // 1- findjob page
-const FindJob = lazy(() => import("../features/Main/talent/FindJob"));
+const FindJob = lazy(
+	() => import("../features/Main/Talent/findJobPage/FindJob"),
+);
 // 2- job details page
 const JobDetails = lazy(() => import("../features/Main/Talent/JobDetails"));
 //3- job proposal page
@@ -48,10 +50,6 @@ const MyApplications = lazy(
 const TalentProfile = lazy(
 	() => import("../features/Main/talent/TalentProfile"),
 );
-
-// const EditTalentProfile = lazy(
-// 	() => import("../features/Main/Talent/EditTalentProfile"),
-// );
 
 const TalentAccountSettings = lazy(
 	() => import("../features/Main/Talent/TalentAccountSettings"),

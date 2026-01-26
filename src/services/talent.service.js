@@ -1,6 +1,6 @@
 
 // services/talent.service.js
-import { JOBS_MODES, PATHS } from "../constants/apiPaths";
+import { PATHS } from "../constants/apiPaths";
 import { api } from "../lib/api";
 
 
@@ -84,8 +84,11 @@ export function getTalentResume() {
  * field name MUST be "resume"
  */
 export function uploadTalentResume(file) {
+    const formData = new FormData();
+    formData.append("resume", file);
+    // لازم الاسم يطابق multer.single("resume") في الباك اند
 
-    return api("put", PATHS.talent.resume, form, file);
+    return api("put", PATHS.talent.resume, formData);
 }
 
 // DELETE /talent/resume
@@ -102,15 +105,9 @@ export function getJobs(params = {}) {
     return api("get", PATHS.jobs.jobsList, null, { params });
 }
 
-// GET /jobs?mode=recommended
-export function getRecommendedJobs(params = {}) {
-    return getJobs({ ...params, mode: JOBS_MODES.RECOMMENDED });
-}
-
-
-// GET /jobs?mode=best_matches
-export function getBestMatchJobs(params = {}) {
-    return getJobs({ ...params, mode: JOBS_MODES.BEST_MATCHES });
+// GET /jobs?mode=recent | recommended
+export function getJobsByMode(mode, params = {}) {
+    return getJobs({ ...params, mode });
 }
 
 
