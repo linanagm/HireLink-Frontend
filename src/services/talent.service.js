@@ -23,6 +23,7 @@ export function getTalentProfile() {
  * payload example:
  * { headline, bio, location }
  */
+
 export function updateTalentProfile(payload) {
     return api("put", PATHS.talent.profile, payload);
 }
@@ -39,61 +40,81 @@ export function updateTalentSkills(payload) {
     return api("put", PATHS.talent.skills, payload);
 }
 
+export function upSertTalentSkill(payload) {
+    return api("post", PATHS.talent.skills, payload);
+}
+
+
+export function removeTalentSkill(payload) {
+    return api("delete", PATHS.talent.skills, null, { data: payload });
+}
+/******************************************** */
 
 /**
- * PUT /talent/languages
- * payload example:
- * {
- *   languages: [{ name: "English", proficiency: "NATIVE" }]
- * }
- */
+* PUT /talent/languages
+* payload example:
+* {
+*   languages: [{ name: "English", proficiency: "NATIVE" }]
+* }
+*/
 export function setTalentLanguages(payload) {
     return api("put", PATHS.talent.languages, payload);
 }
 
+export function upSertTalentLanguage(payload) {
+    return api("post", PATHS.talent.languages, payload);
+}
 
-// GET /talent/avatar?width=200&height=200
+
+export function removeTalentLanguage(payload) {
+    return api("delete", PATHS.talent.languages, null, { data: payload });
+}
+
+/******************************************** */
+
+// Certificaties
+export function setTalentCertificaties(payload) {
+    return api("put", PATHS.talent.certificaties, payload);
+}
+
+export function upSertTalentCertificaties(payload) {
+    return api("post", PATHS.talent.certificaties, payload);
+}
+
+export function removeTalentCertificaties(payload) {
+    return api("delete", PATHS.talent.certificaties, null, { data: payload });
+}
+
+/************************************************ */
+
+//avatar
+
 export function getTalentAvatar(params = {}) {
     return api("get", PATHS.talent.avatar, null, { params });
 }
 
-/**
- * PUT /talent/avatar (multipart/form-data)
- * field name MUST be "avatar"
- */
 export function uploadTalentAvatar(formData) {
-
-    return api("put", PATHS.talent.avatar, formData, {
-
-    });
+    return api("put", PATHS.talent.avatar, formData, {});
 }
 
-// DELETE /talent/avatar
+
 export function deleteTalentAvatar() {
     return api("delete", PATHS.talent.avatar);
 }
 
+/**************************  Resume (Talent) ******************/
 
-// GET /talent/resume
 export function getTalentResume() {
     return api("get", PATHS.talent.resume);
 }
 
-/**
- * PUT /talent/resume (multipart/form-data)
- * field name MUST be "resume"
- */
 export function uploadTalentResume(file) {
     const formData = new FormData();
     formData.append("resume", file);
-    // لازم الاسم يطابق multer.single("resume") في الباك اند
-
     return api("put", PATHS.talent.resume, formData);
 }
-
-// DELETE /talent/resume
-export function deleteTalentResume() {
-    return api("delete", PATHS.talent.resume);
+export function deleteTalentResume(payload) {
+    return api("delete", PATHS.talent.resume, null, { data: payload });
 }
 
 

@@ -43,6 +43,7 @@ export default function EmployerProfile() {
 		isError,
 		error,
 	} = useEmployerProfileQuery();
+
 	const updateMutation = useUpdateEmployerProfile();
 	const { currentUser } = useAuth();
 	const { fileRef, onPickAvatar, onAvatarChange, avatarError, avatarMutation } =
