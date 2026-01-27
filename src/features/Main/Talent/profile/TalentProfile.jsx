@@ -39,10 +39,15 @@ export default function TalentProfile() {
 	const [isEditingSkills, setIsEditingskills] = useState(false);
 	const [skillsDraft, setSkillsDraft] = useState([]);
 	const [isEditingCert, setIsEditingCert] = useState(false);
+	// const [certDraft, setCertDraft] = useState({
+	// 	provider: profile?.cert?.provider ?? "",
+	// 	issued: profile?.cert?.issued ?? "",
+	// 	id: profile?.cert?.id ?? "",
+	// });
 	const [certDraft, setCertDraft] = useState({
-		provider: profile?.cert?.provider ?? "",
-		issued: profile?.cert?.issued ?? "",
-		id: profile?.cert?.id ?? "",
+		provider: "",
+		issued: "",
+		id: "",
 	});
 
 	const qc = useQueryClient();
