@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: <> */
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { Helmet } from "react-helmet";
@@ -10,6 +10,7 @@ import {
 	getMyApplications,
 } from "../../../services/talent.service";
 import { prettyEnum } from "../../../utils/formatter";
+import { formatName } from "../../../utils/tools";
 
 /**
  * JobDetails component displays the details of a job
@@ -101,12 +102,6 @@ export default function JobDetails() {
 		? job.responsibilities
 		: [];
 
-	const skills = Array.isArray(job.skills)
-		? job.skills
-		: Array.isArray(job.tags)
-			? job.tags
-			: [];
-
 	return (
 		<>
 			<Helmet>
@@ -127,7 +122,14 @@ export default function JobDetails() {
 					{/* TITLE */}
 					<div className="flex items-start justify-between gap-4">
 						<div>
-							<h1 className="text-3xl font-bold mb-4">{job.title}</h1>
+							{/* <h1 className="text-3xl font-bold mb-4">{job.title}</h1> */}
+							{/* job title . company name */}
+							<h3 className="text-xl font-semibold mb-3">
+								{job.title} .{" "}
+								<span className="text-lg font-sans font-thin text-gray-600 mb-2">
+									{job?.employer?.companyName}
+								</span>
+							</h3>
 							<p className="text-gray-600 leading-relaxed mb-8">
 								{job.description}
 							</p>
@@ -164,23 +166,44 @@ export default function JobDetails() {
 					)}
 
 					{/* SKILLS */}
-					<h2 className="text-xl font-semibold mb-2">Skills</h2>
-					{skills.length > 0 ? (
-						<div className="flex flex-wrap gap-2 mb-8">
-							{skills.map((skill, idx) => (
-								<span
-									key={`${jobId}-skill-${idx}`}
-									className="px-3 py-1 text-sm bg-gray-100 rounded-full"
-								>
-									{skill}
-								</span>
-							))}
-						</div>
-					) : (
-						<p className="text-gray-500 mb-8">No skills listed.</p>
-					)}
+					{Array.isArray(job?.requiredSkills) &&
+					job?.requiredSkills?.length > 0 ? (
+						<>
+							<h4 className="text-lg font-semibold mb-3 mt-3">Skills</h4>
+							<div className="flex flex-wrap gap-2">
+								{job?.requiredSkills?.map((skill, i) => (
+									<span
+										key={i.id}
+										className="px-3 py-1 text-sm bg-gray-100 rounded-full"
+									>
+										{skill.name}
+									</span>
+								))}
+							</div>
+						</>
+					) : null}
 
-					{/* ✅ APPLICATION STATUS + READ-ONLY DETAILS (بدون تغيير الديزاين العام) */}
+					{/* Languages */}
+					{Array.isArray(job?.requiredLanguages) &&
+					job?.requiredLanguages?.length > 0 ? (
+						<>
+							<h4 className="text-lg font-semibold mb-2 mt-6">
+								Required Languages{" "}
+							</h4>
+							<div className="flex flex-wrap gap-2 mb-3">
+								{job?.requiredLanguages?.map((lang, i) => (
+									<span
+										key={i.id}
+										className="px-3 py-1 text-sm bg-gray-100 rounded-full"
+									>
+										{lang.name} . {formatName(lang.minimumProficiency)}
+									</span>
+								))}
+							</div>
+						</>
+					) : null}
+
+					{/* Apply Button */}
 					{alreadyApplied && (
 						<>
 							<div className="mb-6 p-4 rounded-xl border bg-yellow-50 text-yellow-800">
@@ -229,7 +252,7 @@ export default function JobDetails() {
 						</>
 					)}
 
-					{/* APPLY BUTTON (يختفي لو alreadyApplied) */}
+					{/* APPLY BUTTON  disabled={alreadyApplied} */}
 					{!alreadyApplied && (
 						<div className="text-center">
 							<Link
