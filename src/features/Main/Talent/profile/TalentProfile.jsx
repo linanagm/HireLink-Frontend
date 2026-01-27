@@ -14,6 +14,7 @@ import {
 	uploadTalentAvatar,
 } from "../../../../services/talent.service";
 import { buildAvatarUrl } from "../../../../utils/Helpers/avatar";
+import { useEditableField } from "./hooks/useEdittableField";
 import {
 	buildSkillsDraft,
 	cleanSkillsDraft,
@@ -35,8 +36,8 @@ const EXPERIENCE_LEVELS = [
 ];
 export default function TalentProfile() {
 	const { data: profile, isLoading, isError, error } = useTalentProfileQuery();
-	const [isEditingTitle, setIsEditingTitle] = useState(false);
-	const [titleDraft, setTitleDraft] = useState("");
+	// const [isEditingTitle, setIsEditingTitle] = useState(false);
+	// const [titleDraft, setTitleDraft] = useState("");
 	const [isEditingLevel, setIsEditingLevel] = useState(false);
 	const [levelDraft, setLevelDraft] = useState("");
 	const [isEditingBio, setIsEditingBio] = useState(false);
@@ -82,6 +83,10 @@ export default function TalentProfile() {
 	// console.log("talent languages", talentProfile.languages);
 	// console.log("talent certificates", talentProfile.certificates);
 
+	// 2.1) get title
+	const titleField = useEditableField(talentProfile?.headline, {
+		fallback: "-",
+	});
 	// 3) update title
 	const updateTitleMutation = useProfileEdit({
 		mutationFn: (headline) => updateTalentProfile({ headline }),
@@ -199,7 +204,7 @@ export default function TalentProfile() {
 
 	// handle title
 	useEffect(() => {
-		if (!isEditingTitle) {
+		if (titleField.isEditing) {
 			setTitleDraft(talentProfile?.headline ?? "");
 		}
 	}, [talentProfile?.headline, isEditingTitle]);
