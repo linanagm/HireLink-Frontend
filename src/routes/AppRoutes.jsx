@@ -48,7 +48,7 @@ const MyApplications = lazy(
 );
 //5- profile page / account
 const TalentProfile = lazy(
-	() => import("../features/Main/talent/TalentProfile"),
+	() => import("../features/Main/Talent/profile/TalentProfile"),
 );
 
 const TalentAccountSettings = lazy(

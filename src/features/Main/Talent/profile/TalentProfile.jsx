@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
 import toast from "react-hot-toast";
+import defaultProfileImage from "../../../../assets/images/profile-image.png";
 import Loading from "../../../../components/UI/Loading";
 import { useTalentProfileQuery } from "../../../../hooks/queries/talent/useTalentProfile";
 import { useProfileEdit } from "../../../../hooks/useProfileEdit";
@@ -13,7 +14,11 @@ import {
 	uploadTalentAvatar,
 } from "../../../../services/talent.service";
 import { buildAvatarUrl } from "../../../../utils/Helpers/avatar";
-import defaultProfileImage from "../../../assets/images/profile-image.png";
+import {
+	buildSkillsDraft,
+	cleanSkillsDraft,
+	deriveSkillsUi,
+} from "./utils/skills";
 
 const SKILL_LEVELS = [
 	{ value: "BEGINNER", label: "Beginner" },
@@ -73,6 +78,9 @@ export default function TalentProfile() {
 	const talentProfile = profile?.data?.talentProfile ?? null;
 
 	console.log("talent profile-data: \n", talentProfile);
+	// console.log("talent skills", talentProfile.skills);
+	// console.log("talent languages", talentProfile.languages);
+	// console.log("talent certificates", talentProfile.certificates);
 
 	// 3) update title
 	const updateTitleMutation = useProfileEdit({
@@ -152,16 +160,36 @@ export default function TalentProfile() {
 			toast.error(err?.message || "Failed to update skills");
 		},
 	});
+	/************************************************* */
+	// const skillsUi = useMemo(() => {
+	// 	return cachedSkills?.length
+	// 		? cachedSkills
+	// 		: (talentProfile?.skills ?? []).map((s) => ({
+	// 				skillId: s.skillId,
+	// 				name: s.name ?? "",
+	// 				level: s.level ?? "BEGINNER",
+	// 			}));
+	// }, [cachedSkills, talentProfile?.skills]);
 
+	// 	useEffect(() => {
+	// 		if (!isEditingSkills) {
+	// 			setSkillsDraft(buildSkillsDraft(skillsUi));
+	// 		}
+	// 	}, [isEditingSkills, skillsUi]);
+
+	//************************************************** */
 	const skillsUi = useMemo(() => {
-		return cachedSkills?.length
-			? cachedSkills
-			: (talentProfile?.skills ?? []).map((s) => ({
-					skillId: s.skillId,
-					name: s.name ?? "",
-					level: s.level ?? "BEGINNER",
-				}));
+		return deriveSkillsUi({
+			cachedSkills,
+			talentProfileSkills: talentProfile?.skills,
+		});
 	}, [cachedSkills, talentProfile?.skills]);
+
+	useEffect(() => {
+		if (!isEditingSkills) {
+			setSkillsDraft(buildSkillsDraft(skillsUi));
+		}
+	}, [isEditingSkills, skillsUi]);
 
 	// 8) update certifications
 	const profileCompletion = "70%";
@@ -239,32 +267,44 @@ export default function TalentProfile() {
 		);
 	};
 
-	const onSaveSkills = () => {
-		const cleaned = skillsDraft
-			.map((s) => ({
-				name: (s.name || "").trim(),
-				level: s.level || "BEGINNER",
-			}))
-			.filter((s) => s.name.length);
+	/******************************* */
+	// const onSaveSkills = () => {
+	// 	const cleaned = skillsDraft
+	// 		.map((s) => ({
+	// 			name: (s.name || "").trim(),
+	// 			level: s.level || "BEGINNER",
+	// 		}))
+	// 		.filter((s) => s.name.length);
 
+	// 	setIsEditingskills(false);
+	// 	updateSkillsMutation.mutate(cleaned);
+	// };
+	/******************************* */
+	const onSaveSkills = () => {
+		const cleaned = cleanSkillsDraft(skillsDraft);
 		setIsEditingskills(false);
 		updateSkillsMutation.mutate(cleaned);
 	};
 
-	const onCancelSkills = () => {
-		const initial =
-			skillsUi?.map((s) => ({
-				skillId: s.skillId,
-				name: s.name ?? "",
-				level: s.level ?? "BEGINNER",
-			})) ?? [];
+	/********************************** */
+	// const onCancelSkills = () => {
+	// 	const initial =
+	// 		skillsUi?.map((s) => ({
+	// 			skillId: s.skillId,
+	// 			name: s.name ?? "",
+	// 			level: s.level ?? "BEGINNER",
+	// 		})) ?? [];
 
-		setSkillsDraft(
-			initial.length ? initial : [{ name: "", level: "BEGINNER" }],
-		);
+	// 	setSkillsDraft(
+	// 		initial.length ? initial : [{ name: "", level: "BEGINNER" }],
+	// 	);
+	// 	setIsEditingskills(false);
+	// };
+	/*********************************** */
+	const onCancelSkills = () => {
+		setSkillsDraft(buildSkillsDraft(skillsUi));
 		setIsEditingskills(false);
 	};
-
 	// will be deleted after integration
 
 	const onAddCert = () => console.log("add certification");
