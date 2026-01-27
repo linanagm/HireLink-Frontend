@@ -2,19 +2,32 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
 import toast from "react-hot-toast";
-import defaultProfileImage from "../../../assets/images/profile-image.png";
-import Loading from "../../../components/UI/Loading";
-import { useTalentProfileQuery } from "../../../hooks/queries/talent/useTalentProfile";
-import { useProfileEdit } from "../../../hooks/useProfileEdit";
-import { useUploadAvatar } from "../../../hooks/useUploadAvatar";
-import { queryKeys } from "../../../lib/queryKeys";
+import Loading from "../../../../components/UI/Loading";
+import { useTalentProfileQuery } from "../../../../hooks/queries/talent/useTalentProfile";
+import { useProfileEdit } from "../../../../hooks/useProfileEdit";
+import { useUploadAvatar } from "../../../../hooks/useUploadAvatar";
+import { queryKeys } from "../../../../lib/queryKeys";
 import {
 	updateTalentProfile,
 	updateTalentSkills,
 	uploadTalentAvatar,
-} from "../../../services/talent.service";
-import { buildAvatarUrl } from "../../../utils/Helpers/avatar";
+} from "../../../../services/talent.service";
+import { buildAvatarUrl } from "../../../../utils/Helpers/avatar";
+import defaultProfileImage from "../../../assets/images/profile-image.png";
 
+const SKILL_LEVELS = [
+	{ value: "BEGINNER", label: "Beginner" },
+	{ value: "INTERMEDIATE", label: "Intermediate" },
+	{ value: "ADVANCED", label: "Advanced" },
+	{ value: "EXPERT", label: "Expert" },
+];
+//UI
+const EXPERIENCE_LEVELS = [
+	{ value: "JUNIOR", label: "Junior" },
+	{ value: "MID", label: "Mid-level" },
+	{ value: "SENIOR", label: "Senior" },
+	{ value: "EXPERT", label: "Expert" },
+];
 export default function TalentProfile() {
 	const { data: profile, isLoading, isError, error } = useTalentProfileQuery();
 	const [isEditingTitle, setIsEditingTitle] = useState(false);
@@ -31,20 +44,6 @@ export default function TalentProfile() {
 		issued: profile?.cert?.issued ?? "",
 		id: profile?.cert?.id ?? "",
 	});
-
-	const SKILL_LEVELS = [
-		{ value: "BEGINNER", label: "Beginner" },
-		{ value: "INTERMEDIATE", label: "Intermediate" },
-		{ value: "ADVANCED", label: "Advanced" },
-		{ value: "EXPERT", label: "Expert" },
-	];
-	//UI
-	const EXPERIENCE_LEVELS = [
-		{ value: "JUNIOR", label: "Junior" },
-		{ value: "MID", label: "Mid-level" },
-		{ value: "SENIOR", label: "Senior" },
-		{ value: "EXPERT", label: "Expert" },
-	];
 
 	const qc = useQueryClient();
 
