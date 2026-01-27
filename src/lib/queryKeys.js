@@ -11,6 +11,7 @@ export const queryKeys = {
     talentSkills: ["talent-skills"],
     // AVATAR
     talentAvatar: ["talent-avatar"],
+    talentResume: ["talent-resume"],
 
     // JOBS
     jobs: ["jobs"],

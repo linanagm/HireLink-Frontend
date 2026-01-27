@@ -46,7 +46,7 @@ export function upSertTalentSkill(payload) {
 
 
 export function removeTalentSkill(payload) {
-    return api("delete", PATHS.talent.skills, payload);
+    return api("delete", PATHS.talent.skills, null, { data: payload });
 }
 /******************************************** */
 
@@ -67,7 +67,7 @@ export function upSertTalentLanguage(payload) {
 
 
 export function removeTalentLanguage(payload) {
-    return api("delete", PATHS.talent.languages, payload);
+    return api("delete", PATHS.talent.languages, null, { data: payload });
 }
 
 /******************************************** */
@@ -82,7 +82,7 @@ export function upSertTalentCertificaties(payload) {
 }
 
 export function removeTalentCertificaties(payload) {
-    return api("delete", PATHS.talent.certificaties, payload);
+    return api("delete", PATHS.talent.certificaties, null, { data: payload });
 }
 
 /************************************************ */
@@ -113,8 +113,8 @@ export function uploadTalentResume(file) {
     formData.append("resume", file);
     return api("put", PATHS.talent.resume, formData);
 }
-export function deleteTalentResume() {
-    return api("delete", PATHS.talent.resume);
+export function deleteTalentResume(payload) {
+    return api("delete", PATHS.talent.resume, null, { data: payload });
 }
 
 
