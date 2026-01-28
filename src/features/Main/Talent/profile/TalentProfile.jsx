@@ -6,7 +6,6 @@ import Chip from "../../../../components/UI/Chip";
 import Loading from "../../../../components/UI/Loading";
 import Modal from "../../../../components/UI/Modal";
 import PencilIcon from "../../../../components/UI/PencilIcon";
-import { useTalentProfileQuery } from "../../../../hooks/queries/talent/useTalentProfile";
 import { queryKeys } from "../../../../lib/queryKeys";
 import {
 	removeTalentCertificaties,
@@ -19,13 +18,55 @@ import {
 } from "../../../../services/talent.service";
 import { buildAvatarUrl } from "../../../../utils/Helpers/avatar";
 import { buildCloudinaryUrl } from "../../../../utils/Helpers/cloudinary";
-import ProfileHeaderCard from "./components/ProfileHeaderCard";
-import ResumeCard from "./components/ResumeCard";
+import { calcProfileCompletion } from "../../../../utils/Helpers/profileCompletion";
 import {
 	useDeleteTalentResumeMutation,
 	useUploadTalentResumeMutation,
-} from "./hooks/mutations/useTalentResume";
-import { calcProfileCompletion } from "./lib/profileCompletion";
+} from "../hooks/mutations/useTalentResume";
+import { useTalentProfileQuery } from "../hooks/queries/useTalentProfile";
+import ProfileHeaderCard from "./components/ProfileHeaderCard";
+import ResumeCard from "./components/ResumeCard";
+
+const AboutSection = React.memo(function AboutSection({
+	headline,
+	level,
+	bio,
+	topSkills,
+	onEdit,
+}) {
+	return (
+		<section className="bg-white border border-slate-200 rounded-2xl p-8 mb-4 mt-4">
+			<div className="flex items-start justify-between gap-4">
+				<div>
+					<h2 className="text-xl font-bold text-slate-900">
+						{headline || "UX/UI Designer | Frontend Developer"}
+					</h2>
+					<div className="mt-2">
+						<Badge>{level || "Expert"}</Badge>
+					</div>
+				</div>
+
+				<div className="p-2 rounded-xl hover:bg-slate-50 border">
+					<PencilIcon onClick={onEdit} ariaLabel="Edit Profile" />
+				</div>
+			</div>
+
+			<p className="mt-4 text-slate-700 leading-relaxed">
+				{bio ||
+					"Write a short bio that describes you. Humans love that sort of thing."}
+			</p>
+
+			<div className="mt-4">
+				<div className="font-semibold text-slate-900 mb-2">Skills:</div>
+				<ul className="list-disc pl-6 text-slate-700 space-y-1">
+					{topSkills.map((label) => (
+						<li key={label}>{label}</li>
+					))}
+				</ul>
+			</div>
+		</section>
+	);
+});
 
 const SkillsSection = React.memo(function SkillsSection({
 	skills,
@@ -236,47 +277,6 @@ const LanguagesSection = React.memo(function LanguagesSection({
 				</div>
 			</Modal>
 		</>
-	);
-});
-
-const AboutSection = React.memo(function AboutSection({
-	headline,
-	level,
-	bio,
-	topSkills,
-	onEdit,
-}) {
-	return (
-		<section className="bg-white border border-slate-200 rounded-2xl p-8 mb-4 mt-4">
-			<div className="flex items-start justify-between gap-4">
-				<div>
-					<h2 className="text-xl font-bold text-slate-900">
-						{headline || "UX/UI Designer | Frontend Developer"}
-					</h2>
-					<div className="mt-2">
-						<Badge>{level || "Expert"}</Badge>
-					</div>
-				</div>
-
-				<div className="p-2 rounded-xl hover:bg-slate-50 border">
-					<PencilIcon onClick={onEdit} ariaLabel="Edit Profile" />
-				</div>
-			</div>
-
-			<p className="mt-4 text-slate-700 leading-relaxed">
-				{bio ||
-					"Write a short bio that describes you. Humans love that sort of thing."}
-			</p>
-
-			<div className="mt-4">
-				<div className="font-semibold text-slate-900 mb-2">Skills:</div>
-				<ul className="list-disc pl-6 text-slate-700 space-y-1">
-					{topSkills.map((label) => (
-						<li key={label}>{label}</li>
-					))}
-				</ul>
-			</div>
-		</section>
 	);
 });
 

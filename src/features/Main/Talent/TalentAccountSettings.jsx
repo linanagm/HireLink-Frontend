@@ -1,4 +1,5 @@
 import { Helmet } from "react-helmet";
+import Badge from "../../../components/UI/Badge";
 import { useAccountSecurityMutations } from "../../../hooks/mutations/useAccountSettingsMutation";
 import { useAuth } from "../../../hooks/useAuth";
 
@@ -18,21 +19,6 @@ function LockIcon({ className = "w-5 h-5" }) {
 				d="M16.5 10.5V7.875a4.5 4.5 0 10-9 0V10.5m-.75 0h10.5a2.25 2.25 0 012.25 2.25v6A2.25 2.25 0 0117.25 21H6.75A2.25 2.25 0 014.5 18.75v-6A2.25 2.25 0 016.75 10.5z"
 			/>
 		</svg>
-	);
-}
-
-function Badge({ children, tone = "gray" }) {
-	const tones = {
-		gray: "bg-gray-100 text-gray-700 border-gray-200",
-		green: "bg-green-50 text-green-700 border-green-200",
-		yellow: "bg-yellow-50 text-yellow-700 border-yellow-200",
-	};
-	return (
-		<span
-			className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs border ${tones[tone]}`}
-		>
-			{children}
-		</span>
 	);
 }
 
@@ -98,8 +84,7 @@ export default function TalentAccountSettings() {
 								{email || "—"}
 							</p>
 							<p className="text-xs text-gray-500 mt-1">
-								Email change is not available yet (backend endpoint not
-								implemented).
+								Email change is not available yet...
 							</p>
 						</div>
 

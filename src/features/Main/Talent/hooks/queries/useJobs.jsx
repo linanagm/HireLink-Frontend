@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { queryKeys } from "../../../lib/queryKeys";
-import { getJobs } from "../../../services/talent.service";
+import { queryKeys } from "../../../../../lib/queryKeys";
+import { getJobs } from "../../../../../services/talent.service";
 
 /**
  * A hook to fetch jobs from the server.
