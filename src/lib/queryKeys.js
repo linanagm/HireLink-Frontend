@@ -19,7 +19,7 @@ export const queryKeys = {
     jobDetails: (jobId) => ["job", jobId],
 
     // APPLICATIONS
-    applications: ["applications"],
+    applications: ["my-applications"],
     applicationByJob: (jobId) => ["applications", "job", jobId],
 
     // EMPLOYER
@@ -33,7 +33,9 @@ export const queryKeys = {
     // employerJobSummary: "employerJobSummary",
     // employerRecentApplicants: "employerRecentApplicants",
     moderationStats: ["moderation", "stats"],
-    moderationUsers: (params) => ["moderation", "users", params],
+    //moderationUsers: (params) => ["moderation", "users", params],
+    moderationUsers: ({ page, limit, q }) => ["moderation", "users", page, limit, q ?? ""],
+
     moderationJobs: (params) => ["moderation", "jobs", params],
 
     // ADMIN

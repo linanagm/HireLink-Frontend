@@ -2,10 +2,10 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
 import { useSearchParams } from "react-router-dom";
 import { JOB_MODES, normalizeJobsMode } from "../../../../constants/jobs";
+import useJobs from "../hooks/queries/useJobs";
 import JobCard from "./components/JobCard";
 import Pagination from "./components/Pagination";
 import TabButton from "./components/TabButton";
-import useJobs from "./hooks/queries/useJobs";
 
 const PAGE_SIZE = 10;
 export default function JobList() {
@@ -21,7 +21,6 @@ export default function JobList() {
 	const [tab, setTab] = useState(initialTab);
 	const [page, setPage] = useState(1);
 
-	// If user is searching, force "recent" tab (search intent > recommendations)
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <>
 	useEffect(() => {
 		if (!q) return;
@@ -91,10 +90,17 @@ export default function JobList() {
 				job.companyName ??
 				""
 			).toLowerCase();
-
+			const jobType = (job.jobType ?? "").toLowerCase();
+			const experienceLevel = (job.experienceLevel ?? "").toLowerCase();
+			const salary = (job.salary ?? "").toLowerCase();
+			const location = (job.location ?? "").toLowerCase();
+			const hoursPerWeek = (job.hoursPerWeek ?? "").toLowerCase();
+			const requiredSkills = job.requiredSkills ?? [];
+			const requiredLanguages = job.requiredLanguages ?? [];
 			return title.includes(s) || desc.includes(s) || company.includes(s);
 		});
 	}, [jobs, q]);
+	console.log("jobs");
 
 	const onChangeTab = useCallback(
 		(nextTab) => {
