@@ -5,6 +5,8 @@ import { Helmet } from "react-helmet";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import InfoItem from "../../../components/UI/InfoItem";
 import Loading from "../../../components/UI/Loading";
+import { useAuth } from "../../../hooks/useAuth";
+import { queryKeys } from "../../../lib/queryKeys";
 import {
 	getJobById,
 	getMyApplications,
@@ -24,6 +26,8 @@ import { formatName } from "../../../utils/tools";
 export default function JobDetails() {
 	const { id: jobId } = useParams();
 	const navigate = useNavigate();
+	const { currentUser, isAuthReady, isAuthenticated } = useAuth();
+	const isTalent = currentUser?.role === "TALENT";
 
 	// 1) Job query
 	const {
@@ -32,10 +36,12 @@ export default function JobDetails() {
 		isError: jobIsError,
 		error: jobError,
 	} = useQuery({
-		queryKey: ["job", jobId],
+		queryKey: queryKeys.jobDetails(jobId),
 		queryFn: () => getJobById(jobId),
-		enabled: !!jobId,
-		staleTime: 60 * 1000,
+		enabled: Boolean(isAuthReady && isAuthenticated && isTalent && jobId),
+		staleTime: 2 * 60 * 1000,
+		refetchOnWindowFocus: false,
+		retry: 1,
 	});
 
 	// 2) My applications query (polling to reflect status updates)
@@ -173,7 +179,7 @@ export default function JobDetails() {
 							<div className="flex flex-wrap gap-2">
 								{job?.requiredSkills?.map((skill, i) => (
 									<span
-										key={i.id}
+										key={`${skill.name}-skill-${i}`}
 										className="px-3 py-1 text-sm bg-gray-100 rounded-full"
 									>
 										{skill.name}
@@ -193,7 +199,7 @@ export default function JobDetails() {
 							<div className="flex flex-wrap gap-2 mb-3">
 								{job?.requiredLanguages?.map((lang, i) => (
 									<span
-										key={i.id}
+										key={`${lang.name}-lang-${i}`}
 										className="px-3 py-1 text-sm bg-gray-100 rounded-full"
 									>
 										{lang.name} . {formatName(lang.minimumProficiency)}

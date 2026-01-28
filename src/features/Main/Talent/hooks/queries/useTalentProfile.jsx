@@ -11,7 +11,8 @@ export function useTalentProfileQuery() {
 		queryKey: queryKeys.talentProfile,
 		queryFn: async () => {
 			const res = await getTalentProfile();
-			if (!res.ok) throw new Error(res.message) || "Failed to load profile";
+			if (!res.ok) throw new Error(res.message || "Failed to load profile");
+
 			return res;
 		},
 		enabled: Boolean(isAuthReady && isAuthenticated && isTalent),

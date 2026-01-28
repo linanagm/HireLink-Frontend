@@ -4,6 +4,8 @@ import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import FieldError from "../../../components/UI/FieldError";
 import Loading from "../../../components/UI/Loading";
+import { useAuth } from "../../../hooks/useAuth";
+import { queryKeys } from "../../../lib/queryKeys";
 import { getMyApplications } from "../../../services/talent.service";
 /**
  * MyApplications is a component that displays a list of job applications
@@ -15,14 +17,20 @@ import { getMyApplications } from "../../../services/talent.service";
 export default function MyApplications() {
 	const [statusFilter, setStatusFilter] = useState("");
 	const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
+	const { currentUser, isAuthReady, isAuthenticated } = useAuth();
+	const isTalent = currentUser?.role === "TALENT";
 
+	//  My applications query
 	const { data, isLoading, isError, error } = useQuery({
-		queryKey: ["my-applications"],
-		queryFn: getMyApplications,
+		queryKey: queryKeys.applications, // بدل ["my-applications"]
+		queryFn: () => getMyApplications(),
+		enabled: Boolean(isAuthReady && isAuthenticated && isTalent),
+		staleTime: 30 * 1000,
+		refetchOnWindowFocus: false,
+		retry: 1,
 	});
 
 	const applications = data?.data ?? [];
-	console.log("data: \n", applications);
 
 	const statusOptions = [
 		"PENDING",
