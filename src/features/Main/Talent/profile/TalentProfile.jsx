@@ -98,24 +98,6 @@ const SkillsSection = React.memo(function SkillsSection({
 					</button>
 				</div>
 				{/* Skills List */}
-				{/* <div className="mt-4 flex flex-wrap gap-2">
-					{skills.map((label) => (
-						<div
-							key={label}
-							className="flex items-center gap-2 border rounded-full px-3 py-2"
-						>
-							<span className="text-sm font-semibold">{label}</span>
-							<button
-								type="button"
-								className="text-red-600 text-sm font-bold"
-								onClick={() => removeSkillM.mutate(label)}
-							>
-								×
-							</button>
-						</div>
-					))}
-				</div> */}
-
 				<div className="mt-4 flex flex-wrap gap-2">
 					{skills.map((label) => {
 						const isRemoving = pendingRemove === label;
@@ -306,6 +288,7 @@ const CertificatesSection = React.memo(function CertificatesSection({
 
 	const [certModalOpen, setCertModalOpen] = useState(false);
 	const [editingCert, setEditingCert] = useState(null);
+	const [pendingRemove, setPendingRemove] = useState(null);
 
 	const [certDraft, setCertDraft] = useState({
 		name: "",
@@ -367,7 +350,10 @@ const CertificatesSection = React.memo(function CertificatesSection({
 			await qc.invalidateQueries({ queryKey });
 			toast.success("Certificate deleted");
 		},
-		onError: (e) => toast.error(e?.message || "Delete failed"),
+		onError: (e) => {
+			toast.error(e?.message || "Delete failed");
+		},
+		onSettled: () => setPendingRemove(null),
 	});
 
 	const submitCert = useCallback(() => {
@@ -417,7 +403,16 @@ const CertificatesSection = React.memo(function CertificatesSection({
 					</div>
 				) : (
 					certificates.map((c) => (
-						<div key={c.certificateId} className="border rounded-xl p-4">
+						// <div key={c.certificateId} className="border rounded-xl p-4">
+
+						<div
+							key={c.certificateId}
+							className={`border rounded-xl p-4 transition ${
+								pendingRemove === c.certificateId && deleteCertM.isPending
+									? "opacity-60"
+									: ""
+							}`}
+						>
 							<div className="font-bold">{c.name}</div>
 							<div className="text-sm text-slate-600">
 								Provider : {c.issuer ?? ""}
@@ -440,7 +435,7 @@ const CertificatesSection = React.memo(function CertificatesSection({
 									Edit
 								</button>
 
-								<button
+								{/* <button
 									type="button"
 									className="text-red-600"
 									onClick={() => {
@@ -449,7 +444,25 @@ const CertificatesSection = React.memo(function CertificatesSection({
 										}
 									}}
 								>
-									Delete
+									{pendingRemove ? "Deleting..." : "Delete"}
+								</button> */}
+
+								<button
+									type="button"
+									className="text-red-600 disabled:opacity-50"
+									disabled={
+										pendingRemove === c.certificateId && deleteCertM.isPending
+									}
+									onClick={() => {
+										if (confirm("Delete certificate?")) {
+											setPendingRemove(c.certificateId);
+											deleteCertM.mutate(c.certificateId);
+										}
+									}}
+								>
+									{pendingRemove === c.certificateId && deleteCertM.isPending
+										? "Deleting..."
+										: "Delete"}
 								</button>
 							</div>
 						</div>
@@ -516,13 +529,14 @@ const CertificatesSection = React.memo(function CertificatesSection({
 						<label htmlFor="" className="text-sm font-semibold text-slate-700">
 							Issued
 						</label>
+
 						<input
+							type="date"
 							className="mt-1 w-full rounded-xl border p-3"
 							value={certDraft.issueDate}
 							onChange={(e) =>
 								setCertDraft((p) => ({ ...p, issueDate: e.target.value }))
 							}
-							placeholder="e.g. 2026-01"
 						/>
 					</div>
 
@@ -685,18 +699,6 @@ export default function TalentProfilePage() {
 			/>
 
 			{/* Skills chips */}
-
-			<div className="flex items-center justify-between">
-				<h3 className="text-lg font-bold">Skills</h3>
-				<div className="p-2 rounded-xl hover:bg-slate-50 border">
-					<PencilIcon onClick={() => setEditMode("skills")} />
-				</div>
-			</div>
-			<div className="mt-4 flex flex-wrap gap-2">
-				{(profile?.skills || []).map((s) => (
-					<Chip key={s.name || s}>{s.name || String(s)}</Chip>
-				))}
-			</div>
 
 			<SkillsSection
 				skills={skillsList}
