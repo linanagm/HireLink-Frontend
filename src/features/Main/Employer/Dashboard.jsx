@@ -106,248 +106,6 @@ function Pager({ page, totalPages, setPage }) {
 		</div>
 	);
 }
-
-export default function EmployerDashboard() {
-	const navigate = useNavigate();
-	const delJob = useDeleteEmployerJob();
-
-	const { data, isLoading, isError, error } = useEmployerDashboard({
-		summaryLimit: 5,
-		recentLimit: 5,
-	});
-
-	const [jobsOpen, setJobsOpen] = useState(false);
-	const [appsOpen, setAppsOpen] = useState(false);
-
-	const [jobDetails, setJobDetails] = useState(null);
-	const [appDetails, setAppDetails] = useState(null);
-
-	if (isLoading) return <div className="p-6 text-gray-600">Loading…</div>;
-	if (isError)
-		return <div className="p-6 text-red-600">{error?.message || "Error"}</div>;
-
-	const stats = data?.stats ?? {
-		totalJobs: 0,
-		activeOpenJobs: 0,
-		totalApplications: 0,
-	};
-	const jobs = data?.jobSummary ?? [];
-	const recentApplications = data?.recentApplications ?? [];
-	const allJobs = data?.jobs ?? [];
-
-	return (
-		<div className="min-h-screen bg-gray-50 p-4">
-			{/* Stats top */}
-			<div
-				className="h-58 w-full bg-cover bg-center flex mx-auto mb-10"
-				style={{ backgroundImage: `url(${headerImage})` }}
-			>
-				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mx-auto py-10">
-					<StatCard icon={Layers} label="Total Jobs" value={stats.totalJobs} />
-					<StatCard
-						icon={Briefcase}
-						label="Active (Open) Jobs"
-						value={stats.activeOpenJobs}
-					/>
-					<StatCard
-						icon={Users}
-						label="Applications Received"
-						value={stats.totalApplications}
-					/>
-				</div>
-			</div>
-
-			{/* image under stats */}
-			{/* <div className="w-full h-[220px] sm:h-[260px] lg:h-[300px] overflow-hidden rounded-2xl border bg-white">
-				<img src={headerImage} className="w-full h-full object-cover" alt="" />
-			</div> */}
-			<div className="max-w-6xl mx-auto space-y-6">
-				{/* Job Summary Table */}
-				<TableShell
-					title="Job Summary Table"
-					onSeeMore={() => setJobsOpen(true)}
-				>
-					<div className="overflow-x-auto">
-						<table className="w-full text-sm">
-							<thead>
-								<tr className="text-left text-gray-500 border-b">
-									<th className="py-3 pr-3 font-medium">Job Title</th>
-									<th className="py-3 pr-3 font-medium">Posted On</th>
-									<th className="py-3 pr-3 font-medium">Status</th>
-									<th className="py-3 pr-3 font-medium">Applications</th>
-									<th className="py-3 pr-3 font-medium text-right">Actions</th>
-								</tr>
-							</thead>
-							<tbody>
-								{jobs.length === 0 ? (
-									<tr>
-										<td colSpan={5} className="py-8 text-center text-gray-500">
-											No jobs yet.
-										</td>
-									</tr>
-								) : (
-									jobs.map((job) => (
-										<tr key={job.id} className="border-b last:border-b-0">
-											<td className="py-4 pr-3 text-gray-900 font-medium">
-												{job.title}
-											</td>
-											<td className="py-4 pr-3 text-gray-600">
-												{job.postedOn
-													? new Date(job.postedOn).toLocaleDateString()
-													: "—"}
-											</td>
-											<td className="py-4 pr-3">
-												<StatusPill status={job.jobStatus} />
-											</td>
-											<td className="py-4 pr-3 text-gray-700">
-												{job.applicationsCount ?? 0}
-											</td>
-											<td className="py-4 pr-3">
-												<div className="flex justify-end gap-3">
-													{/* edit -> open post-job page but in edit mode */}
-													<button
-														type="button"
-														className="text-blue-600 hover:text-blue-800"
-														title="Edit"
-														onClick={() =>
-															navigate(`/employer/jobs/${job.id}/edit`)
-														}
-													>
-														<Pencil className="w-4 h-4" />
-													</button>
-
-													<button
-														type="button"
-														className="text-red-600 hover:text-red-800 disabled:opacity-50"
-														title="Delete"
-														disabled={delJob.isLoading}
-														onClick={() => {
-															if (!window.confirm("Delete this job?")) return;
-															delJob.mutate(job.id);
-														}}
-													>
-														<Trash2 className="w-4 h-4" />
-													</button>
-
-													{/* open details modal */}
-													<button
-														type="button"
-														className="text-gray-700 hover:text-gray-900"
-														title="Open"
-														onClick={() => setJobDetails(job)}
-													>
-														<ExternalLink className="w-4 h-4" />
-													</button>
-												</div>
-											</td>
-										</tr>
-									))
-								)}
-							</tbody>
-						</table>
-					</div>
-				</TableShell>
-
-				{/* Recent Applications */}
-				<TableShell
-					title="Recent Applications"
-					onSeeMore={() => setAppsOpen(true)}
-				>
-					{recentApplications.length === 0 ? (
-						<div className="py-8 text-center text-gray-500">
-							No applications yet.
-						</div>
-					) : (
-						<div className="overflow-x-auto">
-							<table className="w-full text-sm">
-								<thead>
-									<tr className="text-left text-gray-500 border-b">
-										<th className="py-3 pr-3 font-medium">Candidate</th>
-										<th className="py-3 pr-3 font-medium">Job</th>
-										<th className="py-3 pr-3 font-medium">Date</th>
-										<th className="py-3 pr-3 font-medium">Status</th>
-										<th className="py-3 pr-3 font-medium text-right">
-											Actions
-										</th>
-									</tr>
-								</thead>
-								<tbody>
-									{recentApplications.map((a) => (
-										<tr key={a.id} className="border-b last:border-b-0">
-											<td className="py-4 pr-3 text-gray-900 font-medium">
-												{a.talent?.fullName ?? a.talent?.user?.email ?? "—"}
-											</td>
-											<td className="py-4 pr-3 text-gray-600">
-												{a.jobTitle ?? "—"}
-											</td>
-											<td className="py-4 pr-3 text-gray-600">
-												{a.createdAt
-													? new Date(a.createdAt).toLocaleDateString()
-													: "—"}
-											</td>
-											<td className="py-4 pr-3">
-												<StatusPill status={a.status} />
-											</td>
-											<td className="py-4 pr-3">
-												<div className="flex justify-end gap-3">
-													<button
-														type="button"
-														className="text-gray-700 hover:text-gray-900"
-														title="Open"
-														onClick={() => setAppDetails(a)}
-													>
-														<ExternalLink className="w-4 h-4" />
-													</button>
-													{/* edit/delete هنا يتفعلوا حسب endpoints المتاحة عندك */}
-												</div>
-											</td>
-										</tr>
-									))}
-								</tbody>
-							</table>
-						</div>
-					)}
-				</TableShell>
-
-				{/* Jobs list modal (paginated) */}
-				<JobsModal
-					open={jobsOpen}
-					onClose={() => setJobsOpen(false)}
-					jobs={allJobs}
-					onEdit={(job) => navigate(`/employer/jobs/${job.id}/edit`)}
-					onDelete={(job) => {
-						if (!window.confirm("Delete this job?")) return;
-						delJob.mutate(job.id);
-					}}
-					onOpenDetails={(job) => setJobDetails(job)}
-				/>
-
-				{/* Applications list modal (paginated) */}
-				<ApplicationsModal
-					open={appsOpen}
-					onClose={() => setAppsOpen(false)}
-					appsByJob={data?.appsByJob ?? []}
-					onOpenDetails={(app) => setAppDetails(app)}
-				/>
-
-				{/* Job details modal */}
-				<JobDetailsModal
-					open={!!jobDetails}
-					job={jobDetails}
-					onClose={() => setJobDetails(null)}
-				/>
-
-				{/* Application details modal */}
-				<ApplicationDetailsModal
-					open={!!appDetails}
-					app={appDetails}
-					onClose={() => setAppDetails(null)}
-				/>
-			</div>
-		</div>
-	);
-}
-
 function JobsModal({ open, onClose, jobs, onEdit, onDelete, onOpenDetails }) {
 	const { page, totalPages, setPage, pageItems } = useClientPagination(jobs, 8);
 
@@ -583,3 +341,248 @@ function ApplicationDetailsModal({ open, onClose, app }) {
 		</Modal>
 	);
 }
+
+export default function EmployerDashboard() {
+	const navigate = useNavigate();
+	const delJob = useDeleteEmployerJob();
+
+	const { data, isLoading, isError, error } = useEmployerDashboard({
+		summaryLimit: 5,
+		recentLimit: 5,
+	});
+
+	console.log('dashboard data', data);
+	
+	const [jobsOpen, setJobsOpen] = useState(false);
+	const [appsOpen, setAppsOpen] = useState(false);
+
+	const [jobDetails, setJobDetails] = useState(null);
+	const [appDetails, setAppDetails] = useState(null);
+
+	if (isLoading) return <div className="p-6 text-gray-600">Loading…</div>;
+	if (isError)
+		return <div className="p-6 text-red-600">{error?.message || "Error"}</div>;
+
+	const stats = data?.stats ?? {
+		totalJobs: 0,
+		activeOpenJobs: 0,
+		totalApplications: 0,
+	};
+	const jobs = data?.jobSummary ?? [];
+	const recentApplications = data?.recentApplications ?? [];
+	const allJobs = data?.jobs ?? [];
+
+	return (
+		<div className="min-h-screen bg-gray-50 p-4">
+			{/* Stats top */}
+			<div
+				className="h-58 w-full bg-cover bg-center flex mx-auto mb-10"
+				style={{ backgroundImage: `url(${headerImage})` }}
+			>
+				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mx-auto py-10">
+					<StatCard icon={Layers} label="Total Jobs" value={stats.totalJobs} />
+					<StatCard
+						icon={Briefcase}
+						label="Active (Open) Jobs"
+						value={stats.activeOpenJobs}
+					/>
+					<StatCard
+						icon={Users}
+						label="Applications Received"
+						value={stats.totalApplications}
+					/>
+				</div>
+			</div>
+
+			{/* image under stats */}
+			{/* <div className="w-full h-[220px] sm:h-[260px] lg:h-[300px] overflow-hidden rounded-2xl border bg-white">
+				<img src={headerImage} className="w-full h-full object-cover" alt="" />
+			</div> */}
+			<div className="max-w-6xl mx-auto space-y-6">
+				{/* Job Summary Table */}
+				<TableShell
+					title="Job Summary Table"
+					onSeeMore={() => setJobsOpen(true)}
+				>
+					<div className="overflow-x-auto">
+						<table className="w-full text-sm">
+							<thead>
+								<tr className="text-left text-gray-500 border-b">
+									<th className="py-3 pr-3 font-medium">Job Title</th>
+									<th className="py-3 pr-3 font-medium">Posted On</th>
+									<th className="py-3 pr-3 font-medium">Status</th>
+									<th className="py-3 pr-3 font-medium">Applications</th>
+									<th className="py-3 pr-3 font-medium text-right">Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								{jobs.length === 0 ? (
+									<tr>
+										<td colSpan={5} className="py-8 text-center text-gray-500">
+											No jobs yet.
+										</td>
+									</tr>
+								) : (
+									jobs.map((job) => (
+										<tr key={job.id} className="border-b last:border-b-0">
+											<td className="py-4 pr-3 text-gray-900 font-medium">
+												{job.title}
+											</td>
+											<td className="py-4 pr-3 text-gray-600">
+												{job.postedOn
+													? new Date(job.postedOn).toLocaleDateString()
+													: "—"}
+											</td>
+											<td className="py-4 pr-3">
+												<StatusPill status={job.jobStatus} />
+											</td>
+											<td className="py-4 pr-3 text-gray-700">
+												{job.applicationsCount ?? 0}
+											</td>
+											<td className="py-4 pr-3">
+												<div className="flex justify-end gap-3">
+													{/* edit -> open post-job page but in edit mode */}
+													<button
+														type="button"
+														className="text-blue-600 hover:text-blue-800"
+														title="Edit"
+														onClick={() =>
+															navigate(`/employer/jobs/${job.id}/edit`)
+														}
+													>
+														<Pencil className="w-4 h-4" />
+													</button>
+
+													<button
+														type="button"
+														className="text-red-600 hover:text-red-800 disabled:opacity-50"
+														title="Delete"
+														disabled={delJob.isLoading}
+														onClick={() => {
+															if (!window.confirm("Delete this job?")) return;
+															delJob.mutate(job.id);
+														}}
+													>
+														<Trash2 className="w-4 h-4" />
+													</button>
+
+													{/* open details modal */}
+													<button
+														type="button"
+														className="text-gray-700 hover:text-gray-900"
+														title="Open"
+														onClick={() => setJobDetails(job)}
+													>
+														<ExternalLink className="w-4 h-4" />
+													</button>
+												</div>
+											</td>
+										</tr>
+									))
+								)}
+							</tbody>
+						</table>
+					</div>
+				</TableShell>
+
+				{/* Recent Applications */}
+				<TableShell
+					title="Recent Applications"
+					onSeeMore={() => setAppsOpen(true)}
+				>
+					{recentApplications.length === 0 ? (
+						<div className="py-8 text-center text-gray-500">
+							No applications yet.
+						</div>
+					) : (
+						<div className="overflow-x-auto">
+							<table className="w-full text-sm">
+								<thead>
+									<tr className="text-left text-gray-500 border-b">
+										<th className="py-3 pr-3 font-medium">Candidate</th>
+										<th className="py-3 pr-3 font-medium">Job</th>
+										<th className="py-3 pr-3 font-medium">Date</th>
+										<th className="py-3 pr-3 font-medium">Status</th>
+										<th className="py-3 pr-3 font-medium text-right">
+											Actions
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									{recentApplications.map((a) => (
+										<tr key={a.id} className="border-b last:border-b-0">
+											<td className="py-4 pr-3 text-gray-900 font-medium">
+												{a.talent?.firstName ?? a.talent?.user?.email ?? "—"}
+												
+											</td>
+											<td className="py-4 pr-3 text-gray-600">
+												{a.jobTitle ?? "—"}
+											</td>
+											<td className="py-4 pr-3 text-gray-600">
+												{a.createdAt
+													? new Date(a.createdAt).toLocaleDateString()
+													: "—"}
+											</td>
+											<td className="py-4 pr-3">
+												<StatusPill status={a.status} />
+											</td>
+											<td className="py-4 pr-3">
+												<div className="flex justify-end gap-3">
+													<button
+														type="button"
+														className="text-gray-700 hover:text-gray-900"
+														title="Open"
+														onClick={() => setAppDetails(a)}
+													>
+														<ExternalLink className="w-4 h-4" />
+													</button>
+													{/* edit/delete هنا يتفعلوا حسب endpoints المتاحة عندك */}
+												</div>
+											</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+					)}
+				</TableShell>
+
+				{/* Jobs list modal (paginated) */}
+				<JobsModal
+					open={jobsOpen}
+					onClose={() => setJobsOpen(false)}
+					jobs={allJobs}
+					onEdit={(job) => navigate(`/employer/jobs/${job.id}/edit`)}
+					onDelete={(job) => {
+						if (!window.confirm("Delete this job?")) return;
+						delJob.mutate(job.id);
+					}}
+					onOpenDetails={(job) => setJobDetails(job)}
+				/>
+
+				{/* Applications list modal (paginated) */}
+				<ApplicationsModal
+					open={appsOpen}
+					onClose={() => setAppsOpen(false)}
+					appsByJob={data?.appsByJob ?? []}
+					onOpenDetails={(app) => setAppDetails(app)}
+				/>
+
+				{/* Job details modal */}
+				<JobDetailsModal
+					open={!!jobDetails}
+					job={jobDetails}
+					onClose={() => setJobDetails(null)}
+				/>
+
+				{/* Application details modal */}
+				<ApplicationDetailsModal
+					open={!!appDetails}
+					app={appDetails}
+					onClose={() => setAppDetails(null)}
+				/>
+			</div>
+		</div>
+	);
+}
+
