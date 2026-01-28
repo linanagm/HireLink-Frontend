@@ -90,10 +90,17 @@ export default function JobList() {
 				job.companyName ??
 				""
 			).toLowerCase();
-
+			const jobType = (job.jobType ?? "").toLowerCase();
+			const experienceLevel = (job.experienceLevel ?? "").toLowerCase();
+			const salary = (job.salary ?? "").toLowerCase();
+			const location = (job.location ?? "").toLowerCase();
+			const hoursPerWeek = (job.hoursPerWeek ?? "").toLowerCase();
+			const requiredSkills = job.requiredSkills ?? [];
+			const requiredLanguages = job.requiredLanguages ?? [];
 			return title.includes(s) || desc.includes(s) || company.includes(s);
 		});
 	}, [jobs, q]);
+	console.log("jobs");
 
 	const onChangeTab = useCallback(
 		(nextTab) => {
