@@ -118,13 +118,4 @@ input:focus {
     color: var(--color-text-secondary);
 }
 
-/******************************* active navlink ****************************/
-/* 
-.active {
-    font-weight: 700;
-     padding-bottom: 2px; 
-    color: var(--color-primary) 
-    
-     
-}*/
 
