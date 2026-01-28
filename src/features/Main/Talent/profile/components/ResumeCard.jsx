@@ -1,5 +1,13 @@
 import { useRef } from "react";
 
+/**
+ * Format bytes to a human-readable string.
+ * @param {number} [bytes=0] The number of bytes to format.
+ * @returns {string} A string representing the formatted bytes.
+ * @example
+ * formatBytes(1024) // returns "1 KB"
+ * formatBytes(1048576) // returns "1 MB"
+ */
 function formatBytes(bytes = 0) {
 	if (!bytes) return "";
 	const units = ["B", "KB", "MB", "GB"];
@@ -77,7 +85,7 @@ export default function ResumeCard({
 							href={resumeUrl}
 							target="_blank"
 							rel="noreferrer"
-							className="px-3 py-2 rounded-xl border hover:bg-slate-50 text-sm font-semibold"
+							className="px-3 py-2 rounded-xl border hover:bg-slate-50 text-sm font-semibold text-purple-500"
 						>
 							Open
 						</a>
