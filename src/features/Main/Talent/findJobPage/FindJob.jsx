@@ -92,7 +92,7 @@ export default function JobList() {
 			).toLowerCase();
 			const jobType = (job.jobType ?? "").toLowerCase();
 			const experienceLevel = (job.experienceLevel ?? "").toLowerCase();
-			const salary = (job.salary ?? "").toLowerCase();
+			const salary = job.salary ?? "";
 			const location = (job.location ?? "").toLowerCase();
 			const hoursPerWeek = (job.hoursPerWeek ?? "").toLowerCase();
 			const requiredSkills = job.requiredSkills ?? [];
