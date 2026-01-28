@@ -69,14 +69,8 @@ const EmployerAccountSettings = lazy(
 );
 const PostAJob = lazy(() => import("../features/Main/Employer/PostAJob"));
 
-const MyApplicants = lazy(
-	() => import("../features/Main/employer/MyApplicants"),
-);
-const EditJob = lazy(() => import("../features/Main/employer/EditJob"));
 
-const SearchTalent = lazy(
-	() => import("../features/Main/Employer/SearchTalent"),
-);
+
 
 // Moderator pages
 const AdminLogin = lazy(() => import("../features/Main/Moderator/AdminLogin"));
@@ -178,12 +172,7 @@ export default function AppRoutes() {
 
 				//modal -> delet
 				{ path: "jobs/:jobId", element: <JobDetails /> },
-				//delete
-				{ path: "jobs/:jobId/edit", element: <EditJob /> },
-
-				{ path: "jobs/:jobId/applicants", element: <MyApplicants /> },
-				{ path: "applicants/search", element: <SearchTalent /> },
-				//{ path: "jobs/:jobId/applicants/search", element: <SearchTalent /> },
+					
 			],
 		},
 
