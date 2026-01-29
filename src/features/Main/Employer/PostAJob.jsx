@@ -666,9 +666,6 @@ export default function PostJobPage() {
 						</div>
 					</form>
 				</div>
-				<pre className="text-xs text-gray-500">
-					{JSON.stringify({ canSubmit, busy, errors: formik.errors }, null, 2)}
-				</pre>
 			</div>
 		</>
 	);

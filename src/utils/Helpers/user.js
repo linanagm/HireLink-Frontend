@@ -14,7 +14,7 @@ export const roleTabs = {
     EMPLOYER: [
         { to: "/employer/dashboard", label: "Dashboard" },
         { to: "/employer/jobs/new", label: "Post a Job" },
-        { to: "/employer/applicants/search", label: "Search Talents" },
+        // { to: "/employer/applicants/search", label: "Search Talents" },
     ],
 };
 

@@ -58,12 +58,6 @@ export default function NavbarComponent() {
 		currentUser?.employerProfile?.logoPublicId,
 	]);
 
-	console.log("nav current user:", currentUser);
-
-	console.log("nav avatar", avatar);
-
-	console.log("nav user :", currentUser);
-
 	const handleLogout = useCallback(async () => {
 		await logout();
 		closeMenus();
