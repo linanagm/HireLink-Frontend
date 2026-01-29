@@ -376,7 +376,7 @@ export default function EmployerDashboard() {
 
 	const recentAppsQ = useEmployerRecentApplicationsQuery(jobs, {
 	recentLimit: 5,
-	jobsSample: 5,
+	jobsSample: 3,
 	});
 	useEffect(() => {
   if (jobsQ.isSuccess) {

@@ -11,7 +11,12 @@ export function useEmployerRecentApplicationsQuery(
       queryKeys.employerRecentApps,
       { recentLimit, jobsSample, jobsCount: jobs?.length ?? 0 },
     ],
-    enabled: Array.isArray(jobs) && jobs.length > 0,
+    enabled:
+  Array.isArray(jobs) &&
+  jobs.length > 0 &&
+  recentLimit > 0 &&
+  jobsSample > 0,
+
     staleTime: 30 * 1000,
     retry: 1,
     refetchOnWindowFocus: false,
