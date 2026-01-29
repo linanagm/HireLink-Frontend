@@ -12,16 +12,13 @@ import {
 import { useEmployerJobQuery } from "./hooks/queries/useEmployerJobsQuery";
 
 const JOB_TYPES = [
-	{ value: "FULL_TIME", label: "Full-time" },
-	{ value: "PART_TIME", label: "Part-time" },
-	{ value: "CONTRACT", label: "Contract" },
+	{ value: "FULL_TIME", label: "Full Time" },
+	{ value: "PART_TIME", label: "Part Time" },
 	{ value: "INTERNSHIP", label: "Internship" },
 ];
-
 const EXP_LEVELS = [
 	{ value: "FRESH", label: "Fresh / Entry" },
 	{ value: "JUNIOR", label: "Junior" },
-	{ value: "MID", label: "Intermediate" },
 	{ value: "SENIOR", label: "Senior" },
 	{ value: "LEAD", label: "Lead" },
 ];
@@ -29,7 +26,7 @@ const EXP_LEVELS = [
 const LANG_PROF = [
 	{ value: "BASIC", label: "Basic" },
 	{ value: "INTERMEDIATE", label: "Intermediate" },
-	{ value: "FLUENT", label: "Fluent" },
+	{ value: "ADVANCED", label: "Advanced" },
 	{ value: "NATIVE", label: "Native" },
 ];
 
@@ -49,6 +46,8 @@ function mapApiJobToFormik(job) {
 			jobType: "FULL_TIME",
 			experienceLevel: "FRESH",
 			salary: "",
+			hoursPerWeek: "",
+			responsibilities: [],
 			requiredSkills: [],
 			requiredLanguages: [],
 		};
@@ -58,9 +57,15 @@ function mapApiJobToFormik(job) {
 		title: job.title ?? "",
 		description: job.description ?? "",
 		location: job.location ?? "",
-		jobType: job.jobType ?? "FULL_TIME",
+
 		experienceLevel: job.experienceLevel ?? "FRESH",
 		salary: job.salary ?? "",
+		hoursPerWeek: job.hoursPerWeek ?? "", // NEW
+		responsibilities: Array.isArray(job.responsibilities)
+			? job.responsibilities
+			: [], // NEW
+		jobType: job.jobType ?? "FULL_TIME",
+
 		requiredSkills: Array.isArray(job.requiredSkills) ? job.requiredSkills : [],
 		requiredLanguages: Array.isArray(job.requiredLanguages)
 			? job.requiredLanguages
@@ -69,16 +74,39 @@ function mapApiJobToFormik(job) {
 }
 
 export default function PostJobPage() {
+	const [resPInput, setResPInput] = useState("");
+
 	const navigate = useNavigate();
 	const { jobId } = useParams();
-	//const isEdit = Boolean(jobId);
 	const isEdit = !!jobId;
 
 	const [submitError, setSubmitError] = useState("");
 
 	const createMutation = useCreateEmployerJobMutation();
 	const updateMutation = useUpdateEmployerJobMutation(jobId);
+	const addResponsibility = () => {
+		const text = (resPInput || "").trim();
+		if (!text) return;
+		const exists = (formik.values.responsibilities || []).some(
+			(r) => (r || "").trim().toLowerCase() === text.toLowerCase(),
+		);
+		if (exists) {
+			setResPInput("");
+			return;
+		}
 
+		formik.setFieldValue("responsibilities", [
+			...(formik.values.responsibilities || []),
+			text,
+		]);
+		setResPInput("");
+	};
+
+	const removeResponsibility = (text) => {
+		formik.setFieldValue("responsibilities", [
+			(formik.values.responsibilities || []).filter((r) => r !== text),
+		]);
+	};
 	//  fetch job details only in edit mode
 	const jobQuery = useEmployerJobQuery(jobId, { enabled: isEdit });
 
@@ -94,8 +122,10 @@ export default function PostJobPage() {
 			title: "",
 			description: "",
 			location: "",
-			jobType: "FULL_TIME",
 			experienceLevel: "FRESH",
+			hoursPerWeek: "",
+			responsibilities: [],
+			jobType: "FULL_TIME",
 			salary: "",
 			requiredSkills: [],
 			requiredLanguages: [],
@@ -113,17 +143,25 @@ export default function PostJobPage() {
 		enableReinitialize: true,
 
 		onSubmit: async (values, { setSubmitting }) => {
-			const payload = mapFormikToJobPayload(values);
+			try {
+				const payload = mapFormikToJobPayload(values);
 
-			if (isEdit) {
-				await updateMutation.mutateAsync(payload);
-				toast.success("Job updated");
-			} else {
-				await createMutation.mutateAsync(payload);
-				toast.success("Job created");
+				const res = isEdit
+					? await updateMutation.mutateAsync(payload)
+					: await createMutation.mutateAsync(payload);
+
+				const msg = res?.message ?? res?.data?.message;
+
+				toast.success(msg || (isEdit ? "Job updated" : "Job created"));
+				navigate("/employer/dashboard");
+			} catch (err) {
+				const msg =
+					err?.response?.data?.message || err?.message || "Failed to save job";
+
+				toast.error(msg);
+			} finally {
+				setSubmitting(false);
 			}
-
-			navigate("/employer/dashboard");
 		},
 	});
 
@@ -253,7 +291,7 @@ export default function PostJobPage() {
 						</div>
 					) : null}
 
-					<div className="flex items-center justify-between">
+					<div className="flex  items-center justify-between">
 						<h1 className="text-2xl font-bold text-gray-900">
 							{isEdit ? "Edit Job" : "Post a Job"}
 						</h1>
@@ -263,255 +301,347 @@ export default function PostJobPage() {
 						onSubmit={formik.handleSubmit}
 						className="mt-6 rounded-2xl border border-gray-200 bg-white p-6 md:p-10"
 					>
-						<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-							{/* Job Title */}
-							<div className="md:col-span-2">
-								<label className="block">
-									<span className="text-sm font-medium text-gray-700">
-										Job Title
-									</span>
-									<input
-										name="title"
-										value={formik.values.title}
-										onChange={formik.handleChange}
-										onBlur={formik.handleBlur}
-										placeholder='e.g., "Backend Engineer"'
-										className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-fuchsia-600"
-									/>
-									<FieldError formik={formik} name="title" />
-								</label>
-							</div>
-
-							{/* Employment Type */}
+						{/* Job Title */}
+						<div className="md:col-span-2 mb-4">
 							<label className="block">
 								<span className="text-sm font-medium text-gray-700">
-									Employment Type
-								</span>
-								<select
-									name="jobType"
-									value={formik.values.jobType}
-									onChange={formik.handleChange}
-									onBlur={formik.handleBlur}
-									className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-fuchsia-600"
-								>
-									{JOB_TYPES.map((x) => (
-										<option key={x.value} value={x.value}>
-											{x.label}
-										</option>
-									))}
-								</select>
-								<FieldError formik={formik} name="jobType" />
-							</label>
-
-							{/* Experience Level */}
-							<label className="block">
-								<span className="text-sm font-medium text-gray-700">
-									Experience Level
-								</span>
-								<select
-									name="experienceLevel"
-									value={formik.values.experienceLevel}
-									onChange={formik.handleChange}
-									onBlur={formik.handleBlur}
-									className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-fuchsia-600"
-								>
-									{EXP_LEVELS.map((x) => (
-										<option key={x.value} value={x.value}>
-											{x.label}
-										</option>
-									))}
-								</select>
-								<FieldError formik={formik} name="experienceLevel" />
-							</label>
-
-							{/* Job Location */}
-							<label className="block">
-								<span className="text-sm font-medium text-gray-700">
-									Job Location
+									Job Title
 								</span>
 								<input
-									name="location"
-									value={formik.values.location}
+									name="title"
+									value={formik.values.title}
 									onChange={formik.handleChange}
 									onBlur={formik.handleBlur}
-									placeholder="e.g., Remote, Riyadh, New York..."
+									placeholder='e.g., "Backend Engineer"'
 									className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-fuchsia-600"
 								/>
+								<FieldError formik={formik} name="title" />
 							</label>
+						</div>
 
-							{/* Salary */}
-							<label className="block">
-								<span className="text-sm font-medium text-gray-700">
-									Salary
-								</span>
-								<input
-									name="salary"
-									type="number"
-									value={formik.values.salary}
-									onChange={formik.handleChange}
-									onBlur={formik.handleBlur}
-									placeholder="e.g., 2000"
-									className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-fuchsia-600"
-								/>
-								<FieldError formik={formik} name="salary" />
-							</label>
-
-							{/* Description */}
-							<div className="md:col-span-2">
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+							{/* left side */}
+							<div className="flex flex-col gap-6 ">
+								{/* Experience Level */}
 								<label className="block">
 									<span className="text-sm font-medium text-gray-700">
-										Job Description
+										Experience Level
 									</span>
-									<textarea
-										name="description"
-										rows={8}
-										value={formik.values.description}
-										onChange={formik.handleChange}
-										onBlur={formik.handleBlur}
-										placeholder="Describe the role..."
-										className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-fuchsia-600"
-									/>
-									<FieldError formik={formik} name="description" />
-								</label>
-							</div>
-
-							{/* Required Skills */}
-							<div className="md:col-span-1">
-								<p className="text-sm font-medium text-gray-700">
-									Required Skills
-								</p>
-								<div className="mt-3 flex gap-2">
-									<input
-										value={skillInput}
-										onChange={(e) => setSkillInput(e.target.value)}
-										onKeyDown={(e) => {
-											if (e.key === "Enter") {
-												e.preventDefault();
-												addSkill();
-											}
-										}}
-										placeholder="Type a skill then Enter"
-										className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-fuchsia-600"
-									/>
-									<button
-										type="button"
-										onClick={addSkill}
-										className="rounded-xl bg-fuchsia-700 px-4 py-3 text-sm font-semibold text-white hover:bg-fuchsia-800"
-									>
-										Add
-									</button>
-								</div>
-
-								<div className="mt-4 flex flex-col gap-2">
-									{(formik.values.requiredSkills || []).map((s) => (
-										<div
-											key={s.name}
-											className="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-3 py-2"
-										>
-											<div className="text-sm text-gray-900">{s.name}</div>
-											<div className="flex items-center gap-3">
-												<label className="inline-flex items-center gap-2 text-xs text-gray-600">
-													<input
-														type="checkbox"
-														checked={!!s.required}
-														onChange={() => toggleSkillRequired(s.name)}
-													/>
-													Required
-												</label>
-												<button
-													type="button"
-													onClick={() => removeSkill(s.name)}
-													className="text-gray-500 hover:text-gray-900"
-												>
-													×
-												</button>
-											</div>
-										</div>
-									))}
-									{(formik.values.requiredSkills || []).length === 0 ? (
-										<p className="text-sm text-gray-500">
-											Add skills like Node.js, React...
-										</p>
-									) : null}
-								</div>
-							</div>
-
-							{/* Required Languages */}
-							<div className="md:col-span-1">
-								<p className="text-sm font-medium text-gray-700">
-									Required Languages
-								</p>
-
-								<div className="mt-3 flex flex-col gap-2 sm:flex-row">
-									<input
-										value={langInput}
-										onChange={(e) => setLangInput(e.target.value)}
-										onKeyDown={(e) => {
-											if (e.key === "Enter") {
-												e.preventDefault();
-												addLanguage();
-											}
-										}}
-										placeholder="Type a language then Enter"
-										className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-fuchsia-600"
-									/>
 									<select
-										value={langProf}
-										onChange={(e) => setLangProf(e.target.value)}
-										className="rounded-xl border border-gray-200 bg-white px-3 py-3 text-sm outline-none focus:border-fuchsia-600"
+										name="experienceLevel"
+										value={formik.values.experienceLevel}
+										onChange={formik.handleChange}
+										onBlur={formik.handleBlur}
+										className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-fuchsia-600"
 									>
-										{LANG_PROF.map((x) => (
+										{EXP_LEVELS.map((x) => (
 											<option key={x.value} value={x.value}>
 												{x.label}
 											</option>
 										))}
 									</select>
-									<button
-										type="button"
-										onClick={addLanguage}
-										className="rounded-xl bg-fuchsia-700 px-4 py-3 text-sm font-semibold text-white hover:bg-fuchsia-800"
-									>
-										Add
-									</button>
+									<FieldError formik={formik} name="experienceLevel" />
+								</label>
+
+								{/* Salary */}
+								<label className="block">
+									<span className="text-sm font-medium text-gray-700">
+										Salary
+									</span>
+									<input
+										name="salary"
+										type="number"
+										value={formik.values.salary}
+										onChange={formik.handleChange}
+										onBlur={formik.handleBlur}
+										placeholder="e.g., 2000"
+										className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-fuchsia-600"
+									/>
+									<FieldError formik={formik} name="salary" />
+								</label>
+
+								{/* Hours Per Week */}
+								<label className="block">
+									<span className="text-sm font-medium text-gray-700">
+										Hours Per Week
+									</span>
+									<input
+										name="hoursPerWeek"
+										type="number"
+										min="1"
+										value={formik.values.hoursPerWeek}
+										onChange={formik.handleChange}
+										onBlur={formik.handleBlur}
+										placeholder="e.g., 40"
+										className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-fuchsia-600"
+									/>
+									<FieldError formik={formik} name="hoursPerWeek" />
+								</label>
+
+								{/* hours per week */}
+
+								{/* Description */}
+								<div className="md:col-span-2">
+									<label className="block">
+										<span className="text-sm font-medium text-gray-700">
+											Job Description
+										</span>
+										<textarea
+											name="description"
+											rows={8}
+											value={formik.values.description}
+											onChange={formik.handleChange}
+											onBlur={formik.handleBlur}
+											placeholder="Describe the role..."
+											className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-fuchsia-600"
+										/>
+										<FieldError formik={formik} name="description" />
+									</label>
 								</div>
 
-								<div className="mt-4 flex flex-col gap-2">
-									{(formik.values.requiredLanguages || []).map((l) => (
-										<div
-											key={l.name}
-											className="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-3 py-2"
-										>
-											<div className="text-sm text-gray-900">
-												{l.name}{" "}
-												<span className="text-gray-500">
-													({l.minimumProficiency})
-												</span>
-											</div>
+								{/* Responsibilities */}
+								<div>
+									<p className="text-sm font-medium text-gray-700">
+										Responsibilities
+									</p>
 
-											<div className="flex items-center gap-3">
-												<label className="inline-flex items-center gap-2 text-xs text-gray-600">
-													<input
-														type="checkbox"
-														checked={!!l.required}
-														onChange={() => toggleLanguageRequired(l.name)}
-													/>
-													Required
-												</label>
+									<div className="mt-3 flex gap-2">
+										<input
+											value={resPInput}
+											onChange={(e) => setResPInput(e.target.value)}
+											onKeyDown={(e) => {
+												if (e.key === "Enter") {
+													e.preventDefault();
+													addResponsibility();
+												}
+											}}
+											placeholder="Type responsibility then Enter"
+											className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-fuchsia-600"
+										/>
+										<button
+											type="button"
+											onClick={addResponsibility}
+											className="rounded-xl bg-fuchsia-700 px-4 py-3 text-sm font-semibold text-white hover:bg-fuchsia-800"
+										>
+											Add
+										</button>
+									</div>
+
+									<div className="mt-4 flex flex-col gap-2">
+										{(formik.values.responsibilities || []).map((r) => (
+											<div
+												key={r}
+												className="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-3 py-2"
+											>
+												<div className="text-sm text-gray-900">{r}</div>
 												<button
 													type="button"
-													onClick={() => removeLanguage(l.name)}
+													onClick={() => removeResponsibility(r)}
 													className="text-gray-500 hover:text-gray-900"
 												>
 													×
 												</button>
 											</div>
-										</div>
-									))}
-									{(formik.values.requiredLanguages || []).length === 0 ? (
-										<p className="text-sm text-gray-500">
-											Add languages like English (BASIC)...
-										</p>
-									) : null}
+										))}
+
+										{(formik.values.responsibilities || []).length === 0 ? (
+											<p className="text-sm text-gray-500">
+												Add responsibilities like "Build REST APIs", "Review
+												PRs"...
+											</p>
+										) : null}
+									</div>
+								</div>
+							</div>
+
+							{/* righ side */}
+							<div className="flex flex-col gap-6">
+								{/* Job Location */}
+								<label className="block">
+									<span className="text-sm font-medium text-gray-700">
+										Job Location
+									</span>
+									<input
+										name="location"
+										value={formik.values.location}
+										onChange={formik.handleChange}
+										onBlur={formik.handleBlur}
+										placeholder="e.g., Remote, Riyadh, New York..."
+										className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-fuchsia-600"
+									/>
+								</label>
+
+								{/* Work Type = job Type*/}
+								<div>
+									<p className="text-sm font-medium text-gray-700">Work Type</p>
+
+									<div className="mt-3 grid grid-cols-3 gap-2">
+										{JOB_TYPES.map((x) => {
+											const active = formik.values.jobType === x.value;
+											return (
+												<label
+													key={x.value}
+													className={`cursor-pointer rounded-xl border px-3 py-3 text-sm text-center ${
+														active
+															? "border-fuchsia-600 bg-fuchsia-50 text-fuchsia-800"
+															: "border-gray-200 bg-white text-gray-700"
+													}`}
+												>
+													<input
+														type="radio"
+														name="jobType"
+														value={x.value}
+														checked={active}
+														onChange={formik.handleChange}
+														className="hidden"
+													/>
+													{x.label}
+												</label>
+											);
+										})}
+									</div>
+
+									<FieldError formik={formik} name="jobType" />
+								</div>
+
+								{/* Required Skills */}
+								<div className="md:col-span-1">
+									<p className="text-sm font-medium text-gray-700">
+										Required Skills
+									</p>
+									<div className="mt-3 flex gap-2">
+										<input
+											value={skillInput}
+											onChange={(e) => setSkillInput(e.target.value)}
+											onKeyDown={(e) => {
+												if (e.key === "Enter") {
+													e.preventDefault();
+													addSkill();
+												}
+											}}
+											placeholder="Type a skill then Enter"
+											className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-fuchsia-600"
+										/>
+										<button
+											type="button"
+											onClick={addSkill}
+											className="rounded-xl bg-fuchsia-700 px-4 py-3 text-sm font-semibold text-white hover:bg-fuchsia-800"
+										>
+											Add
+										</button>
+									</div>
+
+									<div className="mt-4 flex flex-col gap-2">
+										{(formik.values.requiredSkills || []).map((s) => (
+											<div
+												key={s.name}
+												className="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-3 py-2"
+											>
+												<div className="text-sm text-gray-900">{s.name}</div>
+												<div className="flex items-center gap-3">
+													<label className="inline-flex items-center gap-2 text-xs text-gray-600">
+														<input
+															type="checkbox"
+															checked={!!s.required}
+															onChange={() => toggleSkillRequired(s.name)}
+														/>
+														Required
+													</label>
+													<button
+														type="button"
+														onClick={() => removeSkill(s.name)}
+														className="text-gray-500 hover:text-gray-900"
+													>
+														×
+													</button>
+												</div>
+											</div>
+										))}
+										{(formik.values.requiredSkills || []).length === 0 ? (
+											<p className="text-sm text-gray-500">
+												Add skills like Node.js, React...
+											</p>
+										) : null}
+									</div>
+								</div>
+
+								{/* Required Languages */}
+								<div className="md:col-span-1">
+									<p className="text-sm font-medium text-gray-700">
+										Required Languages
+									</p>
+
+									<div className="mt-3 flex flex-col gap-2 sm:flex-row">
+										<input
+											value={langInput}
+											onChange={(e) => setLangInput(e.target.value)}
+											onKeyDown={(e) => {
+												if (e.key === "Enter") {
+													e.preventDefault();
+													addLanguage();
+												}
+											}}
+											placeholder="Type a language then Enter"
+											className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-fuchsia-600"
+										/>
+										<select
+											value={langProf}
+											onChange={(e) => setLangProf(e.target.value)}
+											className="rounded-xl border border-gray-200 bg-white px-3 py-3 text-sm outline-none focus:border-fuchsia-600"
+										>
+											{LANG_PROF.map((x) => (
+												<option key={x.value} value={x.value}>
+													{x.label}
+												</option>
+											))}
+										</select>
+										<button
+											type="button"
+											onClick={addLanguage}
+											className="rounded-xl bg-fuchsia-700 px-4 py-3 text-sm font-semibold text-white hover:bg-fuchsia-800"
+										>
+											Add
+										</button>
+									</div>
+
+									<div className="mt-4 flex flex-col gap-2">
+										{(formik.values.requiredLanguages || []).map((l) => (
+											<div
+												key={l.name}
+												className="flex items-center justify-between rounded-xl border border-gray-200 bg-gray-50 px-3 py-2"
+											>
+												<div className="text-sm text-gray-900">
+													{l.name}{" "}
+													<span className="text-gray-500">
+														({l.minimumProficiency})
+													</span>
+												</div>
+
+												<div className="flex items-center gap-3">
+													<label className="inline-flex items-center gap-2 text-xs text-gray-600">
+														<input
+															type="checkbox"
+															checked={!!l.required}
+															onChange={() => toggleLanguageRequired(l.name)}
+														/>
+														Required
+													</label>
+													<button
+														type="button"
+														onClick={() => removeLanguage(l.name)}
+														className="text-gray-500 hover:text-gray-900"
+													>
+														×
+													</button>
+												</div>
+											</div>
+										))}
+										{(formik.values.requiredLanguages || []).length === 0 ? (
+											<p className="text-sm text-gray-500">
+												Add languages like English (BASIC)...
+											</p>
+										) : null}
+									</div>
 								</div>
 							</div>
 						</div>
