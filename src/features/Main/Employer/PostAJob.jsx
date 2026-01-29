@@ -1,12 +1,12 @@
 import { useFormik } from "formik";
 import { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { postJobSchema } from "../../../utils/validation/jobs.validators";
 import {
 	useCreateEmployerJobMutation,
 	useEmployerJobQuery,
 	useUpdateEmployerJobMutation,
-} from "../../../hooks/queries/employer/useEmployerJobs";
-import { postJobSchema } from "../../../utils/validation/jobs.validators";
+} from "./hooks/useEmployerJobs";
 import { mapFormikToJobPayload } from "./lib/jobFormMapper";
 
 const JOB_TYPES = [

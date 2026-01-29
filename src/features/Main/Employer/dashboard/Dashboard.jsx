@@ -8,10 +8,11 @@ import {
 } from "lucide-react";
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import headerImage from "../../../assets/images/layouts/header.svg";
-import Modal from "../../../components/UI/Modal";
-import { useDeleteEmployerJob } from "../../../hooks/mutations/employer/useDeleteEmployerJob";
-import { useEmployerDashboard } from "../../../hooks/queries/employer/useEmployerDashboard";
+import headerImage from "../../../../assets/images/layouts/header.svg";
+import Modal from "../../../../components/UI/Modal";
+import { useDeleteEmployerJob } from "../../../../hooks/mutations/employer/useDeleteEmployerJob";
+import { useEmployerJobsQuery } from "../hooks/useEmployerJobs";
+import { useEmployerRecentApplicationsQuery } from "../hooks/useEmployerRecentAppQuery";
 
 const norm = (v) => String(v || "").toUpperCase();
 
@@ -45,24 +46,44 @@ function StatusPill({ status }) {
 	);
 }
 
-function TableShell({ title, onSeeMore, children }) {
-	return (
-		<section className="bg-white rounded-2xl border shadow-sm">
-			<div className="p-5 flex items-center justify-between">
-				<h2 className="text-lg font-semibold text-gray-900">{title}</h2>
-				<button
-					type="button"
-					onClick={onSeeMore}
-					className="text-sm font-medium text-fuchsia-700 hover:text-fuchsia-800"
-				>
-					See more →
-				</button>
-			</div>
-			<div className="px-5 pb-5">{children}</div>
-		</section>
-	);
-}
+// function TableShell({ title, onSeeMore, children }) {
+// 	return (
+// 		<section className="bg-white rounded-2xl border shadow-sm">
+// 			<div className="p-5 flex items-center justify-between">
+// 				<h2 className="text-lg font-semibold text-gray-900">{title}</h2>
+// 				<button
+// 					type="button"
+// 					onClick={onSeeMore}
+// 					className="text-sm font-medium text-fuchsia-700 hover:text-fuchsia-800"
+// 				>
+// 					See more →
+// 				</button>
+// 			</div>
+// 			<div className="px-5 pb-5">{children}</div>
+// 		</section>
+// 	);
+// }
 
+function TableShell({ title, onSeeMore, children }) {
+  return (
+    <section className="bg-white rounded-2xl border shadow-sm">
+      <div className="p-5 flex items-center justify-between">
+        <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
+
+        {onSeeMore ? (
+          <button
+            type="button"
+            onClick={onSeeMore}
+            className="text-sm font-medium text-fuchsia-700 hover:text-fuchsia-800"
+          >
+            See more →
+          </button>
+        ) : null}
+      </div>
+      <div className="px-5 pb-5">{children}</div>
+    </section>
+  );
+}
 
 function useClientPagination(items, pageSize = 8) {
 	const [page, setPage] = useState(1);
@@ -346,12 +367,35 @@ export default function EmployerDashboard() {
 	const navigate = useNavigate();
 	const delJob = useDeleteEmployerJob();
 
-	const { data, isLoading, isError, error } = useEmployerDashboard({
-		summaryLimit: 5,
-		recentLimit: 5,
-	});
+	// const { data, isLoading, isError, error } = useEmployerDashboard({
+	// 	summaryLimit: 5,
+	// 	recentLimit: 5,
+	// });
+	const jobsQ = useEmployerJobsQuery();
+	const jobs = jobsQ.data ?? [];
 
-	console.log('dashboard data', data);
+	const recentAppsQ = useEmployerRecentApplicationsQuery(jobs, {
+	recentLimit: 5,
+	jobsSample: 5,
+	});
+	useEffect(() => {
+  if (jobsQ.isSuccess) {
+    console.log("✅ jobs loaded", jobsQ.data);
+  }
+}, [jobsQ.isSuccess, jobsQ.data]);
+
+useEffect(() => {
+  if (recentAppsQ.isSuccess) {
+    console.log("✅ recent apps loaded", recentAppsQ.data);
+  }
+}, [recentAppsQ.isSuccess, recentAppsQ.data]);
+
+
+const isLoading = jobsQ.isLoading || recentAppsQ.isLoading;
+const isError = jobsQ.isError || recentAppsQ.isError;
+const error = jobsQ.error || recentAppsQ.error;
+
+	//console.log('dashboard data', data);
 	
 	const [jobsOpen, setJobsOpen] = useState(false);
 	const [appsOpen, setAppsOpen] = useState(false);
@@ -363,14 +407,36 @@ export default function EmployerDashboard() {
 	if (isError)
 		return <div className="p-6 text-red-600">{error?.message || "Error"}</div>;
 
-	const stats = data?.stats ?? {
-		totalJobs: 0,
-		activeOpenJobs: 0,
-		totalApplications: 0,
-	};
-	const jobs = data?.jobSummary ?? [];
-	const recentApplications = data?.recentApplications ?? [];
-	const allJobs = data?.jobs ?? [];
+	// const stats = data?.stats ?? {
+	// 	totalJobs: 0,
+	// 	activeOpenJobs: 0,
+	// 	totalApplications: 0,
+	// };
+	// //const jobs = data?.jobSummary ?? [];
+	// const recentApplications = data?.recentApplications ?? [];
+	// const allJobs = data?.jobs ?? [];
+	const allJobs = jobs;
+
+const stats = {
+  totalJobs: allJobs.length,
+  activeOpenJobs: allJobs.filter((j) => String(j?.jobStatus || "").toUpperCase() === "OPEN").length,
+  totalApplications: null, // هنسيبها null دلوقتي عشان ما نعملش N+1
+};
+
+// بدل jobSummary: نعمله سريع من allJobs
+const jobSummary = [...allJobs]
+  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  .slice(0, 5)
+  .map((j) => ({
+    id: j.id,
+    title: j.title,
+    postedOn: j.createdAt,
+    jobStatus: j.jobStatus,
+    applicationsCount: null, // مؤقت
+  }));
+
+const recentApplications = recentAppsQ.data ?? [];
+
 
 	return (
 		<div className="min-h-screen bg-gray-50 p-4">
@@ -416,14 +482,14 @@ export default function EmployerDashboard() {
 								</tr>
 							</thead>
 							<tbody>
-								{jobs.length === 0 ? (
+								{jobSummary.length === 0 ? (
 									<tr>
 										<td colSpan={5} className="py-8 text-center text-gray-500">
 											No jobs yet.
 										</td>
 									</tr>
 								) : (
-									jobs.map((job) => (
+									jobSummary.map((job) => (
 										<tr key={job.id} className="border-b last:border-b-0">
 											<td className="py-4 pr-3 text-gray-900 font-medium">
 												{job.title}
@@ -488,7 +554,9 @@ export default function EmployerDashboard() {
 				{/* Recent Applications */}
 				<TableShell
 					title="Recent Applications"
-					onSeeMore={() => setAppsOpen(true)}
+					onSeeMore={()=>{}}
+					// onSeeMore={() => setAppsOpen(true)}
+
 				>
 					{recentApplications.length === 0 ? (
 						<div className="py-8 text-center text-gray-500">
@@ -564,7 +632,7 @@ export default function EmployerDashboard() {
 				<ApplicationsModal
 					open={appsOpen}
 					onClose={() => setAppsOpen(false)}
-					appsByJob={data?.appsByJob ?? []}
+					appsByJob={[]}
 					onOpenDetails={(app) => setAppDetails(app)}
 				/>
 

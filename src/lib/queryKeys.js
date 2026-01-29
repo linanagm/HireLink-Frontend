@@ -18,15 +18,21 @@ export const queryKeys = {
     jobsByMode: (mode) => ["jobs", mode], // recent | best
     jobDetails: (jobId) => ["job", jobId],
 
+    //will delete
     // APPLICATIONS
     applications: ["applications"],
+    // will delete
     applicationByJob: (jobId) => ["applications", "job", jobId],
 
     // EMPLOYER
     employerProfile: ["employer-profile"],
     employerJobs: ["employer-jobs"],
+    employerRecentApps: "employerRecentApps",
+    employerJobApplications: "employerJobApplications",
 
+    // will delete
     employerDashboardAggregated: "employerDashboardAggregated",
+    // wil delete
     employerDashboard: "employerDashboard",
 
     // employerDashboardStats: "employerDashboardStats",

@@ -57,7 +57,7 @@ const TalentAccountSettings = lazy(
 
 // **************** Employer routes ************************
 const EmployerDashboard = lazy(
-	() => import("../features/Main/Employer/Dashboard"),
+	() => import("../features/Main/Employer/dashboard/Dashboard"),
 );
 const EmployerProfile = lazy(
 	() => import("../features/Main/employer/EmployerProfile"),
