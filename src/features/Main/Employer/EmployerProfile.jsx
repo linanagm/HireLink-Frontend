@@ -56,6 +56,7 @@ export default function EmployerProfile() {
 				res?.data?.avatarPublicId ||
 				null,
 		});
+
 	const userData = useMemo(() => res?.data ?? null, [res]);
 	const profile = userData?.employerProfile ?? null;
 

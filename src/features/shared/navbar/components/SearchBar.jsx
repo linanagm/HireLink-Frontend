@@ -34,39 +34,54 @@ export function SearchBar() {
 	const initialQ = useMemo(() => searchParams.get("q") ?? "", [searchParams]);
 	const [value, setValue] = useState(initialQ);
 
-	// Debounced typing = real-time without server spam
 	const debouncedQ = useDebouncedValue(value, 400);
 
-	
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		if (!token || !role) return;
+
+		const q = (debouncedQ || "").trim();
+		const isEmpty = !q;
+
+		// ===== TALENT =====
+		if (role === "TALENT") {
+			const basePath = "/talent/findjob";
+
+			if (isEmpty) {
+				if (location.pathname === basePath) {
+					navigate(`${basePath}?tab=${JOB_MODES.RECENT}`, { replace: true });
+				}
+				return;
+			}
+
+			navigate(
+				`${basePath}?tab=${JOB_MODES.RECENT}&q=${encodeURIComponent(q)}`,
+				{ replace: true },
+			);
+			return;
+		}
+
+		// ===== EMPLOYER =====
+		if (role === "EMPLOYER") {
+			const basePath = "/employer/dashboard";
+			if (isEmpty) {
+				if (location.pathname === basePath) {
+					navigate(basePath, { replace: true });
+				}
+				return;
+			}
+
+			navigate(`${basePath}?q=${encodeURIComponent(q)}`, { replace: true });
+			return;
+		}
+	}, [debouncedQ, token, role, navigate]);
 
 	useEffect(() => {
-  if (!token || role !== "TALENT") return;
+		setValue(searchParams.get("q") ?? "");
+	}, [searchParams]);
 
-  const q = (debouncedQ || "").trim();
-  const basePath = "/talent/findjob";
-
-  // لو فاضي: ما تخطفيش اليوزر من أي صفحة
-  // لكن لو هو واقف في findjob، رجّعيه لليست default
-  if (!q) {
-    if (location.pathname === basePath) {
-      navigate(`${basePath}?tab=${JOB_MODES.RECENT}`, { replace: true });
-    }
-    return;
-  }
-
-  // لو فيه q: روّحيه لصفحة البحث (FindJob) على recent
-  navigate(
-    `${basePath}?tab=${JOB_MODES.RECENT}&q=${encodeURIComponent(q)}`,
-    { replace: true }
-  );
-
-  // intentionally NOT depending on location changes
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [debouncedQ, token, role, navigate]);
-
-	useEffect(() => {
-	setValue(searchParams.get("q") ?? "");
-		}, [searchParams]);
+	if (!token || !currentUser) return null;
+	if (role !== "TALENT" && role !== "EMPLOYER") return null;
 
 	return (
 		<form className="hidden md:flex w-1/2" onSubmit={(e) => e.preventDefault()}>

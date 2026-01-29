@@ -1,12 +1,14 @@
 import { Briefcase, Layers, Pencil, Trash2, Users } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import headerImage from "../../../../assets/images/layouts/header.svg";
 import { useDeleteEmployerJob } from "../hooks/mutations/useDeleteEmployerJob";
 import { useEmployerJobsQuery } from "../hooks/queries/useEmployerJobsQuery";
 import ApplicationDetailsModal from "./components/ApplicationDetailsModal";
 import JobApplicationsModal from "./components/JobApplicationModal";
+
+const PAGE_SIZE = 10;
 
 function StatCard({ icon: Icon, label, value }) {
 	return (
@@ -46,6 +48,9 @@ function TableShell({ title, onSeeMore, children }) {
 }
 
 export default function EmployerDashboard() {
+	const [searchParams] = useSearchParams();
+	const qFromUrl = searchParams.get("q") ?? "";
+	const q = qFromUrl.trim();
 	/* -------------------- router & mutations -------------------- */
 	const navigate = useNavigate();
 	const delJob = useDeleteEmployerJob();
@@ -82,16 +87,44 @@ export default function EmployerDashboard() {
 
 	/* -------------------- Jobs & Recent Applications queries -------------------- */
 	const jobsQ = useEmployerJobsQuery();
-	const jobs = jobsQ.data ?? [];
-	const allJobs = jobs;
 
+	//const jobs = jobsQ.data ?? [];
+	const jobs = useMemo(() => {
+		const raw = jobsQ?.data?.data ?? jobsQ?.data ?? [];
+		return Array.isArray(raw) ? raw : [];
+	}, [jobsQ]);
+
+	const allJobs = jobs;
 	const visibleJobs = useMemo(() => {
 		const sorted = [...allJobs].sort(
 			(a, b) => new Date(b.createdAt) - new Date(a.createdAt),
 		);
 
-		return showAllJobs ? sorted : sorted.slice(0, 5);
+		return showAllJobs ? sorted : sorted.slice(0, 10);
 	}, [allJobs, showAllJobs]);
+
+	// Frontend search filtering
+	const filteredAllJobs = useMemo(() => {
+		const s = q.toLowerCase();
+		if (!s) return allJobs;
+
+		return allJobs.filter((job) => {
+			const title = (job.title ?? "").toLowerCase();
+			const createdAt = job.createdAt
+				? new Date(job.createdAt).toLocaleDateString().toLowerCase()
+				: "";
+			// لو عندك location أو description في job ضيفيهم هنا
+			// const location = (job.location ?? "").toLowerCase();
+
+			return title.includes(s) || createdAt.includes(s);
+		});
+	}, [allJobs, q]);
+
+	// 2) see more يطبق على نتائج الفلترة
+	const filteredVisibleJobs = useMemo(() => {
+		return showAllJobs ? filteredAllJobs : filteredAllJobs.slice(0, 5);
+	}, [filteredAllJobs, showAllJobs]);
+	const emptyText = q ? `No jobs match "${q}".` : "No jobs yet.";
 
 	/* -------------------- Loading / Error -------------------- */
 	const isLoading = jobsQ.isLoading;
@@ -99,13 +132,13 @@ export default function EmployerDashboard() {
 	const error = jobsQ.error;
 
 	if (isLoading) {
-		return <div className="p-6 text-gray-600">Loading…</div>;
+		return <div className="p-6 text-gray-600">Loading jobs…</div>;
 	}
 
 	if (isError) {
 		return (
 			<div className="p-6 text-red-600">
-				{error?.message || "Something went wrong"}
+				Failed to load jobs: {error?.message || "Something went wrong"}
 			</div>
 		);
 	}
@@ -154,11 +187,15 @@ export default function EmployerDashboard() {
 					<div className="flex items-center justify-between mb-3">
 						<div className="text-sm text-gray-500">
 							Showing{" "}
-							<span className="font-semibold">{visibleJobs.length}</span> of{" "}
-							<span className="font-semibold">{allJobs.length}</span> jobs
+							{/* <span className="font-semibold">{visibleJobs.length}</span> of{" "}
+							<span className="font-semibold">{allJobs.length}</span> jobs */}
+							<span className="font-semibold">
+								{filteredVisibleJobs.length}
+							</span>{" "}
+							of <span className="font-semibold">{filteredAllJobs.length}</span>
 						</div>
 
-						{allJobs.length > 5 ? (
+						{filteredAllJobs.length > 5 ? (
 							<button
 								type="button"
 								onClick={() => setShowAllJobs((v) => !v)}
@@ -177,33 +214,30 @@ export default function EmployerDashboard() {
 									<tr className="text-left text-gray-500 border-b">
 										<th className="py-3 pr-3">Job Title</th>
 										<th className="py-3 pr-3">Posted On</th>
-										{/* <th className="py-3 pr-3">Status</th> */}
 										<th className="py-3 pr-3">Applications</th>
 										<th className="py-3 pr-3 text-right">Actions</th>
 									</tr>
 								</thead>
 								<tbody>
-									{visibleJobs.length === 0 ? (
+									{filteredVisibleJobs.length === 0 ? (
 										<tr>
 											<td
 												colSpan={5}
 												className="py-8 text-center text-gray-500"
 											>
-												No jobs yet.
+												{emptyText}
 											</td>
 										</tr>
 									) : (
-										visibleJobs.map((job) => (
+										filteredVisibleJobs.map((job) => (
 											<tr key={job.id} className="border-b last:border-b-0">
 												<td className="py-4 pr-3 font-medium text-gray-900">
 													{job.title}
 												</td>
 												<td className="py-4 pr-3 text-gray-600">
-													{new Date(job.postedOn).toLocaleDateString()}
+													{new Date(job.createdAt).toLocaleDateString()}
 												</td>
-												{/* <td className="py-4 pr-3">
-                        <StatusPill status={job.jobStatus} />
-                      </td> */}
+
 												<td className="py-4 pr-3 text-gray-700">
 													<button
 														type="button"
