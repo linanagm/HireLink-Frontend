@@ -62,15 +62,11 @@ const EmployerDashboard = lazy(
 const EmployerProfile = lazy(
 	() => import("../features/Main/employer/EmployerProfile"),
 );
-//const EditProfile = lazy(() => import("../features/Main/employer/EditProfile"));
 
 const EmployerAccountSettings = lazy(
 	() => import("../features/Main/Employer/AccountSettings"),
 );
 const PostAJob = lazy(() => import("../features/Main/Employer/PostAJob"));
-
-
-
 
 // Moderator pages
 const AdminLogin = lazy(() => import("../features/Main/Moderator/AdminLogin"));
@@ -136,11 +132,7 @@ export default function AppRoutes() {
 				{ path: "jobs/:id", element: <JobDetails /> },
 				{ path: "jobs/:id/apply", element: <JobProposal /> },
 				{ path: "applications", element: <MyApplications /> },
-
 				{ path: "profile", element: <TalentProfile /> },
-
-				// { path: "profile/edit", element: <EditTalentProfile /> },
-
 				{ path: "profile/settings", element: <TalentAccountSettings /> },
 			],
 		},
@@ -163,16 +155,11 @@ export default function AppRoutes() {
 
 				{ path: "profile/settings", element: <EmployerAccountSettings /> },
 
-				// modal
-				//{ path: "profile/edit", element: <EditProfile /> },
-
 				{ path: "jobs/new", element: <PostAJob /> },
 				//edit job
 				{ path: "jobs/:jobId/edit", element: <PostAJob /> },
 
-				//modal -> delet
 				{ path: "jobs/:jobId", element: <JobDetails /> },
-					
 			],
 		},
 

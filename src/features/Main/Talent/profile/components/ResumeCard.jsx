@@ -12,6 +12,21 @@ function formatBytes(bytes = 0) {
 	return `${n.toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
 }
 
+/**
+ * ResumeCard component
+ *
+ * This component renders a card for a resume
+ * If the resumeUrl is not provided, it renders a button to upload a resume
+ * If the resumeUrl is provided, it renders a card with the resume name, size and a button to open the resume
+ * It also renders two buttons to replace or delete the resume
+ *
+ * @param {string} resumeUrl - The url of the resume
+ * @param {string} resumeName - The name of the resume
+ * @param {number} resumeSize - The size of the resume in bytes
+ * @param {boolean} isUploading - Whether the resume is currently being uploaded
+ * @param {(file) => void} onUpload - The function to call when the user uploads a new resume
+ * @param {() => void} onDelete - The function to call when the user deletes the resume
+ */
 export default function ResumeCard({
 	resumeUrl,
 	resumeName,

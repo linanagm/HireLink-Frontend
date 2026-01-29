@@ -4,14 +4,14 @@ import CardOverlay from "../../../components/UI/CardLoader";
 import Field from "../../../components/UI/Field";
 import Loading from "../../../components/UI/Loading";
 import PencilButton from "../../../components/UI/PencilIcon";
-import { useUpdateEmployerProfile } from "../../../hooks/mutations/employer/useUpdateEmployerMutation";
-import { useEmployerProfileQuery } from "../../../hooks/queries/employer/useEmployerQueries";
 import { useAuth } from "../../../hooks/useAuth";
 import { useUploadAvatar } from "../../../hooks/useUploadAvatar";
 import { queryKeys } from "../../../lib/queryKeys";
 import { updateEmployerLogo } from "../../../services/employer.service";
 import { buildAvatarUrl } from "../../../utils/Helpers/avatar";
 import { normalizeUrl } from "../../../utils/normalizeData";
+import { useUpdateEmployerProfile } from "./hooks/mutations/useUpdateEmployerMutation";
+import { useEmployerProfileQuery } from "./hooks/queries/useEmployerProfileQueries";
 
 function Row({ label, value, isLink = false }) {
 	return (
@@ -58,7 +58,6 @@ export default function EmployerProfile() {
 		});
 	const userData = useMemo(() => res?.data ?? null, [res]);
 	const profile = userData?.employerProfile ?? null;
-	console.log("employer profile", profile);
 
 	const companyName = profile?.companyName ?? "";
 	const website = profile?.website ?? "";

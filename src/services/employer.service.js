@@ -4,8 +4,8 @@ import { api } from "../lib/api";
 /**
  * Employer Jobs
  */
-export function listEmployerJobs(config = {}) {
-    return api("get", PATHS.employer.jobs, null, config);
+export function listEmployerJobs() {
+    return api("get", PATHS.employer.jobs,);
 }
 export function getEmployerJob(jobId, config = {}) {
     return api("get", PATHS.employer.jobById(jobId), null, config);
@@ -74,6 +74,8 @@ export function listJobApplications(jobId, config = {}) {
     return api("get", PATHS.employer.jobApplications(jobId), null, config);
 }
 
-export function updateApplicationStatus(applicationId, payload, config = {}) {
-    return api("patch", PATHS.employer.applicationById(applicationId), payload, config);
+
+
+export function updateEmployerApplicationStatus(applicationId, status) {
+    return api("patch", PATHS.employer.applicationById(applicationId), { status });
 }

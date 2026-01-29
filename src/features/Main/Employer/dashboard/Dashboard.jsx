@@ -1,20 +1,12 @@
-import {
-	Briefcase,
-	ExternalLink,
-	Layers,
-	Pencil,
-	Trash2,
-	Users,
-} from "lucide-react";
-import React, { useEffect, useMemo, useState } from "react";
+import { Briefcase, Layers, Pencil, Trash2, Users } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Helmet } from "react-helmet";
 import { useNavigate } from "react-router-dom";
 import headerImage from "../../../../assets/images/layouts/header.svg";
-import Modal from "../../../../components/UI/Modal";
-import { useDeleteEmployerJob } from "../../../../hooks/mutations/employer/useDeleteEmployerJob";
-import { useEmployerJobsQuery } from "../hooks/useEmployerJobs";
-import { useEmployerRecentApplicationsQuery } from "../hooks/useEmployerRecentAppQuery";
-
-const norm = (v) => String(v || "").toUpperCase();
+import { useDeleteEmployerJob } from "../hooks/mutations/useDeleteEmployerJob";
+import { useEmployerJobsQuery } from "../hooks/queries/useEmployerJobsQuery";
+import ApplicationDetailsModal from "./components/ApplicationDetailsModal";
+import JobApplicationsModal from "./components/JobApplicationModal";
 
 function StatCard({ icon: Icon, label, value }) {
 	return (
@@ -32,625 +24,246 @@ function StatCard({ icon: Icon, label, value }) {
 	);
 }
 
-function StatusPill({ status }) {
-	const s = norm(status);
-	let cls = "bg-gray-100 text-gray-700";
-	if (s === "OPEN") cls = "bg-green-50 text-green-700";
-	if (s === "CLOSED") cls = "bg-red-50 text-red-700";
-	return (
-		<span
-			className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${cls}`}
-		>
-			{status || "—"}
-		</span>
-	);
-}
-
-// function TableShell({ title, onSeeMore, children }) {
-// 	return (
-// 		<section className="bg-white rounded-2xl border shadow-sm">
-// 			<div className="p-5 flex items-center justify-between">
-// 				<h2 className="text-lg font-semibold text-gray-900">{title}</h2>
-// 				<button
-// 					type="button"
-// 					onClick={onSeeMore}
-// 					className="text-sm font-medium text-fuchsia-700 hover:text-fuchsia-800"
-// 				>
-// 					See more →
-// 				</button>
-// 			</div>
-// 			<div className="px-5 pb-5">{children}</div>
-// 		</section>
-// 	);
-// }
-
 function TableShell({ title, onSeeMore, children }) {
-  return (
-    <section className="bg-white rounded-2xl border shadow-sm">
-      <div className="p-5 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
-
-        {onSeeMore ? (
-          <button
-            type="button"
-            onClick={onSeeMore}
-            className="text-sm font-medium text-fuchsia-700 hover:text-fuchsia-800"
-          >
-            See more →
-          </button>
-        ) : null}
-      </div>
-      <div className="px-5 pb-5">{children}</div>
-    </section>
-  );
-}
-
-function useClientPagination(items, pageSize = 8) {
-	const [page, setPage] = useState(1);
-	const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
-	const safePage = Math.min(page, totalPages);
-
-	const pageItems = useMemo(() => {
-		const start = (safePage - 1) * pageSize;
-		return items.slice(start, start + pageSize);
-	}, [items, safePage, pageSize]);
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-	useEffect(() => setPage(1), [items.length, pageSize]);
-
-	return { page: safePage, totalPages, setPage, pageItems };
-}
-
-function Pager({ page, totalPages, setPage }) {
 	return (
-		<div className="mt-4 flex items-center justify-between text-sm">
-			<button
-				type="button"
-				className="px-3 py-2 rounded-lg border disabled:opacity-50"
-				onClick={() => setPage(page - 1)}
-				disabled={page <= 1}
-			>
-				Prev
-			</button>
-			<div className="text-gray-600">
-				Page <span className="font-semibold">{page}</span> of{" "}
-				<span className="font-semibold">{totalPages}</span>
+		<section className="bg-white rounded-2xl border shadow-sm">
+			<div className="p-5 flex items-center justify-between">
+				<h2 className="text-lg font-semibold text-gray-900">{title}</h2>
+
+				{onSeeMore ? (
+					<button
+						type="button"
+						onClick={onSeeMore}
+						className="text-sm font-medium text-fuchsia-700 hover:text-fuchsia-800"
+					>
+						See more →
+					</button>
+				) : null}
 			</div>
-			<button
-				type="button"
-				className="px-3 py-2 rounded-lg border disabled:opacity-50"
-				onClick={() => setPage(page + 1)}
-				disabled={page >= totalPages}
-			>
-				Next
-			</button>
-		</div>
-	);
-}
-function JobsModal({ open, onClose, jobs, onEdit, onDelete, onOpenDetails }) {
-	const { page, totalPages, setPage, pageItems } = useClientPagination(jobs, 8);
-
-	return (
-		<Modal
-			open={open}
-			onClose={onClose}
-			title="All Jobs"
-			widthClass="max-w-6xl"
-		>
-			<div className="overflow-x-auto">
-				<table className="w-full text-sm">
-					<thead>
-						<tr className="text-left text-gray-500 border-b">
-							<th className="py-3 pr-3 font-medium">Title</th>
-							<th className="py-3 pr-3 font-medium">Status</th>
-							<th className="py-3 pr-3 font-medium">Created</th>
-							<th className="py-3 pr-3 font-medium text-right">Actions</th>
-						</tr>
-					</thead>
-					<tbody>
-						{pageItems.map((j) => (
-							<tr key={j.id} className="border-b last:border-b-0">
-								<td className="py-4 pr-3 font-medium text-gray-900">
-									{j.title}
-								</td>
-								<td className="py-4 pr-3">
-									<StatusPill status={j.jobStatus} />
-								</td>
-								<td className="py-4 pr-3 text-gray-600">
-									{j.createdAt
-										? new Date(j.createdAt).toLocaleDateString()
-										: "—"}
-								</td>
-								<td className="py-4 pr-3">
-									<div className="flex justify-end gap-3">
-										<button
-											type="button"
-											className="text-blue-600 hover:text-blue-800"
-											onClick={() => onEdit(j)}
-											title="Edit"
-										>
-											<Pencil className="w-4 h-4" />
-										</button>
-										<button
-											type="button"
-											className="text-red-600 hover:text-red-800"
-											onClick={() => onDelete(j)}
-											title="Delete"
-										>
-											<Trash2 className="w-4 h-4" />
-										</button>
-										<button
-											type="button"
-											className="text-gray-700 hover:text-gray-900"
-											onClick={() => onOpenDetails(j)}
-											title="Open"
-										>
-											<ExternalLink className="w-4 h-4" />
-										</button>
-									</div>
-								</td>
-							</tr>
-						))}
-						{pageItems.length === 0 ? (
-							<tr>
-								<td colSpan={4} className="py-8 text-center text-gray-500">
-									No jobs.
-								</td>
-							</tr>
-						) : null}
-					</tbody>
-				</table>
-			</div>
-			<Pager page={page} totalPages={totalPages} setPage={setPage} />
-		</Modal>
-	);
-}
-
-function ApplicationsModal({ open, onClose, appsByJob, onOpenDetails }) {
-	// flatten
-	const apps = React.useMemo(() => {
-		return appsByJob.flatMap((x) =>
-			(x.apps ?? []).map((app) => ({
-				...app,
-				jobTitle: x.jobTitle,
-				jobId: x.jobId,
-			})),
-		);
-	}, [appsByJob]);
-
-	const { page, totalPages, setPage, pageItems } = useClientPagination(apps, 8);
-
-	return (
-		<Modal
-			open={open}
-			onClose={onClose}
-			title="All Applications"
-			widthClass="max-w-6xl"
-		>
-			<div className="overflow-x-auto">
-				<table className="w-full text-sm">
-					<thead>
-						<tr className="text-left text-gray-500 border-b">
-							<th className="py-3 pr-3 font-medium">Candidate</th>
-							<th className="py-3 pr-3 font-medium">Job</th>
-							<th className="py-3 pr-3 font-medium">Date</th>
-							<th className="py-3 pr-3 font-medium">Status</th>
-							<th className="py-3 pr-3 font-medium text-right">Actions</th>
-						</tr>
-					</thead>
-					<tbody>
-						{pageItems.map((a) => (
-							<tr key={a.id} className="border-b last:border-b-0">
-								<td className="py-4 pr-3 font-medium text-gray-900">
-									{a.talent?.fullName ?? a.talent?.user?.email ?? "—"}
-								</td>
-								<td className="py-4 pr-3 text-gray-600">{a.jobTitle ?? "—"}</td>
-								<td className="py-4 pr-3 text-gray-600">
-									{a.createdAt
-										? new Date(a.createdAt).toLocaleDateString()
-										: "—"}
-								</td>
-								<td className="py-4 pr-3">
-									<StatusPill status={a.status} />
-								</td>
-								<td className="py-4 pr-3">
-									<div className="flex justify-end gap-3">
-										<button
-											type="button"
-											className="text-gray-700 hover:text-gray-900"
-											onClick={() => onOpenDetails(a)}
-											title="Open"
-										>
-											<ExternalLink className="w-4 h-4" />
-										</button>
-										{/* edit/delete هنا حسب endpoints */}
-									</div>
-								</td>
-							</tr>
-						))}
-						{pageItems.length === 0 ? (
-							<tr>
-								<td colSpan={5} className="py-8 text-center text-gray-500">
-									No applications.
-								</td>
-							</tr>
-						) : null}
-					</tbody>
-				</table>
-			</div>
-
-			<Pager page={page} totalPages={totalPages} setPage={setPage} />
-		</Modal>
-	);
-}
-
-function JobDetailsModal({ open, onClose, job }) {
-	return (
-		<Modal
-			open={open}
-			onClose={onClose}
-			title="Job Details"
-			widthClass="max-w-3xl"
-		>
-			{!job ? null : (
-				<div className="space-y-3">
-					<div>
-						<div className="text-xl font-bold text-gray-900">{job.title}</div>
-						<div className="mt-2">
-							<StatusPill status={job.jobStatus} />
-						</div>
-					</div>
-					<div className="text-sm text-gray-700 leading-relaxed">
-						{job.description || "No description."}
-					</div>
-					<div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-						<div className="bg-gray-50 border rounded-xl p-3">
-							<span className="text-gray-500">Location:</span>{" "}
-							{job.location ?? "—"}
-						</div>
-						<div className="bg-gray-50 border rounded-xl p-3">
-							<span className="text-gray-500">Type:</span> {job.jobType ?? "—"}
-						</div>
-						<div className="bg-gray-50 border rounded-xl p-3">
-							<span className="text-gray-500">Experience:</span>{" "}
-							{job.experienceLevel ?? "—"}
-						</div>
-						<div className="bg-gray-50 border rounded-xl p-3">
-							<span className="text-gray-500">Created:</span>{" "}
-							{job.createdAt
-								? new Date(job.createdAt).toLocaleDateString()
-								: "—"}
-						</div>
-					</div>
-				</div>
-			)}
-		</Modal>
-	);
-}
-
-function ApplicationDetailsModal({ open, onClose, app }) {
-	return (
-		<Modal
-			open={open}
-			onClose={onClose}
-			title="Application Details"
-			widthClass="max-w-3xl"
-		>
-			{!app ? null : (
-				<div className="space-y-3">
-					<div className="text-xl font-bold text-gray-900">
-						{app.talent?.fullName ?? app.talent?.user?.email ?? "Candidate"}
-					</div>
-
-					<div className="flex items-center gap-3">
-						<StatusPill status={app.status} />
-						<div className="text-sm text-gray-600">
-							{app.createdAt ? new Date(app.createdAt).toLocaleString() : ""}
-						</div>
-					</div>
-
-					<div className="bg-gray-50 border rounded-xl p-3 text-sm">
-						<div className="text-gray-500 mb-1">Job</div>
-						<div className="font-medium text-gray-900">
-							{app.jobTitle ?? "—"}
-						</div>
-					</div>
-
-					{/* هنا تقدري تضيفي coverLetter/answers لو موجودين في schema */}
-				</div>
-			)}
-		</Modal>
+			<div className="px-5 pb-5">{children}</div>
+		</section>
 	);
 }
 
 export default function EmployerDashboard() {
+	/* -------------------- router & mutations -------------------- */
 	const navigate = useNavigate();
 	const delJob = useDeleteEmployerJob();
+	const [appModalOpen, setAppModalOpen] = useState(false);
+	const [selectedAppId, setSelectedAppId] = useState(null);
+	const [selectedAppSeed, setSelectedAppSeed] = useState(null);
 
-	// const { data, isLoading, isError, error } = useEmployerDashboard({
-	// 	summaryLimit: 5,
-	// 	recentLimit: 5,
-	// });
+	const [showAllJobs, setShowAllJobs] = useState(false);
+
+	const openAppDetails = (appRow) => {
+		setSelectedAppId(appRow.id);
+		setSelectedAppSeed(appRow); // لو معاك talent info من recent apps
+		setAppModalOpen(true);
+	};
+
+	const closeAppDetails = () => {
+		setAppModalOpen(false);
+		setSelectedAppId(null);
+		setSelectedAppSeed(null);
+	};
+
+	const [appsModalOpen, setAppsModalOpen] = useState(false);
+	const [selectedJobForApps, setSelectedJobForApps] = useState(null);
+
+	const openJobApps = (job) => {
+		setSelectedJobForApps(job);
+		setAppsModalOpen(true);
+	};
+
+	const closeJobApps = () => {
+		setAppsModalOpen(false);
+		setSelectedJobForApps(null);
+	};
+
+	/* -------------------- Jobs & Recent Applications queries -------------------- */
 	const jobsQ = useEmployerJobsQuery();
 	const jobs = jobsQ.data ?? [];
-
-	const recentAppsQ = useEmployerRecentApplicationsQuery(jobs, {
-	recentLimit: 5,
-	jobsSample: 3,
-	});
-	useEffect(() => {
-  if (jobsQ.isSuccess) {
-    console.log("✅ jobs loaded", jobsQ.data);
-  }
-}, [jobsQ.isSuccess, jobsQ.data]);
-
-useEffect(() => {
-  if (recentAppsQ.isSuccess) {
-    console.log("✅ recent apps loaded", recentAppsQ.data);
-  }
-}, [recentAppsQ.isSuccess, recentAppsQ.data]);
-
-
-const isLoading = jobsQ.isLoading || recentAppsQ.isLoading;
-const isError = jobsQ.isError || recentAppsQ.isError;
-const error = jobsQ.error || recentAppsQ.error;
-
-	//console.log('dashboard data', data);
-	
-	const [jobsOpen, setJobsOpen] = useState(false);
-	const [appsOpen, setAppsOpen] = useState(false);
-
-	const [jobDetails, setJobDetails] = useState(null);
-	const [appDetails, setAppDetails] = useState(null);
-
-	if (isLoading) return <div className="p-6 text-gray-600">Loading…</div>;
-	if (isError)
-		return <div className="p-6 text-red-600">{error?.message || "Error"}</div>;
-
-	// const stats = data?.stats ?? {
-	// 	totalJobs: 0,
-	// 	activeOpenJobs: 0,
-	// 	totalApplications: 0,
-	// };
-	// //const jobs = data?.jobSummary ?? [];
-	// const recentApplications = data?.recentApplications ?? [];
-	// const allJobs = data?.jobs ?? [];
 	const allJobs = jobs;
 
-const stats = {
-  totalJobs: allJobs.length,
-  activeOpenJobs: allJobs.filter((j) => String(j?.jobStatus || "").toUpperCase() === "OPEN").length,
-  totalApplications: null, // هنسيبها null دلوقتي عشان ما نعملش N+1
-};
+	const visibleJobs = useMemo(() => {
+		const sorted = [...allJobs].sort(
+			(a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+		);
 
-// بدل jobSummary: نعمله سريع من allJobs
-const jobSummary = [...allJobs]
-  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-  .slice(0, 5)
-  .map((j) => ({
-    id: j.id,
-    title: j.title,
-    postedOn: j.createdAt,
-    jobStatus: j.jobStatus,
-    applicationsCount: null, // مؤقت
-  }));
+		return showAllJobs ? sorted : sorted.slice(0, 5);
+	}, [allJobs, showAllJobs]);
 
-const recentApplications = recentAppsQ.data ?? [];
+	/* -------------------- Loading / Error -------------------- */
+	const isLoading = jobsQ.isLoading;
+	const isError = jobsQ.isError;
+	const error = jobsQ.error;
 
+	if (isLoading) {
+		return <div className="p-6 text-gray-600">Loading…</div>;
+	}
 
-	return (
-		<div className="min-h-screen bg-gray-50 p-4">
-			{/* Stats top */}
-			<div
-				className="h-58 w-full bg-cover bg-center flex mx-auto mb-10"
-				style={{ backgroundImage: `url(${headerImage})` }}
-			>
-				<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mx-auto py-10">
-					<StatCard icon={Layers} label="Total Jobs" value={stats.totalJobs} />
-					<StatCard
-						icon={Briefcase}
-						label="Active (Open) Jobs"
-						value={stats.activeOpenJobs}
-					/>
-					<StatCard
-						icon={Users}
-						label="Applications Received"
-						value={stats.totalApplications}
-					/>
-				</div>
+	if (isError) {
+		return (
+			<div className="p-6 text-red-600">
+				{error?.message || "Something went wrong"}
 			</div>
+		);
+	}
 
-			{/* image under stats */}
-			{/* <div className="w-full h-[220px] sm:h-[260px] lg:h-[300px] overflow-hidden rounded-2xl border bg-white">
-				<img src={headerImage} className="w-full h-full object-cover" alt="" />
-			</div> */}
-			<div className="max-w-6xl mx-auto space-y-6">
-				{/* Job Summary Table */}
-				<TableShell
-					title="Job Summary Table"
-					onSeeMore={() => setJobsOpen(true)}
+	/* -------------------- Derived data (NO N+1) -------------------- */
+
+	const stats = {
+		totalJobs: allJobs.length,
+		activeOpenJobs: allJobs.filter(
+			(j) => String(j?.jobStatus || "").toUpperCase() === "OPEN",
+		).length,
+		totalApplications: null, // intentionally null to avoid N+1
+	};
+
+	/* -------------------- UI -------------------- */
+	return (
+		<>
+			<Helmet>Dashbard</Helmet>
+			<div className="min-h-screen bg-gray-50 p-4">
+				{/* -------------------- Stats -------------------- */}
+				<div
+					className="h-58 w-full bg-cover bg-center flex mx-auto mb-10"
+					style={{ backgroundImage: `url(${headerImage})` }}
 				>
-					<div className="overflow-x-auto">
-						<table className="w-full text-sm">
-							<thead>
-								<tr className="text-left text-gray-500 border-b">
-									<th className="py-3 pr-3 font-medium">Job Title</th>
-									<th className="py-3 pr-3 font-medium">Posted On</th>
-									<th className="py-3 pr-3 font-medium">Status</th>
-									<th className="py-3 pr-3 font-medium">Applications</th>
-									<th className="py-3 pr-3 font-medium text-right">Actions</th>
-								</tr>
-							</thead>
-							<tbody>
-								{jobSummary.length === 0 ? (
-									<tr>
-										<td colSpan={5} className="py-8 text-center text-gray-500">
-											No jobs yet.
-										</td>
-									</tr>
-								) : (
-									jobSummary.map((job) => (
-										<tr key={job.id} className="border-b last:border-b-0">
-											<td className="py-4 pr-3 text-gray-900 font-medium">
-												{job.title}
-											</td>
-											<td className="py-4 pr-3 text-gray-600">
-												{job.postedOn
-													? new Date(job.postedOn).toLocaleDateString()
-													: "—"}
-											</td>
-											<td className="py-4 pr-3">
-												<StatusPill status={job.jobStatus} />
-											</td>
-											<td className="py-4 pr-3 text-gray-700">
-												{job.applicationsCount ?? 0}
-											</td>
-											<td className="py-4 pr-3">
-												<div className="flex justify-end gap-3">
-													{/* edit -> open post-job page but in edit mode */}
-													<button
-														type="button"
-														className="text-blue-600 hover:text-blue-800"
-														title="Edit"
-														onClick={() =>
-															navigate(`/employer/jobs/${job.id}/edit`)
-														}
-													>
-														<Pencil className="w-4 h-4" />
-													</button>
-
-													<button
-														type="button"
-														className="text-red-600 hover:text-red-800 disabled:opacity-50"
-														title="Delete"
-														disabled={delJob.isLoading}
-														onClick={() => {
-															if (!window.confirm("Delete this job?")) return;
-															delJob.mutate(job.id);
-														}}
-													>
-														<Trash2 className="w-4 h-4" />
-													</button>
-
-													{/* open details modal */}
-													<button
-														type="button"
-														className="text-gray-700 hover:text-gray-900"
-														title="Open"
-														onClick={() => setJobDetails(job)}
-													>
-														<ExternalLink className="w-4 h-4" />
-													</button>
-												</div>
-											</td>
-										</tr>
-									))
-								)}
-							</tbody>
-						</table>
+					<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mx-auto py-10">
+						<StatCard
+							icon={Layers}
+							label="Total Jobs"
+							value={stats.totalJobs}
+						/>
+						<StatCard
+							icon={Briefcase}
+							label="Active (Open) Jobs"
+							value={stats.activeOpenJobs}
+						/>
+						<StatCard
+							icon={Users}
+							label="Applications Received"
+							value={stats.totalApplications ?? "—"}
+						/>
 					</div>
-				</TableShell>
+				</div>
 
-				{/* Recent Applications */}
-				<TableShell
-					title="Recent Applications"
-					onSeeMore={()=>{}}
-					// onSeeMore={() => setAppsOpen(true)}
-
-				>
-					{recentApplications.length === 0 ? (
-						<div className="py-8 text-center text-gray-500">
-							No applications yet.
+				<div className="max-w-6xl mx-auto space-y-6">
+					{/* -------------------- see more button --------------- */}
+					<div className="flex items-center justify-between mb-3">
+						<div className="text-sm text-gray-500">
+							Showing{" "}
+							<span className="font-semibold">{visibleJobs.length}</span> of{" "}
+							<span className="font-semibold">{allJobs.length}</span> jobs
 						</div>
-					) : (
+
+						{allJobs.length > 5 ? (
+							<button
+								type="button"
+								onClick={() => setShowAllJobs((v) => !v)}
+								className="text-sm font-medium text-fuchsia-700 hover:text-fuchsia-800"
+							>
+								{showAllJobs ? "Show less ←" : "See more →"}
+							</button>
+						) : null}
+					</div>
+
+					{/* -------------------- Job Summary -------------------- */}
+					<TableShell title="Job Summary Table">
 						<div className="overflow-x-auto">
 							<table className="w-full text-sm">
 								<thead>
 									<tr className="text-left text-gray-500 border-b">
-										<th className="py-3 pr-3 font-medium">Candidate</th>
-										<th className="py-3 pr-3 font-medium">Job</th>
-										<th className="py-3 pr-3 font-medium">Date</th>
-										<th className="py-3 pr-3 font-medium">Status</th>
-										<th className="py-3 pr-3 font-medium text-right">
-											Actions
-										</th>
+										<th className="py-3 pr-3">Job Title</th>
+										<th className="py-3 pr-3">Posted On</th>
+										{/* <th className="py-3 pr-3">Status</th> */}
+										<th className="py-3 pr-3">Applications</th>
+										<th className="py-3 pr-3 text-right">Actions</th>
 									</tr>
 								</thead>
 								<tbody>
-									{recentApplications.map((a) => (
-										<tr key={a.id} className="border-b last:border-b-0">
-											<td className="py-4 pr-3 text-gray-900 font-medium">
-												{a.talent?.firstName ?? a.talent?.user?.email ?? "—"}
-												
-											</td>
-											<td className="py-4 pr-3 text-gray-600">
-												{a.jobTitle ?? "—"}
-											</td>
-											<td className="py-4 pr-3 text-gray-600">
-												{a.createdAt
-													? new Date(a.createdAt).toLocaleDateString()
-													: "—"}
-											</td>
-											<td className="py-4 pr-3">
-												<StatusPill status={a.status} />
-											</td>
-											<td className="py-4 pr-3">
-												<div className="flex justify-end gap-3">
-													<button
-														type="button"
-														className="text-gray-700 hover:text-gray-900"
-														title="Open"
-														onClick={() => setAppDetails(a)}
-													>
-														<ExternalLink className="w-4 h-4" />
-													</button>
-													{/* edit/delete هنا يتفعلوا حسب endpoints المتاحة عندك */}
-												</div>
+									{visibleJobs.length === 0 ? (
+										<tr>
+											<td
+												colSpan={5}
+												className="py-8 text-center text-gray-500"
+											>
+												No jobs yet.
 											</td>
 										</tr>
-									))}
+									) : (
+										visibleJobs.map((job) => (
+											<tr key={job.id} className="border-b last:border-b-0">
+												<td className="py-4 pr-3 font-medium text-gray-900">
+													{job.title}
+												</td>
+												<td className="py-4 pr-3 text-gray-600">
+													{new Date(job.postedOn).toLocaleDateString()}
+												</td>
+												{/* <td className="py-4 pr-3">
+                        <StatusPill status={job.jobStatus} />
+                      </td> */}
+												<td className="py-4 pr-3 text-gray-700">
+													<button
+														type="button"
+														className="text-fuchsia-700 hover:text-fuchsia-800 font-medium"
+														onClick={() => openJobApps(job)}
+													>
+														Open →
+													</button>
+												</td>
+												<td className="py-4 pr-3">
+													<div className="flex justify-end gap-3">
+														<button
+															type="button"
+															className="text-blue-600 hover:text-blue-800"
+															onClick={() =>
+																navigate(`/employer/jobs/${job.id}/edit`)
+															}
+														>
+															<Pencil className="w-4 h-4" />
+														</button>
+														<button
+															type="button"
+															className="text-red-600 hover:text-red-800"
+															disabled={delJob.isLoading}
+															onClick={() => {
+																if (!window.confirm("Delete this job?")) return;
+																delJob.mutate(job.id);
+															}}
+														>
+															<Trash2 className="w-4 h-4" />
+														</button>
+													</div>
+												</td>
+											</tr>
+										))
+									)}
 								</tbody>
 							</table>
 						</div>
-					)}
-				</TableShell>
+					</TableShell>
+					<ApplicationDetailsModal
+						open={appModalOpen}
+						onClose={closeAppDetails}
+						seed={selectedAppSeed}
+					/>
 
-				{/* Jobs list modal (paginated) */}
-				<JobsModal
-					open={jobsOpen}
-					onClose={() => setJobsOpen(false)}
-					jobs={allJobs}
-					onEdit={(job) => navigate(`/employer/jobs/${job.id}/edit`)}
-					onDelete={(job) => {
-						if (!window.confirm("Delete this job?")) return;
-						delJob.mutate(job.id);
-					}}
-					onOpenDetails={(job) => setJobDetails(job)}
-				/>
-
-				{/* Applications list modal (paginated) */}
-				<ApplicationsModal
-					open={appsOpen}
-					onClose={() => setAppsOpen(false)}
-					appsByJob={[]}
-					onOpenDetails={(app) => setAppDetails(app)}
-				/>
-
-				{/* Job details modal */}
-				<JobDetailsModal
-					open={!!jobDetails}
-					job={jobDetails}
-					onClose={() => setJobDetails(null)}
-				/>
-
-				{/* Application details modal */}
-				<ApplicationDetailsModal
-					open={!!appDetails}
-					app={appDetails}
-					onClose={() => setAppDetails(null)}
-				/>
+					<JobApplicationsModal
+						open={appsModalOpen}
+						onClose={closeJobApps}
+						job={selectedJobForApps}
+						onOpenApplication={(app, job) => {
+							closeJobApps();
+							openAppDetails({
+								...app,
+								jobTitle: job.title,
+							});
+						}}
+					/>
+				</div>
 			</div>
-		</div>
+		</>
 	);
 }
-

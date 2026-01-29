@@ -29,6 +29,8 @@ export const queryKeys = {
     employerJobs: ["employer-jobs"],
     employerRecentApps: "employerRecentApps",
     employerJobApplications: "employerJobApplications",
+    employerApplications: "employerApplications",
+    employerApplication: "employerApplication",
 
     // will delete
     employerDashboardAggregated: "employerDashboardAggregated",

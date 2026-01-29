@@ -19,6 +19,7 @@ import {
 } from "../../../../services/talent.service";
 import { buildAvatarUrl } from "../../../../utils/Helpers/avatar";
 import { buildCloudinaryUrl } from "../../../../utils/Helpers/cloudinary";
+import { calcProfileCompletion } from "../../../../utils/Helpers/profileCompletion";
 import ProfileHeaderCard from "./components/ProfileHeaderCard";
 import ResumeCard from "./components/ResumeCard";
 import {
@@ -26,7 +27,6 @@ import {
 	useTalentResumeQuery,
 	useUploadTalentResumeMutation,
 } from "./hooks/mutations/useTalentResume";
-import { calcProfileCompletion } from "./lib/profileCompletion";
 
 export function Modal({ open, title, onClose, children, footer }) {
 	if (!open) return null;
@@ -209,7 +209,6 @@ export default function TalentProfilePage() {
 	const uploadResume = useUploadTalentResumeMutation();
 	const deleteResume = useDeleteTalentResumeMutation();
 
-	//const avatarUrl = profile?.avatarUrl || profile?.avatarPublicId || null;
 	const avatarUrl = profile?.avatarPublicId
 		? buildAvatarUrl(profile.avatarPublicId)
 		: null;

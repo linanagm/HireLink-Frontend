@@ -8,6 +8,12 @@ const toIntOrNull = (v) => {
     return Number.isFinite(n) ? Math.trunc(n) : null;
 };
 
+/**
+ * Maps Formik values to a job payload object.
+ *
+ * @param {Object} values The Formik values object.
+ * @return {Object} The job payload object.
+ */
 export function mapFormikToJobPayload(values) {
     return {
         title: cleanStr(values.title),
