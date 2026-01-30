@@ -13,5 +13,7 @@ export default {
 	},
 	plugins: [
 		//  flowbiteplugin,
+		require('flowbite-react/plugin/vite'),
+
 	],
 };

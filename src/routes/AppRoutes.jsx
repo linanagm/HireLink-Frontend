@@ -121,11 +121,9 @@ export default function AppRoutes() {
 						{ path: "reset", element: <ResetPassword /> },
 					],
 				},
-
-				{ path: "unauthorized", element: <Unauthorized /> },
 			],
 		},
-
+		{ path: "unauthorized", element: <Unauthorized /> },
 		// 3) Talent routes
 		{
 			path: "talent",
