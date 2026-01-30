@@ -98,43 +98,37 @@ axiosClient.interceptors.response.use(
 			isRefreshing = true;
 
 			try {
-				// Request a new access token using refresh token (cookies)
-				const res = await axiosClient.get(PATHS.auth.refresh);
+				// Refresh should be cookie-based only (no Authorization header)
+				const res = await axiosClient.get(PATHS.auth.refresh, {
+					headers: { Authorization: "" },
+				});
 
-
-				// Backend response: res.data.data.token
 				const newAccessToken = res?.data?.data?.token;
+
 
 				if (!newAccessToken) {
 					throw new Error("Refresh succeeded but token missing in response");
 				}
 
-				// Save the new token (Keeps the same storage as before)
 				setAccessToken(newAccessToken);
 
-				// Retry all queued requests with the new token
 				processQueue(null, newAccessToken);
 
-				// Retry the original request
 				originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 				return axiosClient(originalRequest);
 			} catch (err) {
-				// Refresh failed -> logout
 				processQueue(err, null);
 
-				//prevent logout if it is network glitch
 				const refreshStatus = err?.response?.status;
 				if (refreshStatus === 401 || refreshStatus === 403) {
 					clearAccessToken();
 				}
-				// optional:
-				// - clear react-query cache
-				// - redirect to login
-				// window.location.href = "/login"
+
 				return Promise.reject(err);
 			} finally {
 				isRefreshing = false;
 			}
+
 		}
 
 		// Any other error
