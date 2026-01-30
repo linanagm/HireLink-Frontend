@@ -172,7 +172,7 @@ export default function JobDetails() {
 							<div className="flex flex-wrap gap-2">
 								{job?.requiredSkills?.map((skill, i) => (
 									<span
-										key={i.id}
+										key={`${jobId}-skill-${i}`}
 										className="px-3 py-1 text-sm bg-gray-100 rounded-full"
 									>
 										{skill.name}
@@ -192,7 +192,7 @@ export default function JobDetails() {
 							<div className="flex flex-wrap gap-2 mb-3">
 								{job?.requiredLanguages?.map((lang, i) => (
 									<span
-										key={i.id}
+										key={`${jobId}-lang-${i}`}
 										className="px-3 py-1 text-sm bg-gray-100 rounded-full"
 									>
 										{lang.name} . {formatName(lang.minimumProficiency)}

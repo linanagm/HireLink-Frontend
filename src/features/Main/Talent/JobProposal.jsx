@@ -211,7 +211,7 @@ export default function JobProposal() {
 					job.responsibilities.length > 0 ? (
 						<ul className="list-disc ml-6 space-y-1 mb-8 text-gray-700">
 							{job.responsibilities.map((item, i) => (
-								<li key={i.id}>{item}</li>
+								<li key={`${job.id}-resp-${i}`}>{item}</li>
 							))}
 						</ul>
 					) : (
@@ -226,7 +226,7 @@ export default function JobProposal() {
 							<div className="flex flex-wrap gap-2">
 								{job?.requiredSkills?.map((skill, i) => (
 									<span
-										key={i.id}
+										key={`${job.id}-skill-${i}`}
 										className="px-3 py-1 text-sm bg-gray-100 rounded-full"
 									>
 										{skill.name}
@@ -246,7 +246,7 @@ export default function JobProposal() {
 							<div className="flex flex-wrap gap-2">
 								{job?.requiredLanguages?.map((lang, i) => (
 									<span
-										key={i.id}
+										key={`${job.id}-lang-${i}`}
 										className="px-3 py-1 text-sm bg-gray-100 rounded-full"
 									>
 										{lang.name} . {formatName(lang.minimumProficiency)}
