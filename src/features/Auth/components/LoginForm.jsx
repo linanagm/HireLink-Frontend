@@ -22,10 +22,9 @@ export default function LoginForm({ onOpenForgot }) {
 		initialValues: { email: "", password: "" },
 		validationSchema: LoginSchema,
 		onSubmit: async (values) => {
-			try{
+			try {
 				await doLogin(values, rememberMeChecked);
-			}catch(err){}
-			
+			} catch (err) {}
 		},
 	});
 

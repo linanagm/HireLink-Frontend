@@ -83,49 +83,52 @@ export default function AdminLogin() {
 	// };
 
 	const handleAdminLogin = async (formValues) => {
-  setIsLoading(true);
-  setApiError("");
+		setIsLoading(true);
+		setApiError("");
 
-  try {
-    const res = await login(formValues);
-    if (!res?.ok) {
-      setApiError(res?.message || "Admin login failed.");
-      return;
-    }
+		try {
+			const res = await login(formValues);
+			if (!res?.ok) {
+				setApiError(res?.message || "Admin login failed.");
+				return;
+			}
 
-    const token = res?.data?.token;
-    if (!token) {
-      setApiError("Unexpected response (missing token).");
-      return;
-    }
+			const token = res?.data?.token;
+			if (!token) {
+				setApiError("Unexpected response (missing token).");
+				return;
+			}
 
-    // 1) save token once
-    saveLogin(token, rememberMeChecked);
+			// 1) save token once
+			saveLogin(token, rememberMeChecked);
 
-    // 2) prevent stale/in-flight currentUser
-    queryClient.cancelQueries({ queryKey: queryKeys.currentUser });
-    queryClient.removeQueries({ queryKey: queryKeys.currentUser, exact: true });
+			// 2) prevent stale/in-flight currentUser
+			queryClient.cancelQueries({ queryKey: queryKeys.currentUser });
+			queryClient.removeQueries({
+				queryKey: queryKeys.currentUser,
+				exact: true,
+			});
 
-    // 3) fetch /me once
-    const meRes = await getUser();
-    if (!meRes?.ok) {
-      setApiError(meRes?.message || "Could not load admin profile.");
-      return;
-    }
+			// 3) fetch /me once
+			const meRes = await getUser();
+			if (!meRes?.ok) {
+				setApiError(meRes?.message || "Could not load admin profile.");
+				return;
+			}
 
-    // 4) set user once
-    setUser(meRes.data);
+			// 4) set user once
+			setUser(meRes.data);
 
-    // 5) hydrate cache (optional)
-    queryClient.setQueryData(queryKeys.currentUser, meRes);
+			// 5) hydrate cache (optional)
+			queryClient.setQueryData(queryKeys.currentUser, meRes);
 
-    navigateAdmin(meRes.data);
-  } catch (err) {
-    setApiError(err?.message || "Something went wrong. Try again.");
-  } finally {
-    setIsLoading(false);
-  }
-};
+			navigateAdmin(meRes.data);
+		} catch (err) {
+			setApiError(err?.message || "Something went wrong. Try again.");
+		} finally {
+			setIsLoading(false);
+		}
+	};
 
 	const formik = useFormik({
 		initialValues: { email: "", password: "" },

@@ -3,7 +3,6 @@ import { api } from "../lib/api";
 
 export const register = (values) => api("post", PATHS.auth.register, values);
 
-
 export const verifyEmail = (verificationToken) =>
 	api("post", PATHS.auth.verify, { verificationToken });
 
@@ -15,7 +14,12 @@ export const getRefreshToken = () => api("get", PATHS.auth.refresh);
 export const requestPasswordReset = (email) =>
 	api("post", PATHS.auth.resetRequest, { email });
 
-export const resetPassword = ({ email, verificationToken, newPassword, oldPassword }) =>
+export const resetPassword = ({
+	email,
+	verificationToken,
+	newPassword,
+	oldPassword,
+}) =>
 	api("put", PATHS.auth.reset, {
 		email,
 		verificationToken,
@@ -23,10 +27,10 @@ export const resetPassword = ({ email, verificationToken, newPassword, oldPasswo
 		oldPassword,
 	});
 
-
-
 export const getUser = () => api("get", PATHS.auth.me, null, {});
 
-export const logoutRes = (config = []) => api("post", PATHS.auth.logout, {}, config);
+export const logoutRes = (config = []) =>
+	api("post", PATHS.auth.logout, {}, config);
 
-export const logoutAll = (config = []) => api("post", PATHS.auth.logoutAll, config);
+export const logoutAll = (config = []) =>
+	api("post", PATHS.auth.logoutAll, config);

@@ -142,38 +142,37 @@ export function AuthProvider({ children }) {
 				}
 
 				//  if user never logged in before, don't hit refresh
-if (!savedUser) {
-  clearAccessToken();
-  setToken(null);
-  setCurrentUser(null);
-  setIsAuthReady(true);
-  return;
-}
+				if (!savedUser) {
+					clearAccessToken();
+					setToken(null);
+					setCurrentUser(null);
+					setIsAuthReady(true);
+					return;
+				}
 
-// otherwise try refresh once (cookie-based)
+				// otherwise try refresh once (cookie-based)
 
-try {
-  const refreshRes = await getRefreshToken();
-  if (refreshRes.ok) {
-    const newToken = refreshRes.data?.token;
-    if (newToken) {
-      setAccessToken(newToken);
-      setToken(newToken);
+				try {
+					const refreshRes = await getRefreshToken();
+					if (refreshRes.ok) {
+						const newToken = refreshRes.data?.token;
+						if (newToken) {
+							setAccessToken(newToken);
+							setToken(newToken);
 
-      const meRes = await getUser();
-      if (meRes.ok) setCurrentUser(meRes.data);
-    }
-  } else {
-    clearAccessToken();
-    setToken(null);
-    setCurrentUser(null);
-  }
-} catch {
-  clearAccessToken();
-  setToken(null);
-  setCurrentUser(null);
-}
-
+							const meRes = await getUser();
+							if (meRes.ok) setCurrentUser(meRes.data);
+						}
+					} else {
+						clearAccessToken();
+						setToken(null);
+						setCurrentUser(null);
+					}
+				} catch {
+					clearAccessToken();
+					setToken(null);
+					setCurrentUser(null);
+				}
 
 				// If no token, try to refresh
 				const refreshRes = await getRefreshToken();

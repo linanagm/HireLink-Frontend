@@ -18,7 +18,6 @@ export const passwordschema = Yup.string()
 		"Password cannot contain three repeating characters",
 	);
 
-
 export const name = Yup.string().matches(
 	/^\S+\s+\S+/,
 	"Please enter your full name",

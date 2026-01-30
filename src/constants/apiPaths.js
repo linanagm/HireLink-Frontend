@@ -1,85 +1,81 @@
-
 export const JOBS_MODES = {
-    RECOMMENDED: "recommended",
-    BEST_MATCHES: "best_matches",
+	RECOMMENDED: "recommended",
+	BEST_MATCHES: "best_matches",
 };
 
 export const PATHS = {
-    auth: {
-        register: "/auth/register",
-        verify: "/auth/verify",
-        login: "/auth/login",
-        refresh: "/auth/refresh",
-        resetRequest: "/auth/reset/request",
-        reset: "/auth/reset",
-        me: "/auth/me",
-        logout: "/auth/logout",
-        logoutAll: "/auth/logout/all",
-    },
+	auth: {
+		register: "/auth/register",
+		verify: "/auth/verify",
+		login: "/auth/login",
+		refresh: "/auth/refresh",
+		resetRequest: "/auth/reset/request",
+		reset: "/auth/reset",
+		me: "/auth/me",
+		logout: "/auth/logout",
+		logoutAll: "/auth/logout/all",
+	},
 
-    talent: {
-        // Profile
-        profile: "/talent/profile", // GET/PUT
+	talent: {
+		// Profile
+		profile: "/talent/profile", // GET/PUT
 
-        // Avatar
-        avatar: "/talent/avatar", // GET/PUT/DELETE
+		// Avatar
+		avatar: "/talent/avatar", // GET/PUT/DELETE
 
-        // Skills & Languages & Certificates
-        skills: "/talent/skills", // PUT/post/delete
-        languages: "/talent/languages", // PUT/post/delete
-        certificaties: "/talent/certificates", // PUT/post/delete
+		// Skills & Languages & Certificates
+		skills: "/talent/skills", // PUT/post/delete
+		languages: "/talent/languages", // PUT/post/delete
+		certificaties: "/talent/certificates", // PUT/post/delete
 
-        // Applications
-        applications: "/talent/applications", // GET
+		// Applications
+		applications: "/talent/applications", // GET
 
-        // Resume
-        resume: "/talent/resume", // GET/PUT/DELETE
-    },
+		// Resume
+		resume: "/talent/resume", // GET/PUT/DELETE
+	},
 
-    // Jobs (Talent browsing)
-    jobs: {
-        jobsList: "/jobs", // GET with params (e.g. mode=recommended)
-        jobDetails: (id) => `/jobs/${id}`, // GET
-        jobProposal: (id) => `/jobs/${id}/apply`, // POST
-    },
+	// Jobs (Talent browsing)
+	jobs: {
+		jobsList: "/jobs", // GET with params (e.g. mode=recommended)
+		jobDetails: (id) => `/jobs/${id}`, // GET
+		jobProposal: (id) => `/jobs/${id}/apply`, // POST
+	},
 
+	skill: {
+		getSkillById: (id) => `/skills/${id}`,
+		putSkills: "/skills",
+	},
 
-    skill: {
-        getSkillById: (id) => `/skills/${id}`,
-        putSkills: "/skills",
-    },
+	employer: {
+		profile: "/employer/profile",
 
+		logo: "/employer/logo",
 
-    employer: {
-        profile: "/employer/profile",
+		jobs: "/employer/jobs",
 
-        logo: "/employer/logo",
+		jobById: (jobId) => `/employer/jobs/${jobId}`,
+		updateJob: (jobId) => `/employer/jobs/${jobId}`,
 
-        jobs: "/employer/jobs",
+		jobSkill: (jobId) => `/employer/jobs/${jobId}/skills`,
 
-        jobById: (jobId) => `/employer/jobs/${jobId}`,
-        updateJob: (jobId) => `/employer/jobs/${jobId}`,
+		Job: (jobId) => `/employer/jobs/${jobId}`,
 
-        jobSkill: (jobId) => `/employer/jobs/${jobId}/skills`,
+		jobLanguage: (jobId) => `/employer/jobs/${jobId}/languages`,
 
-        Job: (jobId) => `/employer/jobs/${jobId}`,
+		jobApplications: (jobId) => `/employer/jobs/${jobId}/applications`,
 
-        jobLanguage: (jobId) => `/employer/jobs/${jobId}/languages`,
+		applicationById: (applicationId) =>
+			`/employer/applications/${applicationId}`,
+	},
+	moderation: {
+		stats: "/moderation/stats",
 
+		users: "/moderation/users",
+		userById: (userId) => `/moderation/users/${userId}`,
+		userActive: (userId) => `/moderation/users/${userId}/active`,
 
-        jobApplications: (jobId) => `/employer/jobs/${jobId}/applications`,
-
-        applicationById: (applicationId) => `/employer/applications/${applicationId}`,
-    },
-    moderation: {
-        stats: "/moderation/stats",
-
-        users: "/moderation/users",
-        userById: (userId) => `/moderation/users/${userId}`,
-        userActive: (userId) => `/moderation/users/${userId}/active`,
-
-        jobs: "/moderation/jobs",
-        jobById: (jobId) => `/moderation/jobs/${jobId}`,
-    },
-
+		jobs: "/moderation/jobs",
+		jobById: (jobId) => `/moderation/jobs/${jobId}`,
+	},
 };

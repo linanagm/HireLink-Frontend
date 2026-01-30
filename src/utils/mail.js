@@ -4,8 +4,6 @@
  * @returns {string|null} - The URL of the mail provider, or null if the domain is not recognized
  */
 export function getMailProviderUrl(email) {
-
-
 	const domain = email.split("@")[1];
 
 	if (!domain) return null;

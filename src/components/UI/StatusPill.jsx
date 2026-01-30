@@ -1,4 +1,3 @@
-
 const norm = (v) => String(v || "").toUpperCase();
 
 export default function StatusPill({ status }) {

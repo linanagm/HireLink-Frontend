@@ -14,15 +14,19 @@ const axiosClient = axios.create({
 	baseURL: import.meta.env.VITE_API_URL,
 	withCredentials: true,
 	//headers: { "Content-Type": "application/json" },
-	headers: {}
+	headers: {},
 });
-
-
 
 axiosClient.interceptors.request.use(
 	(config) => {
 		const token = getAccessToken();
-		console.log("REQ", config.method?.toUpperCase(), config.url, "token", !!token);
+		console.log(
+			"REQ",
+			config.method?.toUpperCase(),
+			config.url,
+			"token",
+			!!token,
+		);
 
 		if (token) config.headers.Authorization = `Bearer ${token}`;
 
@@ -47,7 +51,6 @@ let isRefreshing = false;
 // Queue to store requests that failed with 401 while refresh is in progress
 let failedQueue = [];
 
-
 // Restore or reject all queued requests after refresh finishes
 const processQueue = (error, token = null) => {
 	failedQueue.forEach(({ resolve, reject }) => {
@@ -62,14 +65,10 @@ const processQueue = (error, token = null) => {
 axiosClient.interceptors.response.use(
 	(response) => response,
 	async (error) => {
-
-
 		const originalRequest = error.config;
 		const status = error?.response?.status;
 
-
-
-		// Network errors (no response from server) 
+		// Network errors (no response from server)
 		// Let the caller handle them
 		if (!status) return Promise.reject(error);
 
@@ -77,16 +76,15 @@ axiosClient.interceptors.response.use(
 		// Do not try to refresh if the failed request is already /auth/refresh
 		const isRefreshCall = originalRequest?.url?.includes(PATHS.auth.refresh);
 
-		// handle expired access token		
+		// handle expired access token
 		if (status === 401 && !originalRequest._retry && !isRefreshCall) {
 			// check if refresh is in progress
 			if (isRefreshing) {
-
 				// If a refresh request is already is running,
 				//wait until it finishes and retry the original request
 				return new Promise((resolve, reject) => {
 					failedQueue.push({ resolve, reject });
-					// 
+					//
 				}).then((token) => {
 					originalRequest.headers.Authorization = `Bearer ${token}`;
 					return axiosClient(originalRequest);
@@ -104,7 +102,6 @@ axiosClient.interceptors.response.use(
 				});
 
 				const newAccessToken = res?.data?.data?.token;
-
 
 				if (!newAccessToken) {
 					throw new Error("Refresh succeeded but token missing in response");
@@ -128,7 +125,6 @@ axiosClient.interceptors.response.use(
 			} finally {
 				isRefreshing = false;
 			}
-
 		}
 
 		// Any other error

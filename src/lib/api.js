@@ -1,6 +1,5 @@
 // import axiosClient from "../config/axiosClient";
 
-
 // /**
 //  * Makes an API request using axios.
 //  * Returns a normalized response object with ok, message, and data properties.
@@ -15,31 +14,28 @@
 import axiosClient from "../config/axiosClient";
 
 export async function api(method, url, data = null, config = {}) {
-    try {
-        const m = method.toLowerCase();
+	try {
+		const m = method.toLowerCase();
 
-        const response =
-            m === "get" || m === "delete"
-                ? await axiosClient[m](url, config)           //  GET/DELETE
-                : await axiosClient[m](url, data, config);    // POST/PUT/PATCH
+		const response =
+			m === "get" || m === "delete"
+				? await axiosClient[m](url, config) //  GET/DELETE
+				: await axiosClient[m](url, data, config); // POST/PUT/PATCH
 
-        return {
-            ok: true,
-            message: response?.data?.message ?? null,
-            data: response?.data?.data ?? response?.data?.paylod ?? null,
-            status: response?.status ?? 200,
-        };
-    } catch (error) {
-
-        return {
-            ok: false,
-            message:
-                error?.response?.data?.message ||
-                error?.message ||
-                "Request failed",
-            status: error?.response?.status ?? null,
-            data: null,
-            error,
-        };
-    }
+		return {
+			ok: true,
+			message: response?.data?.message ?? null,
+			data: response?.data?.data ?? response?.data?.paylod ?? null,
+			status: response?.status ?? 200,
+		};
+	} catch (error) {
+		return {
+			ok: false,
+			message:
+				error?.response?.data?.message || error?.message || "Request failed",
+			status: error?.response?.status ?? null,
+			data: null,
+			error,
+		};
+	}
 }

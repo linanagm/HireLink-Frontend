@@ -64,7 +64,6 @@ export default function NavbarComponent() {
 		qc.clear();
 		closeMenus();
 		navigate("/");
-
 	}, [logout, navigate, closeMenus]);
 
 	return (
@@ -83,8 +82,6 @@ export default function NavbarComponent() {
 					<AuthButtons />
 				) : (
 					<ul className="flex gap-7 items-center">
-						
-
 						<ProfileMenu
 							open={openMenu === "profile"}
 							onToggle={() => toggleMenu("profile")}

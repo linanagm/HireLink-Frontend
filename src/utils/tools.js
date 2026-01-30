@@ -21,15 +21,14 @@ export function formatName(name) {
 	if (!name || typeof name !== "string") return "";
 
 	return name
-		.split("_")// delete _                 
-		.map(word =>
+		.split("_") // delete _
+		.map((word) =>
 			word
-				.toLowerCase()// change word to small letters
+				.toLowerCase() // change word to small letters
 				.replace(
 					/^./,
-					char => char.toUpperCase() // turn first letter to capital letter
-				)
+					(char) => char.toUpperCase(), // turn first letter to capital letter
+				),
 		)
-		.join(" ");                  // ترجعهم space
+		.join(" "); // ترجعهم space
 }
-

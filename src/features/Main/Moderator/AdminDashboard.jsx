@@ -18,7 +18,7 @@ export default function ModerationDashboard() {
 	const [tab, setTab] = useState("users"); // "users" | "jobs"
 	const [usersPage, setUsersPage] = useState({ limit: 20, skip: 0 });
 	const [jobsPage, setJobsPage] = useState({ limit: 20, skip: 0 });
-	const qc =useQueryClient();
+	const qc = useQueryClient();
 	const [detailModal, setDetailModal] = useState({
 		open: false,
 		title: "",
@@ -141,10 +141,8 @@ export default function ModerationDashboard() {
 	//const navigate = useNavigate();
 
 	const handleSignOut = async () => {
-
 		await logout();
 		qc.clear();
-		
 	};
 
 	return (
