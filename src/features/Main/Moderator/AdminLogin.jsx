@@ -1,8 +1,10 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import { useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
+import { queryKeys } from "../../../lib/queryKeys";
 import { getUser, login } from "../../../services/auth.service";
 import { LoginSchema } from "../../../utils/validation/authValidationjs";
 import AdminLogo from "./components/AdminLogo";
@@ -28,7 +30,7 @@ export default function AdminLogin() {
 	const [showPassword, setShowPassword] = useState(false);
 	const [rememberMeChecked, setRememberMeChecked] = useState(false);
 	const [apiError, setApiError] = useState("");
-
+	const queryClient = useQueryClient();
 	const navigateAdmin = (adminData) => {
 		const role = adminData?.role;
 
@@ -39,46 +41,91 @@ export default function AdminLogin() {
 		}
 	};
 
+	// const handleAdminLogin = async (formValues) => {
+	// 	setIsLoading(true);
+	// 	setApiError("");
+
+	// 	try {
+	// 		const res = await login(formValues);
+
+	// 		if (!res?.ok) {
+	// 			setApiError(res?.message || "Admin login failed.");
+	// 			return;
+	// 		}
+
+	// 		const token = res?.data?.token;
+	// 		if (!token) {
+	// 			setApiError("Unexpected response (missing token).");
+	// 			return;
+	// 		}
+
+	// 		// Save token first
+	// 		await saveLogin(token, rememberMeChecked);
+
+	// 		// Fetch full user info including role
+	// 		const me = await getUser();
+
+	// 		if (!me?.ok) {
+	// 			setApiError(me?.message || "Could not load admin profile.");
+	// 			return;
+	// 		}
+
+	// 		// Save full user info
+	// 		await saveLogin(token, rememberMeChecked);
+
+	// 		setUser(me.data);
+	// 		navigateAdmin(me.data);
+	// 	} catch (err) {
+	// 		setApiError("Something went wrong. Try again.");
+	// 	} finally {
+	// 		setIsLoading(false);
+	// 	}
+	// };
+
 	const handleAdminLogin = async (formValues) => {
-		setIsLoading(true);
-		setApiError("");
+  setIsLoading(true);
+  setApiError("");
 
-		try {
-			const res = await login(formValues);
+  try {
+    const res = await login(formValues);
+    if (!res?.ok) {
+      setApiError(res?.message || "Admin login failed.");
+      return;
+    }
 
-			if (!res?.ok) {
-				setApiError(res?.message || "Admin login failed.");
-				return;
-			}
+    const token = res?.data?.token;
+    if (!token) {
+      setApiError("Unexpected response (missing token).");
+      return;
+    }
 
-			const token = res?.data?.token;
-			if (!token) {
-				setApiError("Unexpected response (missing token).");
-				return;
-			}
+    // 1) save token once
+    saveLogin(token, rememberMeChecked);
 
-			// Save token first
-			await saveLogin(token, rememberMeChecked);
+    // 2) prevent stale/in-flight currentUser
+    queryClient.cancelQueries({ queryKey: queryKeys.currentUser });
+    queryClient.removeQueries({ queryKey: queryKeys.currentUser, exact: true });
 
-			// Fetch full user info including role
-			const me = await getUser();
+    // 3) fetch /me once
+    const meRes = await getUser();
+    if (!meRes?.ok) {
+      setApiError(meRes?.message || "Could not load admin profile.");
+      return;
+    }
 
-			if (!me?.ok) {
-				setApiError(me?.message || "Could not load admin profile.");
-				return;
-			}
+    // 4) set user once
+    setUser(meRes.data);
 
-			// Save full user info
-			await saveLogin(token, rememberMeChecked);
+    // 5) hydrate cache (optional)
+    queryClient.setQueryData(queryKeys.currentUser, meRes);
 
-			setUser(me.data);
-			navigateAdmin(me.data);
-		} catch (err) {
-			setApiError("Something went wrong. Try again.");
-		} finally {
-			setIsLoading(false);
-		}
-	};
+    navigateAdmin(meRes.data);
+  } catch (err) {
+    setApiError(err?.message || "Something went wrong. Try again.");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
 	const formik = useFormik({
 		initialValues: { email: "", password: "" },
