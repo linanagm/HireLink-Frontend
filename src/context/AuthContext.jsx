@@ -140,16 +140,39 @@ export function AuthProvider({ children }) {
 					setIsAuthReady(true);
 					return;
 				}
-				const hasRefreshToken =
-					!!localStorage.getItem(STORAGE_KEYS.token) ||
-					!!sessionStorage.getItem(STORAGE_KEYS.token);
+				// const hasRefreshToken =
+				// 	!!localStorage.getItem(STORAGE_KEYS.token) ||
+				// 	!!sessionStorage.getItem(STORAGE_KEYS.token);
 
-				if (!hasRefreshToken) {
-					clearAccessToken();
-					setToken(null);
-					setCurrentUser(null);
-					return;
-				}
+				// if (!hasRefreshToken) {
+				// 	clearAccessToken();
+				// 	setToken(null);
+				// 	setCurrentUser(null);
+				// 	return;
+				// }
+				// If no access token, try refresh ONCE (cookie-based). If it fails, stay logged out.
+try {
+  const refreshRes = await getRefreshToken();
+  if (refreshRes.ok) {
+    const newToken = refreshRes.data?.token;
+    if (newToken) {
+      setAccessToken(newToken);
+      setToken(newToken);
+
+      const meRes = await getUser();
+      if (meRes.ok) setCurrentUser(meRes.data);
+    }
+  } else {
+    clearAccessToken();
+    setToken(null);
+    setCurrentUser(null);
+  }
+} catch {
+  clearAccessToken();
+  setToken(null);
+  setCurrentUser(null);
+}
+
 
 				// If no token, try to refresh
 				const refreshRes = await getRefreshToken();
