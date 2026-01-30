@@ -140,6 +140,17 @@ export function AuthProvider({ children }) {
 					setIsAuthReady(true);
 					return;
 				}
+
+				//  if user never logged in before, don't hit refresh
+if (!savedUser) {
+  clearAccessToken();
+  setToken(null);
+  setCurrentUser(null);
+  setIsAuthReady(true);
+  return;
+}
+
+// otherwise try refresh once (cookie-based)
 				// const hasRefreshToken =
 				// 	!!localStorage.getItem(STORAGE_KEYS.token) ||
 				// 	!!sessionStorage.getItem(STORAGE_KEYS.token);
