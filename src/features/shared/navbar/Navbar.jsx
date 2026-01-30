@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import defaultProfileImage from "../../../assets/images/profile-image.png";
@@ -18,7 +19,7 @@ import { Tabs } from "./components/Tabs.jsx";
 export default function NavbarComponent() {
 	const { token, currentUser, logout } = useAuth();
 	const navigate = useNavigate();
-
+	const qc = useQueryClient();
 	const [openMenu, setOpenMenu] = useState(null);
 
 	const closeMenus = useCallback(() => setOpenMenu(null), []);
@@ -60,8 +61,10 @@ export default function NavbarComponent() {
 
 	const handleLogout = useCallback(async () => {
 		await logout();
+		qc.clear();
 		closeMenus();
 		navigate("/");
+
 	}, [logout, navigate, closeMenus]);
 
 	return (
@@ -80,11 +83,7 @@ export default function NavbarComponent() {
 					<AuthButtons />
 				) : (
 					<ul className="flex gap-7 items-center">
-						{/* <NotificationsMenu
-							open={openMenu === "notify"}
-							onToggle={() => toggleMenu("notify")}
-							onClose={closeMenus}
-						/> */}
+						
 
 						<ProfileMenu
 							open={openMenu === "profile"}

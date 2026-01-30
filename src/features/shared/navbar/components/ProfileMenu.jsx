@@ -29,6 +29,7 @@ export function ProfileMenu({
 
 		try {
 			await onLogout(); // مهم: onLogout تكون async
+
 		} finally {
 			// في العادة الصفحة هتتغير، بس ده أمان زيادة
 			setLoggingOut(false);

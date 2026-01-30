@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { useDeleteJob } from "../../../hooks/mutations/moderation/useDeleteJob";
@@ -11,20 +12,13 @@ import { cx } from "../../../utils/formatter";
 import Modal from "./components/dashboard/Modal";
 import Pill from "./components/dashboard/Pill";
 import StatCard from "./components/dashboard/StatCard";
-//import { logoutRes } from "../../../services/auth.service";
-// const num = (v) => {
-// 	if (v == null) return "-";
-// 	if (typeof v === "number" || typeof v === "string") return v;
-// 	if (typeof v === "object") return v.total ?? v.count ?? v.value ?? "-";
-// 	return "-";
-// };
 
 export default function ModerationDashboard() {
 	const { logout } = useAuth();
 	const [tab, setTab] = useState("users"); // "users" | "jobs"
 	const [usersPage, setUsersPage] = useState({ limit: 20, skip: 0 });
 	const [jobsPage, setJobsPage] = useState({ limit: 20, skip: 0 });
-
+	const qc =useQueryClient();
 	const [detailModal, setDetailModal] = useState({
 		open: false,
 		title: "",
@@ -146,14 +140,11 @@ export default function ModerationDashboard() {
 	};
 	//const navigate = useNavigate();
 
-	const handleSignOut = () => {
-		//if (!confirm("Are you sure you want to sign out?")) return;
+	const handleSignOut = async () => {
 
-		logout();
-		// اختياري لكن مفيد جدًا لو في state بايظة
-		//window.location.reload();
-
-		//navigate("/login", { replace: true });
+		await logout();
+		qc.clear();
+		
 	};
 
 	return (
