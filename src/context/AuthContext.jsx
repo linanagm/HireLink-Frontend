@@ -151,17 +151,7 @@ if (!savedUser) {
 }
 
 // otherwise try refresh once (cookie-based)
-				// const hasRefreshToken =
-				// 	!!localStorage.getItem(STORAGE_KEYS.token) ||
-				// 	!!sessionStorage.getItem(STORAGE_KEYS.token);
 
-				// if (!hasRefreshToken) {
-				// 	clearAccessToken();
-				// 	setToken(null);
-				// 	setCurrentUser(null);
-				// 	return;
-				// }
-				// If no access token, try refresh ONCE (cookie-based). If it fails, stay logged out.
 try {
   const refreshRes = await getRefreshToken();
   if (refreshRes.ok) {

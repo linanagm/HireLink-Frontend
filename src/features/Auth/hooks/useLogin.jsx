@@ -38,21 +38,20 @@ export function useLogin() {
 
 			saveLogin(token, rememberMe);
 
-			// 3) FETCH USER DATA
-			const meRes = await qc.fetchQuery({
-				queryKey: queryKeys.currentUser,
-				queryFn: () => getUser(),
-			});
+			// prevent duplicate /me fetch or stale cache from previous sessions
+			qc.cancelQueries({ queryKey: queryKeys.currentUser });
+			qc.removeQueries({ queryKey: queryKeys.currentUser, exact: true });
 
+			// fetch user once
+
+			const meRes = await getUser(); // direct call
+			const me = meRes?.data;
 			if (!meRes?.ok) throw new Error(meRes?.message || "Failed to load user");
 
-			const me = meRes.data;
-			const role = me?.role;
+			setUser(meRes.data);
 
-			// 4) Build user object
-
-			// 5) SET USER ONCE
-			setUser(me);
+			// hydrate react-query cache
+			qc.setQueryData(queryKeys.currentUser, meRes);
 
 			// 6) NAVIGATE ONCE
 			return navigateByRole(me.role);
