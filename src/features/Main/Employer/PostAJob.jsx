@@ -303,7 +303,7 @@ export default function PostJobPage() {
 					>
 						{/* Job Title */}
 						<div className="md:col-span-2 mb-4">
-							<label className="block">
+							<label htmlFor="" className="block">
 								<span className="text-sm font-medium text-gray-700">
 									Job Title
 								</span>
@@ -323,7 +323,7 @@ export default function PostJobPage() {
 							{/* left side */}
 							<div className="flex flex-col gap-6 ">
 								{/* Experience Level */}
-								<label className="block">
+								<label htmlFor="" className="block">
 									<span className="text-sm font-medium text-gray-700">
 										Experience Level
 									</span>
@@ -344,7 +344,7 @@ export default function PostJobPage() {
 								</label>
 
 								{/* Salary */}
-								<label className="block">
+								<label htmlFor="" className="block">
 									<span className="text-sm font-medium text-gray-700">
 										Salary
 									</span>
@@ -361,7 +361,7 @@ export default function PostJobPage() {
 								</label>
 
 								{/* Hours Per Week */}
-								<label className="block">
+								<label htmlFor="" className="block">
 									<span className="text-sm font-medium text-gray-700">
 										Hours Per Week
 									</span>

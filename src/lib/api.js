@@ -17,15 +17,19 @@ export async function api(method, url, data = null, config = {}) {
 	try {
 		const m = method.toLowerCase();
 
-		const response =
-			m === "get" || m === "delete"
-				? await axiosClient[m](url, config) //  GET/DELETE
-				: await axiosClient[m](url, data, config); // POST/PUT/PATCH
+		let response;
 
+		if (m === "get") {
+			response = await axiosClient.get(url, config);
+		} else if (m === "delete") {
+			response = await axiosClient.delete(url, config);
+		} else {
+			response = await axiosClient[m](url, data, config);
+		}
 		return {
 			ok: true,
 			message: response?.data?.message ?? null,
-			data: response?.data?.data ?? response?.data?.paylod ?? null,
+			data: response?.data?.data ?? response?.data?.payload ?? null,
 			status: response?.status ?? 200,
 		};
 	} catch (error) {

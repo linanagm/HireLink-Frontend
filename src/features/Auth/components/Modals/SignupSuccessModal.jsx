@@ -28,7 +28,7 @@ export default function SignupSuccess({ onClose, email }) {
 					onClick={onClose}
 					className="absolute top-1/4 right-2 "
 				>
-					<i class="fa-solid fa-x bolder text-slate-800 hover:text-red-900"></i>
+					<i className="fa-solid fa-x bolder text-slate-800 hover:text-red-900"></i>
 				</button>
 			</div>
 		</div>

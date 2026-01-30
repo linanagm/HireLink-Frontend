@@ -60,7 +60,7 @@ export default function ApplicationDetailsModal({
 			open={open}
 			onClose={onClose}
 			title=""
-			widthClass="max-w-5xl"
+			widthClassName="max-w-5xl"
 			style={{ maxHeight: "90vh" }}
 		>
 			<div className="p-6 max-h-[80vh] overflow-y-auto">
@@ -183,7 +183,7 @@ export default function ApplicationDetailsModal({
 									</div>
 								) : (
 									<div className="mt-3 space-y-3">
-										<i class="fa-regular fa-square-check text-green-500 pr-2"></i>{" "}
+										<i className="fa-regular fa-square-check text-green-500 pr-2"></i>{" "}
 										Uploaded
 									</div>
 								)}
