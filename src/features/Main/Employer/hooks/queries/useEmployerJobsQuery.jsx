@@ -29,9 +29,6 @@ export function useEmployerJobQuery(jobId, { enabled } = {}) {
 		queryFn: async () => {
 			const res = await getEmployerJob(jobId);
 
-			console.log("jobId for edit:", jobId);
-			console.log("jobQuery res:", res);
-
 			if (!res?.ok) {
 				throw res?.error || new Error(res?.message || "Failed to load job");
 			}

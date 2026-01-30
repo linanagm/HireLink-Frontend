@@ -9,7 +9,7 @@ export function useUpdateEmployerProfile() {
 	return useMutation({
 		mutationFn: updateEmployerProfile,
 
-		onSuccess: (res, payload) => {
+		onSuccess: (payload) => {
 			toast.success("Profile updated");
 
 			// update cache

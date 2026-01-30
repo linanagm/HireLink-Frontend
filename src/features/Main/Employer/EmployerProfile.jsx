@@ -10,7 +10,7 @@ import { queryKeys } from "../../../lib/queryKeys";
 import { updateEmployerLogo } from "../../../services/employer.service";
 import { buildAvatarUrl } from "../../../utils/Helpers/avatar";
 import { normalizeUrl } from "../../../utils/normalizeData";
-import { useUpdateEmployerProfile } from "./hooks/mutations/useUpdateEmployerMutation";
+import { useUpdateEmployerProfile } from "./hooks/mutations/useUpdateEmployerMutation.jsx";
 import { useEmployerProfileQuery } from "./hooks/queries/useEmployerProfileQueries";
 
 function Row({ label, value, isLink = false }) {

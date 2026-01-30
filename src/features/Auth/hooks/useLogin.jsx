@@ -30,7 +30,6 @@ export function useLogin() {
 		try {
 			// 1) Call login API to get access token
 			const loginRes = await loginApi({ email, password });
-			console.log("login response: ", loginRes);
 
 			if (!loginRes?.ok) throw new Error(loginRes?.message || "Login failed");
 
@@ -51,7 +50,6 @@ export function useLogin() {
 			const role = me?.role;
 
 			// 4) Build user object
-			console.log("me:", me, role);
 
 			// 5) SET USER ONCE
 			setUser(me);

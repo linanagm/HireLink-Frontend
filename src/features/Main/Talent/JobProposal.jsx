@@ -38,7 +38,6 @@ export default function JobProposal() {
 
 	// Keep your extraction, but don't default to [] because job is an object
 	const job = data?.data?.data ?? data?.data ?? null;
-	console.log("job", job);
 
 	const paymentType = useMemo(() => (job?.salary ? "Salary" : "Hourly"), [job]);
 	const budget = useMemo(() => job?.salary ?? null, [job]);

@@ -88,14 +88,14 @@ export function AuthProvider({ children }) {
 	 */
 	const logout = useCallback(async () => {
 		try {
-			console.log("logout clicked");
-
-			const res = await logoutRes();
-			console.log("logout res", res);
+			await logoutRes();
+			//const res = await logoutRes();
 		} finally {
 			clearAccessToken();
 			localStorage.removeItem(STORAGE_KEYS.user);
 			sessionStorage.removeItem(STORAGE_KEYS.user);
+			localStorage.removeItem(STORAGE_KEYS.token);
+			sessionStorage.removeItem(STORAGE_KEYS.token);
 			setToken(null);
 			setCurrentUser(null);
 		}
@@ -140,6 +140,16 @@ export function AuthProvider({ children }) {
 					setIsAuthReady(true);
 					return;
 				}
+				const hasRefreshToken =
+					!!localStorage.getItem(STORAGE_KEYS.token) ||
+					!!sessionStorage.getItem(STORAGE_KEYS.token);
+
+				if (!hasRefreshToken) {
+					clearAccessToken();
+					setToken(null);
+					setCurrentUser(null);
+					return;
+				}
 
 				// If no token, try to refresh
 				const refreshRes = await getRefreshToken();
@@ -153,6 +163,18 @@ export function AuthProvider({ children }) {
 						if (meRes.ok) setCurrentUser(meRes.data);
 					}
 				} else {
+					clearAccessToken();
+					setToken(null);
+					setCurrentUser(null);
+				}
+			} catch (err) {
+				const status = err?.response?.status;
+				if (status === 401) {
+					clearAccessToken();
+					setToken(null);
+					setCurrentUser(null);
+				} else {
+					console.error("initAuth refresh failed:", err);
 					clearAccessToken();
 					setToken(null);
 					setCurrentUser(null);

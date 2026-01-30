@@ -19,7 +19,6 @@ export default function RoleRoute({
 }) {
 	const { token, currentUser } = useAuth();
 	const location = useLocation();
-	console.log("currentUser role route : ", currentUser);
 
 	// Not logged in
 	if (!token) {

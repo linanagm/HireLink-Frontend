@@ -21,7 +21,7 @@ export default function Contact() {
 	const handleContactUs = async (values, { resetForm }) => {
 		//fake request
 		await new Promise((resolve) => setTimeout(resolve, 1000));
-		console.log(values);
+
 		//---------------------
 
 		setSuccess(true);

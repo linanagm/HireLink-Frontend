@@ -46,8 +46,6 @@ export default function AdminLogin() {
 		try {
 			const res = await login(formValues);
 
-			console.log("res: ", res);
-
 			if (!res?.ok) {
 				setApiError(res?.message || "Admin login failed.");
 				return;
@@ -65,8 +63,6 @@ export default function AdminLogin() {
 			// Fetch full user info including role
 			const me = await getUser();
 
-			//console.log("me :", me);
-
 			if (!me?.ok) {
 				setApiError(me?.message || "Could not load admin profile.");
 				return;
@@ -75,11 +71,9 @@ export default function AdminLogin() {
 			// Save full user info
 			await saveLogin(token, rememberMeChecked);
 
-			//console.log("admin me:", me.data);
 			setUser(me.data);
 			navigateAdmin(me.data);
 		} catch (err) {
-			console.log("admin login error:", err);
 			setApiError("Something went wrong. Try again.");
 		} finally {
 			setIsLoading(false);
@@ -91,7 +85,6 @@ export default function AdminLogin() {
 		validationSchema: LoginSchema,
 		onSubmit: handleAdminLogin,
 	});
-	console.log("formik : ", formik);
 
 	return (
 		<>

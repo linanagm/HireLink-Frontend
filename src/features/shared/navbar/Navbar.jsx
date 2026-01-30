@@ -11,7 +11,6 @@ import {
 } from "../../../utils/Helpers/user.js";
 import { AuthButtons } from "./components/AuthButtons.jsx";
 import { Brand } from "./components/Brand.jsx";
-import { NotificationsMenu } from "./components/NotificationMenu.jsx";
 import { ProfileMenu } from "./components/ProfileMenu.jsx";
 import { SearchBar } from "./components/SearchBar.jsx";
 import { Tabs } from "./components/Tabs.jsx";
@@ -27,6 +26,7 @@ export default function NavbarComponent() {
 	const toggleMenu = useCallback((menuName) => {
 		setOpenMenu((prev) => (prev === menuName ? null : menuName));
 	}, []);
+	//const [open, setOpen] = useState(false);
 
 	const tabs = useMemo(() => {
 		if (!token) return publicTabs;
@@ -80,11 +80,11 @@ export default function NavbarComponent() {
 					<AuthButtons />
 				) : (
 					<ul className="flex gap-7 items-center">
-						<NotificationsMenu
+						{/* <NotificationsMenu
 							open={openMenu === "notify"}
 							onToggle={() => toggleMenu("notify")}
 							onClose={closeMenus}
-						/>
+						/> */}
 
 						<ProfileMenu
 							open={openMenu === "profile"}

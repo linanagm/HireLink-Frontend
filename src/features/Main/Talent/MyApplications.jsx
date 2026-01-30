@@ -22,7 +22,6 @@ export default function MyApplications() {
 	});
 
 	const applications = data?.data ?? [];
-	console.log("data: \n", applications);
 
 	const statusOptions = [
 		"PENDING",

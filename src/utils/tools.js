@@ -10,13 +10,6 @@ export function splitName(fullName) {
 			lastName: "",
 		};
 	}
-	console.log(
-		"first name -> ",
-		parts[0],
-		"\n",
-		"Last name -> ",
-		parts.slice(1).join(" "),
-	);
 
 	return {
 		firstName: parts[0],

@@ -30,9 +30,6 @@ export function useUploadAvatar({
 		mutationFn: async (file) => {
 			const formData = new FormData();
 			formData.append(fieldName, file);
-			console.log("Uploading avatar...");
-			console.log("FormData has avatar?", formData.has(fieldName));
-			console.log("FieldName:", fieldName);
 
 			return uploadFn(formData);
 		},

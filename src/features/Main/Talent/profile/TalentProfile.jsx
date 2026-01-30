@@ -346,12 +346,9 @@ export default function TalentProfilePage() {
 				<section className="bg-white border border-slate-200 rounded-2xl p-6 mb-4">
 					<div className="flex items-center justify-between">
 						<h3 className="text-lg font-bold">Skills</h3>
-						<button
-							type="button"
-							className="p-2 rounded-xl hover:bg-slate-50 border"
-						>
+						<div className="p-2 rounded-xl hover:bg-slate-50 border">
 							<PencilIcon onClick={() => setEditMode("skills")} />
-						</button>
+						</div>
 					</div>
 					<div className="mt-4 flex flex-wrap gap-2">
 						{(profile?.skills || []).map((s) => (
@@ -364,12 +361,9 @@ export default function TalentProfilePage() {
 				<section className="bg-white border border-slate-200 rounded-2xl p-6 mb-4">
 					<div className="flex items-center justify-between">
 						<h3 className="text-lg font-bold">Languages</h3>
-						<button
-							type="button"
-							className="p-2 rounded-xl hover:bg-slate-50 border"
-						>
+						<div className="p-2 rounded-xl hover:bg-slate-50 border">
 							<PencilIcon onClick={() => setEditMode("languages")} />
-						</button>
+						</div>
 					</div>
 					<div className="mt-4 flex flex-wrap gap-2">
 						{(profile?.languages || []).map((l) => (

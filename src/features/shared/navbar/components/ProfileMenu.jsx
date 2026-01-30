@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 /**
@@ -21,12 +22,24 @@ export function ProfileMenu({
 	profilePath,
 	settingsPath,
 }) {
+	const [loggingOut, setLoggingOut] = useState(false);
+	const handleLogout = async () => {
+		if (loggingOut) return;
+		setLoggingOut(true);
+
+		try {
+			await onLogout(); // مهم: onLogout تكون async
+		} finally {
+			// في العادة الصفحة هتتغير، بس ده أمان زيادة
+			setLoggingOut(false);
+		}
+	};
 	return (
 		<li className="relative">
 			<button
 				type="button"
 				onClick={onToggle}
-				className="rounded-full focus:outline-none focus:ring-4 focus:ring-gray-300"
+				className="rounded-full focus:outline-none focus:ring-4 focus:ring-gray-300 border border-fuchsia-800"
 				aria-label="User profile"
 			>
 				{/* PROFILE AVATAR */}
@@ -40,10 +53,10 @@ export function ProfileMenu({
 			{open && (
 				<div className="absolute right-0 mt-2 w-72 bg-white shadow-lg rounded-xl border z-50">
 					{/* HEADER */}
-					<div className="p-3 flex items-center gap-2 bg-gray-100 rounded-t-xl">
+					<div className="p-3 flex items-center gap-2 bg-gray-100 rounded-t-xl  ">
 						{/* PROFILE AVATAR */}
 						<img
-							className="w-10 h-10 rounded-full"
+							className="w-10 h-10 rounded-full border border-fuchsia-800"
 							src={avatar}
 							alt="Profile avatar"
 						/>
@@ -79,7 +92,7 @@ export function ProfileMenu({
 							</Link>
 						</li>
 
-						<li>
+						{/* <li>
 							<button
 								type="button"
 								onClick={onLogout}
@@ -87,6 +100,27 @@ export function ProfileMenu({
 							>
 								<i className="fa-solid fa-arrow-right-from-bracket mr-2"></i>
 								Sign out
+							</button>
+						</li> */}
+
+						<li>
+							<button
+								type="button"
+								onClick={handleLogout}
+								disabled={loggingOut}
+								className="flex items-center w-full p-2 text-red-600 hover:bg-gray-100 focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed"
+							>
+								{loggingOut ? (
+									<>
+										<i className="fa-solid fa-spinner fa-spin mr-2"></i>
+										Signing out...
+									</>
+								) : (
+									<>
+										<i className="fa-solid fa-arrow-right-from-bracket mr-2"></i>
+										Sign out
+									</>
+								)}
 							</button>
 						</li>
 					</ul>
