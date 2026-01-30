@@ -102,7 +102,7 @@ axiosClient.interceptors.response.use(
 				});
 
 				const newAccessToken = res?.data?.data?.token;
-
+				console.log(newAccessToken);
 				if (!newAccessToken) {
 					throw new Error("Refresh succeeded but token missing in response");
 				}

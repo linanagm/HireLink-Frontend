@@ -91,7 +91,7 @@ export default function AppRoutes() {
 			path: "/",
 			element: <MainLayout />,
 			children: [
-				{ index: true, element: <Home /> },
+				// { index: true, element: <Home /> },
 				{ path: "about", element: <About /> },
 				{ path: "contact", element: <Contact /> },
 			],
@@ -102,6 +102,10 @@ export default function AppRoutes() {
 			path: "",
 			element: <GuestRoutes />,
 			children: [
+				{
+					element: <MainLayout />,
+					children: [{ index: true, element: <Home /> }],
+				},
 				{
 					element: <AuthLayout />,
 					children: [

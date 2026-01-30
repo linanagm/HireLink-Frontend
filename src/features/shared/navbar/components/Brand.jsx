@@ -5,10 +5,10 @@ import logo from "../../../../assets/images/HL.svg";
  * Component for displaying the HireLink logo in the navbar.
  * @return {JSX.Element} - The component containing the HireLink logo.
  */
-export function Brand() {
+export function Brand({ homePaths }) {
 	return (
 		<NavLink
-			to="/"
+			to={homePaths}
 			className="flex items-center space-x-2"
 			aria-label="HireLink Home"
 		>

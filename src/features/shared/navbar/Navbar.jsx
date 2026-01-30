@@ -2,6 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import defaultProfileImage from "../../../assets/images/profile-image.png";
+import { ROLE_HOME } from "../../../constants/roleHomePaths.js";
 import { useAuth } from "../../../hooks/useAuth.jsx";
 import { buildAvatarUrl } from "../../../utils/Helpers/avatar.js";
 import {
@@ -27,8 +28,8 @@ export default function NavbarComponent() {
 	const toggleMenu = useCallback((menuName) => {
 		setOpenMenu((prev) => (prev === menuName ? null : menuName));
 	}, []);
-	//const [open, setOpen] = useState(false);
-
+	const homePath = ROLE_HOME[currentUser?.role] || "/";
+	console.log("current ", currentUser);
 	const tabs = useMemo(() => {
 		if (!token) return publicTabs;
 		return roleTabs[currentUser?.role] || [];
@@ -59,6 +60,7 @@ export default function NavbarComponent() {
 		currentUser?.employerProfile?.logoPublicId,
 	]);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <>
 	const handleLogout = useCallback(async () => {
 		await logout();
 		qc.clear();
@@ -70,7 +72,7 @@ export default function NavbarComponent() {
 		<nav className="fixed top-0 left-0 right-0 z-50 flex flex-wrap w-full h-20 max-w-screen-2xl bg-neutral-100 hover:bg-neutral-50 z-200 border-b border-default mx-auto p-4 pb-7 justify-between items-center">
 			{/* LEFT SECTION */}
 			<div className="flex items-center gap-7 w-1/2">
-				<Brand />
+				<Brand homePaths={homePath} />
 				<Tabs tabs={tabs} />
 			</div>
 
