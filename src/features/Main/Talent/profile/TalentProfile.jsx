@@ -93,17 +93,59 @@ export default function TalentProfilePage() {
 		onError: (e) => toast.error(e?.message || "Operation failed"),
 	});
 
+	// const deleteCertM = useMutation({
+	// 	mutationFn: (certificateId) => removeTalentCertificaties({ certificateId }),
+	// 	onSuccess: async (res) => {
+	// 		//if (res?.ok === false) throw new Error(res?.message);
+	// 		//await qc.invalidateQueries({ queryKey: queryKeys.talentProfile });
+	// 		setQueryData((prev) => {
+	// 			return {
+	// 				...prev,
+	// 				data: {
+	// 					...prev.data,
+	// 					talentProfile: {
+	// 						...prev.data.talentProfile,
+	// 						certificates: prev.data.talentProfile.certificates.filter(
+	// 							(cert) => cert.id !== certificateId
+	// 						),
+	// 					},
+	// 				},
+	// 			};
+	// 		})
+	// 		toast.success("Certificate deleted");
+	// 	},
+	// 	onError: (e) => toast.error(e?.message || "Delete failed"),
+	// });
+
+	// edit cert
+
 	const deleteCertM = useMutation({
 		mutationFn: (certificateId) => removeTalentCertificaties({ certificateId }),
-		onSuccess: async (res) => {
-			if (res?.ok === false) throw new Error(res?.message);
-			await qc.invalidateQueries({ queryKey: queryKeys.talentProfile });
+		onSuccess: (res, certificateId) => {
+			if (res?.ok === false) throw new Error(res?.message || "Delete failed");
+
+			qc.setQueryData(queryKeys.talentProfile, (prev) => {
+				if (!prev?.data?.talentProfile) return prev;
+
+				return {
+					...prev,
+					data: {
+						...prev.data,
+						talentProfile: {
+							...prev.data.talentProfile,
+							certificates: (prev.data.talentProfile.certificates || []).filter(
+								(cert) => cert.certificateId !== certificateId,
+							),
+						},
+					},
+				};
+			});
+
 			toast.success("Certificate deleted");
 		},
 		onError: (e) => toast.error(e?.message || "Delete failed"),
 	});
 
-	// edit cert
 	useEffect(() => {
 		if (!editingCert) {
 			setCertDraft({
