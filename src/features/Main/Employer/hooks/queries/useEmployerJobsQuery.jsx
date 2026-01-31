@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "../../../../../hooks/useAuth";
 import { queryKeys } from "../../../../../lib/queryKeys";
 import {
 	getEmployerJob,
@@ -15,8 +16,14 @@ function toError(res, fallback) {
 	return new Error(res?.message || res?.error || fallback);
 }
 export function useEmployerJobsQuery() {
+	const { isAuthReady, isAuthenticated, currentUser } = useAuth();
+	const isEmployer = currentUser?.role === "EMPLOYER";
+
+	console.log("current", currentUser);
+
 	return useQuery({
 		queryKey: [queryKeys.employerJobs],
+		enabled: Boolean(isAuthReady && isAuthenticated && isEmployer),
 
 		queryFn: async () => {
 			const res = await listEmployerJobs();
