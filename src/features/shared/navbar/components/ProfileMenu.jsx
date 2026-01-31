@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 /**
@@ -23,22 +23,52 @@ export function ProfileMenu({
 	settingsPath,
 }) {
 	const [loggingOut, setLoggingOut] = useState(false);
+	const MENU_NAME = "profile";
+	const rootRef = useRef(null);
+
+	useEffect(() => {
+		function handleClickOutside(e) {
+			if (!open) return;
+
+			if (rootRef.current && !rootRef.current.contains(e.target)) {
+				onToggle(null); // ← القفل الرسمي
+			}
+		}
+
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => document.removeEventListener("mousedown", handleClickOutside);
+	}, [open, onToggle]);
+
+	//  close on click outside
+	useEffect(() => {
+		function handleClickOutside(event) {
+			if (!open) return;
+			if (rootRef.current && !rootRef.current.contains(event.target)) {
+				onToggle(null);
+			}
+		}
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, [open, onToggle]);
 	const handleLogout = async () => {
 		if (loggingOut) return;
 		setLoggingOut(true);
 
 		try {
 			await onLogout(); // مهم: onLogout تكون async
+			onToggle(null);
 		} finally {
-			// في العادة الصفحة هتتغير، بس ده أمان زيادة
 			setLoggingOut(false);
 		}
 	};
+
 	return (
-		<li className="relative">
+		<li className="relative" ref={rootRef}>
 			<button
 				type="button"
-				onClick={onToggle}
+				onClick={() => onToggle(MENU_NAME)}
 				className="rounded-full focus:outline-none focus:ring-4 focus:ring-gray-300 border border-fuchsia-800"
 				aria-label="User profile"
 			>
@@ -75,6 +105,8 @@ export function ProfileMenu({
 						<li>
 							<Link
 								to={profilePath}
+								//onClick={closeMenu}
+								onClick={() => onToggle(null)}
 								className="flex items-center p-2 text-gray-600 hover:bg-slate-100 hover:text-gray-900"
 							>
 								<i className="fa-regular fa-user mr-2"></i>
@@ -85,23 +117,14 @@ export function ProfileMenu({
 						<li>
 							<Link
 								to={settingsPath}
+								//onClick={closeMenu}
+								onClick={() => onToggle(null)}
 								className="flex items-center p-2 text-gray-600 hover:bg-slate-100 hover:text-gray-900"
 							>
 								<i className="fa-solid fa-gear mr-2"></i>
 								Settings & Privacy
 							</Link>
 						</li>
-
-						{/* <li>
-							<button
-								type="button"
-								onClick={onLogout}
-								className="flex items-center w-full p-2 text-red-600 hover:bg-gray-100 focus:outline-none"
-							>
-								<i className="fa-solid fa-arrow-right-from-bracket mr-2"></i>
-								Sign out
-							</button>
-						</li> */}
 
 						<li>
 							<button

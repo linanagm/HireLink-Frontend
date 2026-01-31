@@ -28,6 +28,7 @@ export default function NavbarComponent() {
 	const toggleMenu = useCallback((menuName) => {
 		setOpenMenu((prev) => (prev === menuName ? null : menuName));
 	}, []);
+
 	const homePath = ROLE_HOME[currentUser?.role] || "/";
 	console.log("current ", currentUser);
 	const tabs = useMemo(() => {

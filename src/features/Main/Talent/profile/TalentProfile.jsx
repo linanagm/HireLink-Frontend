@@ -81,7 +81,7 @@ export default function TalentProfilePage() {
 	});
 
 	const qc = useQueryClient();
-	// cert mutation
+	// upsert cert mutation
 	const upsertCertM = useMutation({
 		mutationFn: upSertTalentCertificaties,
 		onSuccess: async (res) => {
@@ -93,32 +93,7 @@ export default function TalentProfilePage() {
 		onError: (e) => toast.error(e?.message || "Operation failed"),
 	});
 
-	// const deleteCertM = useMutation({
-	// 	mutationFn: (certificateId) => removeTalentCertificaties({ certificateId }),
-	// 	onSuccess: async (res) => {
-	// 		//if (res?.ok === false) throw new Error(res?.message);
-	// 		//await qc.invalidateQueries({ queryKey: queryKeys.talentProfile });
-	// 		setQueryData((prev) => {
-	// 			return {
-	// 				...prev,
-	// 				data: {
-	// 					...prev.data,
-	// 					talentProfile: {
-	// 						...prev.data.talentProfile,
-	// 						certificates: prev.data.talentProfile.certificates.filter(
-	// 							(cert) => cert.id !== certificateId
-	// 						),
-	// 					},
-	// 				},
-	// 			};
-	// 		})
-	// 		toast.success("Certificate deleted");
-	// 	},
-	// 	onError: (e) => toast.error(e?.message || "Delete failed"),
-	// });
-
-	// edit cert
-
+	// delete cert
 	const deleteCertM = useMutation({
 		mutationFn: (certificateId) => removeTalentCertificaties({ certificateId }),
 		onSuccess: (res, certificateId) => {
