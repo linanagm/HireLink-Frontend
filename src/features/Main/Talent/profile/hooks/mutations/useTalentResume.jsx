@@ -10,6 +10,14 @@ export function useTalentResumeQuery() {
 	return useQuery({
 		queryKey: queryKeys.talentResume,
 		queryFn: getTalentResume,
+		// performance
+		staleTime: 5 * 60 * 1000,
+		gcTime: 30 * 60 * 1000,
+		refetchOnWindowFocus: false,
+		refetchOnReconnect: false,
+		refetchOnMount: false,
+		retry: false,
+		placeholderData: (prev) => prev,
 	});
 }
 
