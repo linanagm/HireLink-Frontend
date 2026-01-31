@@ -41,47 +41,6 @@ export default function AdminLogin() {
 		}
 	};
 
-	// const handleAdminLogin = async (formValues) => {
-	// 	setIsLoading(true);
-	// 	setApiError("");
-
-	// 	try {
-	// 		const res = await login(formValues);
-
-	// 		if (!res?.ok) {
-	// 			setApiError(res?.message || "Admin login failed.");
-	// 			return;
-	// 		}
-
-	// 		const token = res?.data?.token;
-	// 		if (!token) {
-	// 			setApiError("Unexpected response (missing token).");
-	// 			return;
-	// 		}
-
-	// 		// Save token first
-	// 		await saveLogin(token, rememberMeChecked);
-
-	// 		// Fetch full user info including role
-	// 		const me = await getUser();
-
-	// 		if (!me?.ok) {
-	// 			setApiError(me?.message || "Could not load admin profile.");
-	// 			return;
-	// 		}
-
-	// 		// Save full user info
-	// 		await saveLogin(token, rememberMeChecked);
-
-	// 		setUser(me.data);
-	// 		navigateAdmin(me.data);
-	// 	} catch (err) {
-	// 		setApiError("Something went wrong. Try again.");
-	// 	} finally {
-	// 		setIsLoading(false);
-	// 	}
-	// };
-
 	const handleAdminLogin = async (formValues) => {
 		setIsLoading(true);
 		setApiError("");
