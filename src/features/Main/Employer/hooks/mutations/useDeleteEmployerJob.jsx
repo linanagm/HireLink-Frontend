@@ -117,10 +117,39 @@ export function useCreateEmployerJobMutation() {
 }
 
 export function useUpdateEmployerJobMutation(jobId) {
+	const qc = useQueryClient();
 	return useMutation({
 		mutationFn: async (payload) => {
 			const res = await updateEmployerJob(jobId, payload);
 			return res?.data?.data ?? res?.data;
+		},
+		onSuccess: () => {
+			// 1) Update jobs list cache (fast UI, no refetch)
+			qc.setQueryData(queryKeys.employerJobs, (old) => {
+				if (!old) return old;
+
+				const patch = (arr) =>
+					arr.map((j) => (j?.id === jobId ? { ...j, ...updatedJob } : j));
+
+				// flexable if data shape changes
+				if (Array.isArray(old)) return patch(old);
+				if (Array.isArray(old?.data)) return { ...old, data: patch(old.data) };
+				if (Array.isArray(old?.data?.jobs))
+					return { ...old, data: { ...old.data, jobs: patch(old.data.jobs) } };
+
+				return old;
+			});
+
+			// 2) Update single job cache if you have it (only if exists)
+			qc.setQueryData(queryKeys.employerJob, (old) =>
+				old ? { ...old, ...updatedJob } : old,
+			);
+		},
+
+		// 3) Optional: one smart refetch to guarantee server truth (keep it minimal)
+		onSettled: () => {
+			qc.invalidateQueries({ queryKey: queryKeys.employerJobs });
+			qc.invalidateQueries({ queryKey: queryKeys.employerJob });
 		},
 	});
 }
