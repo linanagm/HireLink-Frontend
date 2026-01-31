@@ -7,24 +7,25 @@ import {
 	setAccessToken,
 } from "../lib/tokenStore";
 
+const baseURL = import.meta.env.VITE_API_URL;
+
 // Create a single axios client for the whole app
 // - baseURL comes from env
 // - withCredentials: is required to send refresh token cookies
 const axiosClient = axios.create({
-	baseURL: import.meta.env.VITE_API_URL,
+	baseURL: baseURL,
 	withCredentials: true,
-	//headers: { "Content-Type": "application/json" },
 	headers: {},
 });
 
+// Refreshclient
 const refreshClient = axios.create({
 	baseURL: import.meta.env.VITE_API_URL,
 	withCredentials: true,
 });
 
-
-const res = await refreshClient.get(PATHS.auth.refresh);
-
+// Request Interceptor:
+// Add Authorization header to requests
 
 axiosClient.interceptors.request.use(
 	(config) => {
@@ -36,7 +37,8 @@ axiosClient.interceptors.request.use(
 			"token",
 			!!token,
 		);
-
+		// Ensure headers object eists
+		config.headers = config.headers || {};
 		if (token) config.headers.Authorization = `Bearer ${token}`;
 		else delete config.headers.Authorization;
 
@@ -46,8 +48,9 @@ axiosClient.interceptors.request.use(
 			// for file upload
 			delete config.headers["Content-Type"];
 		} else {
-			// for json
-			config.headers["Content-Type"] = "application/json";
+			if (!config.headers["Content-Type"]) {
+				config.headers["Content-Type"] = "application/json";
+			}
 		}
 
 		return config;
@@ -55,6 +58,7 @@ axiosClient.interceptors.request.use(
 	(error) => Promise.reject(error),
 );
 
+//Rferesh  queue logic
 // Flag to prevent multiple refresh calls at the same time
 let isRefreshing = false;
 
@@ -75,19 +79,25 @@ const processQueue = (error, token = null) => {
 axiosClient.interceptors.response.use(
 	(response) => response,
 	async (error) => {
-		const originalRequest = error.config;
 		const status = error?.response?.status;
+		const originalRequest = error.config;
 
 		// Network errors (no response from server)
 		// Let the caller handle them
-		if (!status) return Promise.reject(error);
+		if (!status || !originalRequest) return Promise.reject(error);
 
 		// Prevent infinite loop:
 		// Do not try to refresh if the failed request is already /auth/refresh
-		const isRefreshCall = originalRequest?.url?.includes(PATHS.auth.refresh);
+		const isRefreshCall =
+			typeof originalRequest.url === "string" &&
+			originalRequest.url.includes(PATHS.auth.refresh);
 
 		// handle expired access token
 		if (status === 401 && !originalRequest._retry && !isRefreshCall) {
+			// Ensure headers object exists for retry
+
+			originalRequest.headers = originalRequest.headers || {};
+
 			// check if refresh is in progress
 			if (isRefreshing) {
 				// If a refresh request is already is running,
@@ -95,8 +105,8 @@ axiosClient.interceptors.response.use(
 				return new Promise((resolve, reject) => {
 					failedQueue.push({ resolve, reject });
 					//
-				}).then((token) => {
-					originalRequest.headers.Authorization = `Bearer ${token}`;
+				}).then((newToken) => {
+					originalRequest.headers.Authorization = `Bearer ${newToken}`;
 					return axiosClient(originalRequest);
 				});
 			}
@@ -107,18 +117,19 @@ axiosClient.interceptors.response.use(
 
 			try {
 				// Refresh should be cookie-based only (no Authorization header)
-				const res = await axiosClient.get(PATHS.auth.refresh, {
-					headers: { Authorization: "" },
-				});
+				// const res = await axiosClient.get(PATHS.auth.refresh, {
+				// 	headers: { Authorization: "" },
+				// });
+				const refreshRes = await refreshClient.get(PATHS.auth.refresh);
+				const newAccessToken = refreshRes?.data?.data?.token;
 
-				const newAccessToken = res?.data?.data?.token;
+				//				const newAccessToken = res?.data?.data?.token;
 				console.log(newAccessToken);
 				if (!newAccessToken) {
 					throw new Error("Refresh succeeded but token missing in response");
 				}
 
 				setAccessToken(newAccessToken);
-
 				processQueue(null, newAccessToken);
 
 				originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;

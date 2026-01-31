@@ -7,7 +7,7 @@ export const verifyEmail = (verificationToken) =>
 	api("post", PATHS.auth.verify, { verificationToken });
 
 export const login = ({ email, password }) =>
-	api("post", PATHS.auth.login, { email, password });
+	api("post", PATHS.auth.login, { email, password }, { timeout: 15000 });
 
 export const getRefreshToken = () => api("get", PATHS.auth.refresh);
 
