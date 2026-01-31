@@ -21,7 +21,7 @@ export default function useJobs({ queryParams }) {
 	return useQuery({
 		queryKey: [...queryKeys.jobsByMode(mode), { limit, skip, q }],
 		queryFn: () => getJobs(params),
-		staleTime: 60 * 1000,
+		staleTime: 5 * 60 * 1000,
 		keepPreviousData: true,
 		// avoid refetching just because tab refocused
 		refetchOnWindowFocus: false,

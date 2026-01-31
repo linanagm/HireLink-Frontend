@@ -30,36 +30,6 @@ export default function JobDetails() {
 		error: jobError,
 	} = useTalentJobQuery(jobId);
 
-	// const {
-	// 	data: appsRes,
-	// 	isLoading: appsLoading,
-	// 	isError: appsIsError,
-	// 	error: appsError,
-	// 	isFetching: appsFetching,
-	// } = useQuery({
-	// 	queryKey: queryKeys.MyApplications, // key واضح
-	// 	queryFn: () => getMyApplications(),
-	// 	enabled: !!jobId,
-
-	// 	staleTime: 10 * 1000,
-
-	// 	//
-	// 	refetchInterval: (data) => {
-	// 		const apps = data?.data ?? data;
-	// 		if (!apps) return 15_000;
-	// 		if (!Array.isArray(apps)) return 15_000; // ✅ حماية
-
-	// 		const hasPending = apps.some((a) => a.status === "PENDING");
-	// 		return hasPending ? 15_000 : false;
-	// 	},
-
-	// 	refetchIntervalInBackground: false, // مهم
-
-	// 	refetchOnWindowFocus: false,
-
-	// 	placeholderData: (prev) => prev,
-	// });
-
 	// Job extraction
 
 	const {

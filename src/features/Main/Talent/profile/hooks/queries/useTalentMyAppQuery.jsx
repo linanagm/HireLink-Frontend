@@ -1,27 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "../../../../../../hooks/useAuth";
 import { queryKeys } from "../../../../../../lib/queryKeys";
 import { getMyApplications } from "../../../../../../services/talent.service";
-export const useTalentMyAppQuery = (jobId) =>
-	useQuery({
-		queryKey: queryKeys.MyApplications, // key واضح
-		queryFn: () => getMyApplications(),
-		enabled: !!jobId,
+export function useTalentMyAppQuery(jobId) {
+	const { currentUser, isAuthReady, isAuthenticated } = useAuth();
+	const isTalent = currentUser?.role === "TALENT";
+	return useQuery({
+		queryKey: queryKeys.MyApplications,
+		queryFn: ({ signal }) => getMyApplications({ signal }),
+
+		enabled: Boolean(isAuthReady && isAuthenticated && isTalent),
 
 		staleTime: 5 * 10 * 1000,
 
-		//
-		refetchInterval: (data) => {
-			const apps = data?.data ?? data;
-			if (!apps) return 15_000;
-			if (!Array.isArray(apps)) return 15_000; // ✅ حماية
-
-			const hasPending = apps.some((a) => a.status === "PENDING");
-			return hasPending ? 15_000 : false;
-		},
-
-		refetchIntervalInBackground: false, // مهم
+		gcTime: 30 * 60 * 1000,
+		refetchOnMount: false,
+		refetchOnReconnect: false,
 
 		refetchOnWindowFocus: false,
-
+		retry: false,
 		placeholderData: (prev) => prev,
 	});
+}

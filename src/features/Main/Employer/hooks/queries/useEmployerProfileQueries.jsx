@@ -14,7 +14,7 @@ function shallowEqual(a, b) {
 export function useEmployerProfileQuery() {
 	return useQuery({
 		queryKey: [queryKeys.employerProfile],
-		queryFn: getEmployerProfile,
+		queryFn: () => getEmployerProfile(),
 		staleTime: 10 * 60 * 1000,
 		gcTime: 10 * 60 * 1000, //store in cache for 30 min
 		retry: false,

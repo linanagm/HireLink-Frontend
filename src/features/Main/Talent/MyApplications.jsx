@@ -19,7 +19,9 @@ export default function MyApplications() {
 
 	const { data, isLoading, isError, error } = useQuery({
 		queryKey: queryKeys.MyApplications,
-		queryFn: getMyApplications,
+		queryFn: () => getMyApplications(),
+		staleTime: 60 * 1000,
+		refetchOnWindowFocus: false,
 	});
 
 	const applications = data?.data ?? [];
