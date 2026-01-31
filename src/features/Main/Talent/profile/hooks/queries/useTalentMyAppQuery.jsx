@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../../../../../hooks/useAuth";
 import { queryKeys } from "../../../../../../lib/queryKeys";
 import { getMyApplications } from "../../../../../../services/talent.service";
-export function useTalentMyAppQuery(jobId) {
+export function useTalentMyAppQuery() {
 	const { currentUser, isAuthReady, isAuthenticated } = useAuth();
 	const isTalent = currentUser?.role === "TALENT";
 	return useQuery({

@@ -1,4 +1,3 @@
-// src/hooks/mutations/moderation/useSetUserActive.js
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "../../../lib/queryKeys";
 import { setModerationUserActive } from "../../../services/moderation.service";

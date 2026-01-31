@@ -12,7 +12,7 @@ export function getModerationStats(config = {}) {
 /* ===================== USERS ===================== */
 
 export function listModerationUsers(config = {}) {
-	// pagination تبقى في config.params
+
 	return api("get", PATHS.moderation.users, null, config);
 }
 

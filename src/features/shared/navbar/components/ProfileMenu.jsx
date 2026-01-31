@@ -31,7 +31,7 @@ export function ProfileMenu({
 			if (!open) return;
 
 			if (rootRef.current && !rootRef.current.contains(e.target)) {
-				onToggle(null); // ← القفل الرسمي
+				onToggle(null);
 			}
 		}
 
@@ -105,7 +105,6 @@ export function ProfileMenu({
 						<li>
 							<Link
 								to={profilePath}
-								//onClick={closeMenu}
 								onClick={() => onToggle(null)}
 								className="flex items-center p-2 text-gray-600 hover:bg-slate-100 hover:text-gray-900"
 							>
@@ -117,7 +116,6 @@ export function ProfileMenu({
 						<li>
 							<Link
 								to={settingsPath}
-								//onClick={closeMenu}
 								onClick={() => onToggle(null)}
 								className="flex items-center p-2 text-gray-600 hover:bg-slate-100 hover:text-gray-900"
 							>

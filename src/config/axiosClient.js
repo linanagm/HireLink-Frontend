@@ -17,6 +17,15 @@ const axiosClient = axios.create({
 	headers: {},
 });
 
+const refreshClient = axios.create({
+	baseURL: import.meta.env.VITE_API_URL,
+	withCredentials: true,
+});
+
+
+const res = await refreshClient.get(PATHS.auth.refresh);
+
+
 axiosClient.interceptors.request.use(
 	(config) => {
 		const token = getAccessToken();
@@ -29,6 +38,7 @@ axiosClient.interceptors.request.use(
 		);
 
 		if (token) config.headers.Authorization = `Bearer ${token}`;
+		else delete config.headers.Authorization;
 
 		const isFormData = config.data instanceof FormData;
 

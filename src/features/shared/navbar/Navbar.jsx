@@ -30,7 +30,7 @@ export default function NavbarComponent() {
 	}, []);
 
 	const homePath = ROLE_HOME[currentUser?.role] || "/";
-	console.log("current ", currentUser);
+
 	const tabs = useMemo(() => {
 		if (!token) return publicTabs;
 		return roleTabs[currentUser?.role] || [];

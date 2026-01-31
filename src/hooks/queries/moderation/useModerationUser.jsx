@@ -4,7 +4,6 @@ import { queryKeys } from "../../../lib/queryKeys";
 import { listModerationUsers } from "../../../services/moderation.service";
 
 export function useModerationUsers({ limit = 20, skip = 0 } = {}) {
-	//	const params = { limit, skip };
 	const params = useMemo(() => ({ limit, skip }), [limit, skip]);
 
 	return useQuery({
