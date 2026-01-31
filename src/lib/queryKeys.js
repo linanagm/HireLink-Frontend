@@ -15,6 +15,7 @@ export const queryKeys = {
 	jobsByMode: (mode) => ["jobs", mode], // recent | best
 	jobDetails: (jobId) => ["job", jobId],
 
+
 	//will delete
 	// APPLICATIONS
 	applications: ["applications"],

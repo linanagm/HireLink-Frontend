@@ -38,7 +38,6 @@ export default function JobDetails() {
 		staleTime: 60 * 1000,
 	});
 
-	// 2) My applications query (polling to reflect status updates)
 	const {
 		data: appsRes,
 		isLoading: appsLoading,
@@ -46,12 +45,26 @@ export default function JobDetails() {
 		error: appsError,
 		isFetching: appsFetching,
 	} = useQuery({
-		queryKey: ["my-applications"],
+		queryKey: ["my-applications", jobId], // key واضح
 		queryFn: () => getMyApplications(),
-		staleTime: 10 * 1000,
-		refetchInterval: 15_000,
-		refetchOnWindowFocus: true,
 		enabled: !!jobId,
+
+		staleTime: 10 * 1000,
+
+		//
+		refetchInterval: (data) => {
+			const apps = data?.data;
+			if (!apps) return 15_000;
+
+			const hasPending = apps.some((a) => a.status === "PENDING");
+			return hasPending ? 15_000 : false;
+		},
+
+		refetchIntervalInBackground: false, // مهم
+
+		refetchOnWindowFocus: false,
+
+		placeholderData: (prev) => prev,
 	});
 
 	// Job extraction
