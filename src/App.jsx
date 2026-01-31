@@ -27,11 +27,27 @@ function App() {
 			<ThemeInit />
 			<AuthProvider>
 				<Toaster
-					position="top-right"
+					position="top-center"
 					toastOptions={{
-						duration: 3000,
+						success: {
+							style: {
+								background: "#16a34a",
+								color: "#fff",
+								fontSize: "16px",
+							},
+						},
+
+						error: {
+							style: {
+								background: "#dc2626",
+								color: "#fff",
+								fontSize: "16px",
+							},
+						},
+						duration: 5000,
 					}}
 				/>
+
 				<AppRoutes />
 			</AuthProvider>
 			<ReactQueryDevtools initialIsOpen={false} />

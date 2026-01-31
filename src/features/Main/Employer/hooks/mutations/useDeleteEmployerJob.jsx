@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import { queryKeys } from "../../../../../lib/queryKeys";
 import {
 	createEmployerJob,
@@ -169,6 +170,91 @@ export function useDeleteEmployerJob() {
 				queryKey: [queryKeys.employerDashboardAggregated],
 			});
 			qc.invalidateQueries({ queryKey: [queryKeys.employerJobs] });
+			toast.success("Job deleted");
 		},
 	});
 }
+
+// export function useDeleteEmployerJob() {
+// 	const qc = useQueryClient();
+
+// 	return useMutation({
+// 		mutationFn: async (jobId) => {
+// 			const res = await deleteEmployerJob(jobId);
+// 			if (!res.ok)
+// 				throw res.error || new Error(res.message || "Failed to delete job");
+// 			return { jobId };
+// 		},
+
+// 		onSuccess: ({ jobId }) => {
+// 			// 1) Update jobs list cache immediately (fast UI)
+// 			qc.setQueryData(queryKeys.employerJobs, (old) => {
+// 				if (!old) return old;
+
+// 				const remove = (arr) => arr.filter((j) => j?.id !== jobId);
+
+// 				if (Array.isArray(old)) return remove(old);
+// 				if (Array.isArray(old?.data)) return { ...old, data: remove(old.data) };
+// 				if (Array.isArray(old?.data?.jobs))
+// 					return {
+// 						...old,
+// 						data: { ...old.data, jobs: remove(old.data.jobs) },
+// 					};
+
+// 				return old;
+// 			});
+
+// 			// 2) One smart invalidate for aggregated stats only
+// 			qc.invalidateQueries({
+// 				queryKey: queryKeys.employerDashboardAggregated,
+// 			});
+// 		},
+// 	});
+// }
+
+// export function useDeleteEmployerJob() {
+// 	const qc = useQueryClient();
+
+// 	return useMutation({
+// 		mutationFn: async (jobId) => {
+// 			const res = await deleteEmployerJob(jobId);
+// 			if (!res.ok)
+// 				throw res.error || new Error(res.message || "Failed to delete job");
+// 			return { jobId };
+// 		},
+
+// 		onMutate: async (jobId) => {
+// 			// وقف أي refetch شغال عشان ميعملش overwrite
+// 			await qc.cancelQueries({ queryKey: queryKeys.employerJobs });
+
+// 			const prev = qc.getQueryData(queryKeys.employerJobs);
+
+// 			// شيلها فورًا من الكاش
+// 			qc.setQueryData(queryKeys.employerJobs, (old) => {
+// 				if (!old) return old;
+
+// 				const remove = (arr) => arr.filter((j) => j?.id !== jobId);
+
+// 				if (Array.isArray(old)) return remove(old);
+// 				if (Array.isArray(old?.data)) return { ...old, data: remove(old.data) };
+// 				if (Array.isArray(old?.data?.jobs))
+// 					return { ...old, data: { ...old.data, jobs: remove(old.data.jobs) } };
+
+// 				return old; // شكل غير معروف
+// 			});
+
+// 			return { prev };
+// 		},
+
+// 		onError: (_err, _jobId, ctx) => {
+// 			// رجّعي الحالة القديمة لو الحذف فشل
+// 			if (ctx?.prev) qc.setQueryData(queryKeys.employerJobs, ctx.prev);
+// 		},
+
+// 		onSettled: () => {
+// 			// تحديث خفيف للـ stats + تأكيد القائمة لو فيه pagination/filters
+// 			qc.invalidateQueries({ queryKey: queryKeys.employerDashboardAggregated });
+// 			qc.invalidateQueries({ queryKey: queryKeys.employerJobs });
+// 		},
+// 	});
+// }

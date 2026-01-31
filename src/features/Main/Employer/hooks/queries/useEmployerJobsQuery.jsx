@@ -34,7 +34,7 @@ export function useEmployerJobsQuery() {
 		staleTime: 60 * 1000,
 		retry: 1,
 		refetchOnWindowFocus: false,
-		placeholderData: (prev) => prev ?? [], //prevents UI flicker
+		placeholderData: (prev) => prev,
 	});
 }
 
