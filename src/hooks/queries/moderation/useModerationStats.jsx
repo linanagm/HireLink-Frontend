@@ -3,7 +3,7 @@ import { queryKeys } from "../../../lib/queryKeys";
 import { getModerationStats } from "../../../services/moderation.service";
 
 const normalizeStats = (res) => {
-	const raw = res?.data ?? res; // حسب wrapper بتاعك
+	const raw = res?.data ?? res;
 	const s = raw?.data ?? raw;
 
 	const pick = (v) =>
@@ -26,6 +26,12 @@ export function useModerationStats() {
 			return res.data;
 		},
 		select: normalizeStats,
-		staleTime: 30 * 1000,
+		staleTime: 2 * 30 * 1000,
+		gcTime: 15 * 60 * 1000, // cacheTime لو v4
+		refetchOnWindowFocus: false,
+		refetchOnReconnect: false,
+		refetchOnMount: false,
+		retry: 1,
+		placeholderData: (prev) => prev,
 	});
 }

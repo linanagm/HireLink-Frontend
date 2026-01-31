@@ -1,11 +1,9 @@
-// src/hooks/queries/moderation/useModerationJobs.js
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { queryKeys } from "../../../lib/queryKeys";
 import { listModerationJobs } from "../../../services/moderation.service";
 
 export function useModerationJobs({ limit = 20, skip = 0 } = {}) {
-	//const params = { limit, skip };
 	const params = useMemo(() => ({ limit, skip }), [limit, skip]);
 
 	return useQuery({
