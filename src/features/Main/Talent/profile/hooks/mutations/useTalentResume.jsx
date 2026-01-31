@@ -21,39 +21,6 @@ export function useTalentResumeQuery() {
 	});
 }
 
-// export function useUploadTalentResumeMutation() {
-// 	const qc = useQueryClient();
-// 	return useMutation({
-// 		mutationFn: uploadTalentResume,
-// 		onSuccess: () => {
-// 			qc.invalidateQueries({ queryKey: queryKeys.talentResume });
-// 			qc.invalidateQueries({ queryKey: queryKeys.talentProfile });
-// 		},
-// 	});
-// }
-// export function useUploadTalentResumeMutation() {
-// 	const qc = useQueryClient();
-
-// 	return useMutation({
-// 		mutationFn: uploadTalentResume,
-
-// 		onSuccess: async (res) => {
-// 			const nextResume = res?.data?.resumeUrl ?? res?.payload ?? null;
-
-// 			if (nextResume) {
-// 				qc.setQueryData(queryKeys.talentResume, nextResume);
-// 			} else {
-// 				await qc.invalidateQueries({ queryKey: queryKeys.talentResume });
-// 			}
-
-// 			await qc.invalidateQueries({
-// 				queryKey: queryKeys.talentProfile,
-// 				refetchType: "inactive",
-// 			});
-// 		},
-// 	});
-// }
-
 export function useUploadTalentResumeMutation() {
 	const qc = useQueryClient();
 
@@ -77,39 +44,6 @@ export function useUploadTalentResumeMutation() {
 		},
 	});
 }
-
-// export function useDeleteTalentResumeMutation() {
-// 	const qc = useQueryClient();
-
-// 	return useMutation({
-// 		mutationFn: deleteTalentResume,
-// 		onSuccess: async () => {
-// 			await Promise.all([
-// 				qc.invalidateQueries({ queryKey: queryKeys.talentResume }),
-// 				qc.invalidateQueries({ queryKey: queryKeys.talentProfile }),
-// 			]);
-// 		},
-// 	});
-// }
-
-// export function useDeleteTalentResumeMutation() {
-// 	const qc = useQueryClient();
-
-// 	return useMutation({
-// 		mutationFn: deleteTalentResume,
-
-// 		onSuccess: async () => {
-// 			// 1) Update cache immediately (no refetch needed)
-// 			qc.setQueryData(queryKeys.talentResume, null);
-
-// 			// 2) If profile depends on resume state, refresh it, but don't block UI
-// 			qc.invalidateQueries({
-// 				queryKey: queryKeys.talentProfile,
-// 				refetchType: "inactive",
-// 			});
-// 		},
-// 	});
-// }
 
 export function useDeleteTalentResumeMutation() {
 	const qc = useQueryClient();

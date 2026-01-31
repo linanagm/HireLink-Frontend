@@ -9,6 +9,7 @@ export function useTalentProfileQuery() {
 
 	return useQuery({
 		queryKey: queryKeys.talentProfile,
+
 		queryFn: async () => {
 			const res = await getTalentProfile();
 			if (!res.ok) throw new Error(res.message) || "Failed to load profile";
@@ -17,6 +18,10 @@ export function useTalentProfileQuery() {
 		enabled: Boolean(isAuthReady && isAuthenticated && isTalent),
 		retry: false,
 		refetchOnWindowFocus: false,
+		refetchOnMount: false,
+		refetchOnReconnect: false,
 		staleTime: 5 * 60 * 1000,
+		gcTime: 30 * 60 * 1000,
+		placeholderData: (prev) => prev,
 	});
 }
