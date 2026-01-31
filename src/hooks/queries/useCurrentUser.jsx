@@ -13,21 +13,27 @@ import { getUser } from "../../services/auth.service";
  * @returns {UseQueryResult} The result object of the useQuery hook.
  */
 export function useCurrentUser({ token, enabled = true, onUser, onLogout }) {
+	const isEnabled = Boolean(enabled && token); // ✅ أهم سطر: ممنوع request بدون token
+
 	return useQuery({
 		queryKey: queryKeys.currentUser,
 		queryFn: () => getUser(token),
-		enabled,
+		enabled: isEnabled,
 		retry: false,
 		refetchOnWindowFocus: false,
 		refetchOnReconnect: false,
+		refetchOnMount: false,
+		placeholderData: (prev) => prev,
+
 		staleTime: 5 * 60 * 1000,
+		gcTime: 30 * 60 * 1000,
 		onSuccess: (res) => {
-			//	onUser?.(res?.data ?? res)
 			if (res?.ok) onUser?.(res?.data);
-			else onLogout?.(); //if failed /me
+			else onLogout?.();
 		},
 		onError: () => {
-			onLogout?.();
+			const status = err?.response?.status;
+			if (status === 401 || status === 403) onLogout?.();
 		},
 	});
 }
