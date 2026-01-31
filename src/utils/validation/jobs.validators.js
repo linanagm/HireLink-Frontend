@@ -6,18 +6,20 @@ export const proposalSchema = Yup.object({
 });
 
 export const postJobSchema = Yup.object({
-	title: Yup.string().trim().min(2, "Title is too short").required("Required"),
+	title: Yup.string().trim().min(2, "Title is too short").required("Job title is required"),
 	description: Yup.string()
 		.trim()
 		.min(2, "Description is too short")
 		.required("Required"),
+	responsibilities: Yup.array().of(Yup.string().trim()),
 	location: Yup.string().trim().nullable(),
-	jobType: Yup.string().required("Required"),
+	jobType: Yup.string().required("Job type is required"),
+
 	experienceLevel: Yup.string().required("Required"),
 	salary: Yup.number()
 		.transform((v, raw) => (raw === "" ? undefined : v))
-		.integer("Must be integer")
-		.min(0, "Must be >= 0")
+		.integer("Salary must be integer")
+		.min(0, "Salary must be at least positive number")
 		.optional(),
 
 	requiredSkills: Yup.array().of(

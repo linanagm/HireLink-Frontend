@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
 import toast from "react-hot-toast";
 import { useNavigate, useParams } from "react-router-dom";
+import { getUserFriendlyError } from "../../../lib/errorMapper";
 import { mapFormikToJobPayload } from "../../../utils/Helpers/jobFormMapper";
 import { postJobSchema } from "../../../utils/validation/jobs.validators";
 import {
@@ -152,11 +153,19 @@ export default function PostJobPage() {
 
 				const msg = res?.message ?? res?.data?.message;
 
-				toast.success(msg || (isEdit ? "Job updated" : "Job created"));
+				toast.success(
+					msg ||
+						(isEdit ? "Job successfully updated" : "Job successfully created"),
+				);
 				navigate("/employer/dashboard");
 			} catch (err) {
-				const msg =
-					err?.response?.data?.message || err?.message || "Failed to save job";
+				const userMsg = getUserFriendlyError(
+					err,
+					"Failed to save job, please try again",
+				);
+				const msg = err?.response?.data?.message;
+				toast.error(userMsg);
+				console.log(msg);
 
 				toast.error(msg);
 			} finally {
@@ -469,6 +478,7 @@ export default function PostJobPage() {
 										placeholder="e.g., Remote, Riyadh, New York..."
 										className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm outline-none focus:border-fuchsia-600"
 									/>
+									<FieldError formik={formik} name="location" />
 								</label>
 
 								{/* Work Type = job Type*/}
@@ -496,12 +506,11 @@ export default function PostJobPage() {
 														className="hidden"
 													/>
 													{x.label}
+													<FieldError formik={formik} name="jobType" />
 												</label>
 											);
 										})}
 									</div>
-
-									<FieldError formik={formik} name="jobType" />
 								</div>
 
 								{/* Required Skills */}
@@ -529,6 +538,7 @@ export default function PostJobPage() {
 										>
 											Add
 										</button>
+										<FieldError formik={formik} name="requiredSkills" />
 									</div>
 
 									<div className="mt-4 flex flex-col gap-2">
@@ -546,6 +556,7 @@ export default function PostJobPage() {
 															onChange={() => toggleSkillRequired(s.name)}
 														/>
 														Required
+														<FieldError formik={formik} name="requiredSkills" />
 													</label>
 													<button
 														type="button"
@@ -574,6 +585,7 @@ export default function PostJobPage() {
 									<div className="mt-3 flex flex-col gap-2 sm:flex-row">
 										<input
 											value={langInput}
+											name="requiredLanguages"
 											onChange={(e) => setLangInput(e.target.value)}
 											onKeyDown={(e) => {
 												if (e.key === "Enter") {
@@ -584,6 +596,7 @@ export default function PostJobPage() {
 											placeholder="Type a language then Enter"
 											className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm outline-none focus:border-fuchsia-600"
 										/>
+										<FieldError formik={formik} name="requiredLanguages" />
 										<select
 											value={langProf}
 											onChange={(e) => setLangProf(e.target.value)}
@@ -663,6 +676,7 @@ export default function PostJobPage() {
 							>
 								Cancel
 							</button>
+							<FieldError formik={formik} />
 						</div>
 					</form>
 				</div>
