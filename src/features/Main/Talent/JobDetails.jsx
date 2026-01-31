@@ -1,16 +1,14 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: <> */
-import { useQuery } from "@tanstack/react-query";
+
 import { useMemo } from "react";
 import { Helmet } from "react-helmet";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import InfoItem from "../../../components/UI/InfoItem";
 import Loading from "../../../components/UI/Loading";
-import {
-	getJobById,
-	getMyApplications,
-} from "../../../services/talent.service";
 import { prettyEnum } from "../../../utils/formatter";
 import { formatName } from "../../../utils/tools";
+import { useTalentJobQuery } from "./profile/hooks/queries/useTalentJobQuery";
+import { useTalentMyAppQuery } from "./profile/hooks/queries/useTalentMyAppQuery";
 
 /**
  * JobDetails component displays the details of a job
@@ -25,18 +23,44 @@ export default function JobDetails() {
 	const { id: jobId } = useParams();
 	const navigate = useNavigate();
 
-	// 1) Job query
 	const {
 		data: jobRes,
 		isLoading: jobLoading,
 		isError: jobIsError,
 		error: jobError,
-	} = useQuery({
-		queryKey: ["job", jobId],
-		queryFn: () => getJobById(jobId),
-		enabled: !!jobId,
-		staleTime: 60 * 1000,
-	});
+	} = useTalentJobQuery(jobId);
+
+	// const {
+	// 	data: appsRes,
+	// 	isLoading: appsLoading,
+	// 	isError: appsIsError,
+	// 	error: appsError,
+	// 	isFetching: appsFetching,
+	// } = useQuery({
+	// 	queryKey: queryKeys.MyApplications, // key واضح
+	// 	queryFn: () => getMyApplications(),
+	// 	enabled: !!jobId,
+
+	// 	staleTime: 10 * 1000,
+
+	// 	//
+	// 	refetchInterval: (data) => {
+	// 		const apps = data?.data ?? data;
+	// 		if (!apps) return 15_000;
+	// 		if (!Array.isArray(apps)) return 15_000; // ✅ حماية
+
+	// 		const hasPending = apps.some((a) => a.status === "PENDING");
+	// 		return hasPending ? 15_000 : false;
+	// 	},
+
+	// 	refetchIntervalInBackground: false, // مهم
+
+	// 	refetchOnWindowFocus: false,
+
+	// 	placeholderData: (prev) => prev,
+	// });
+
+	// Job extraction
 
 	const {
 		data: appsRes,
@@ -44,30 +68,7 @@ export default function JobDetails() {
 		isError: appsIsError,
 		error: appsError,
 		isFetching: appsFetching,
-	} = useQuery({
-		queryKey: ["my-applications", jobId], // key واضح
-		queryFn: () => getMyApplications(),
-		enabled: !!jobId,
-
-		staleTime: 10 * 1000,
-
-		//
-		refetchInterval: (data) => {
-			const apps = data?.data;
-			if (!apps) return 15_000;
-
-			const hasPending = apps.some((a) => a.status === "PENDING");
-			return hasPending ? 15_000 : false;
-		},
-
-		refetchIntervalInBackground: false, // مهم
-
-		refetchOnWindowFocus: false,
-
-		placeholderData: (prev) => prev,
-	});
-
-	// Job extraction
+	} = useTalentMyAppQuery();
 	const job = jobRes?.data?.data ?? jobRes?.data ?? null;
 
 	// Applications extraction

@@ -18,9 +18,9 @@ export const queryKeys = {
 
 	//will delete
 	// APPLICATIONS
-	applications: ["applications"],
+	MyApplications: ["my-applications"],
 	// will delete
-	applicationByJob: (jobId) => ["applications", "job", jobId],
+	applicationByJob: (jobId) => ["my-application", "job", jobId],
 
 	// EMPLOYER
 	employerProfile: ["employer-profile"],

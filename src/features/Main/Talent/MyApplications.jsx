@@ -4,6 +4,7 @@ import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import FieldError from "../../../components/UI/FieldError";
 import Loading from "../../../components/UI/Loading";
+import { queryKeys } from "../../../lib/queryKeys";
 import { getMyApplications } from "../../../services/talent.service";
 /**
  * MyApplications is a component that displays a list of job applications
@@ -17,7 +18,7 @@ export default function MyApplications() {
 	const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
 
 	const { data, isLoading, isError, error } = useQuery({
-		queryKey: ["my-applications"],
+		queryKey: queryKeys.MyApplications,
 		queryFn: getMyApplications,
 	});
 

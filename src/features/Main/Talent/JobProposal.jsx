@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import { useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet";
@@ -7,12 +6,12 @@ import FieldError from "../../../components/UI/FieldError";
 import InfoItem from "../../../components/UI/InfoItem";
 import {
 	applyToJob,
-	getJobById,
 	uploadTalentResume,
 } from "../../../services/talent.service";
 import { buildCloudinaryUrl } from "../../../utils/Helpers/cloudinary";
 import { formatName } from "../../../utils/tools";
 import { proposalSchema } from "../../../utils/validation/jobs.validators";
+import { useTalentJobQuery } from "./profile/hooks/queries/useTalentJobQuery";
 
 /**
  * Job proposal form component.
@@ -30,11 +29,7 @@ export default function JobProposal() {
 	const { id } = useParams();
 	const navigate = useNavigate();
 
-	const { data, isLoading, isError, error } = useQuery({
-		queryKey: ["job", id],
-		queryFn: () => getJobById(id),
-		enabled: !!id,
-	});
+	const { data, isLoading, isError, error } = useTalentJobQuery(id);
 
 	// Keep your extraction, but don't default to [] because job is an object
 	const job = data?.data?.data ?? data?.data ?? null;
