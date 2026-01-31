@@ -31,28 +31,85 @@ export function useTalentResumeQuery() {
 // 		},
 // 	});
 // }
+// export function useUploadTalentResumeMutation() {
+// 	const qc = useQueryClient();
+
+// 	return useMutation({
+// 		mutationFn: uploadTalentResume,
+
+// 		onSuccess: async (res) => {
+// 			const nextResume = res?.data?.resumeUrl ?? res?.payload ?? null;
+
+// 			if (nextResume) {
+// 				qc.setQueryData(queryKeys.talentResume, nextResume);
+// 			} else {
+// 				await qc.invalidateQueries({ queryKey: queryKeys.talentResume });
+// 			}
+
+// 			await qc.invalidateQueries({
+// 				queryKey: queryKeys.talentProfile,
+// 				refetchType: "inactive",
+// 			});
+// 		},
+// 	});
+// }
+
 export function useUploadTalentResumeMutation() {
 	const qc = useQueryClient();
 
 	return useMutation({
 		mutationFn: uploadTalentResume,
-
 		onSuccess: async (res) => {
-			const nextResume = res?.data?.resumeUrl ?? res?.payload ?? null;
+			// 1) Update cache immediately with SAME SHAPE the query returns
+			qc.setQueryData(queryKeys.talentResume, res);
 
-			if (nextResume) {
-				qc.setQueryData(queryKeys.talentResume, nextResume);
-			} else {
-				await qc.invalidateQueries({ queryKey: queryKeys.talentResume });
-			}
-
-			await qc.invalidateQueries({
+			// 2) Refresh profile if needed (don’t block UI)
+			qc.invalidateQueries({
 				queryKey: queryKeys.talentProfile,
-				refetchType: "inactive",
+				refetchType: "active",
+			});
+
+			// 3) Optional: if you want to be extra-safe, refetch resume when page is open
+			qc.invalidateQueries({
+				queryKey: queryKeys.talentResume,
+				refetchType: "active",
 			});
 		},
 	});
 }
+
+// export function useDeleteTalentResumeMutation() {
+// 	const qc = useQueryClient();
+
+// 	return useMutation({
+// 		mutationFn: deleteTalentResume,
+// 		onSuccess: async () => {
+// 			await Promise.all([
+// 				qc.invalidateQueries({ queryKey: queryKeys.talentResume }),
+// 				qc.invalidateQueries({ queryKey: queryKeys.talentProfile }),
+// 			]);
+// 		},
+// 	});
+// }
+
+// export function useDeleteTalentResumeMutation() {
+// 	const qc = useQueryClient();
+
+// 	return useMutation({
+// 		mutationFn: deleteTalentResume,
+
+// 		onSuccess: async () => {
+// 			// 1) Update cache immediately (no refetch needed)
+// 			qc.setQueryData(queryKeys.talentResume, null);
+
+// 			// 2) If profile depends on resume state, refresh it, but don't block UI
+// 			qc.invalidateQueries({
+// 				queryKey: queryKeys.talentProfile,
+// 				refetchType: "inactive",
+// 			});
+// 		},
+// 	});
+// }
 
 export function useDeleteTalentResumeMutation() {
 	const qc = useQueryClient();
@@ -60,10 +117,21 @@ export function useDeleteTalentResumeMutation() {
 	return useMutation({
 		mutationFn: deleteTalentResume,
 		onSuccess: async () => {
-			await Promise.all([
-				qc.invalidateQueries({ queryKey: queryKeys.talentResume }),
-				qc.invalidateQueries({ queryKey: queryKeys.talentProfile }),
-			]);
+			// Put a value with the SAME SHAPE
+			qc.setQueryData(queryKeys.talentResume, (old) => ({
+				...(old ?? { ok: true, message: "resume deleted" }),
+				ok: true,
+				data: null,
+			}));
+
+			qc.invalidateQueries({
+				queryKey: queryKeys.talentProfile,
+				refetchType: "active",
+			});
+			qc.invalidateQueries({
+				queryKey: queryKeys.talentResume,
+				refetchType: "active",
+			});
 		},
 	});
 }
