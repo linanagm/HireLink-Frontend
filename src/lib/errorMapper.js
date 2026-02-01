@@ -2,16 +2,13 @@
 export function getUserFriendlyError(err, fallback = "Something went wrong. Please try again.") {
     // normalized response : { ok:false, message, statusCode, ... }
     const status = err?.statusCode || err?.response?.status;
-    const msg =
-        err?.message ||
-        err?.response?.data?.message ||
-        err?.response?.data?.error ||
-        "";
+    const data = err?.response?.data || err;
 
-    const code =
-        err?.code ||
-        err?.response?.data?.code ||
-        err?.response?.data?.errorCode;
+    const msg = data?.message || data?.error || "";
+
+    const code = data?.code || data?.errorCode;
+    const details = data?.details || data?.errors || data?.error_description || "";
+
 
     // Priority: code > status+message
     if (code) {
@@ -22,21 +19,30 @@ export function getUserFriendlyError(err, fallback = "Something went wrong. Plea
             TOKEN_EXPIRED: "Your session expired. Please log in again.",
             FORBIDDEN: "You don’t have permission to do that.",
         };
-        if (mapByCode[code]) return mapByCode[code];
+        if (mapByCode[code]) return { message: mapByCode[code], code, status, details };
     }
 
-    // status-based
-    if (status === 400) return "Please check the entered data and try again.";
-    if (status === 401) return "Please log in to continue.";
-    if (status === 403) return "You don’t have permission to do that.";
-    if (status === 404) return "We couldn’t find what you’re looking for.";
-    if (status >= 500) return "Server is having a moment. Try again soon.";
+    // --- status-based
+    if (status === 400)
+        return { message: "Please check the entered data and try again.", status, details };
+    if (status === 401)
+        return { message: "Please log in to continue.", status, details };
+    if (status === 403)
+        return { message: "You don’t have permission to do that.", status, details };
+    if (status === 404)
+        return { message: "We couldn’t find what you’re looking for.", status };
+    if (status >= 500)
+        return { message: "Server is having a moment. Try again soon.", status };
 
-    // message heuristics 
+
+    // --- message heuristics
     const m = msg.toLowerCase();
-    if (m.includes("invalid") && m.includes("password")) return "Password is invalid.";
-    if (m.includes("invalid") && m.includes("email")) return "Email is invalid.";
-    if (m.includes("already") && m.includes("email")) return "This email is already in use.";
+    if (m.includes("invalid") && m.includes("password"))
+        return { message: "Password is invalid.", status, details };
+    if (m.includes("invalid") && m.includes("email"))
+        return { message: "Email is invalid.", status, details };
+    if (m.includes("already") && m.includes("email"))
+        return { message: "This email is already in use.", status, details };
 
-    return fallback;
+    return { message: fallback, status, details };
 }
