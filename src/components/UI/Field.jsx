@@ -5,13 +5,22 @@
  * @param {function} onChange - The function to call when the value of the field changes.
  * @param {string} placeholder - The placeholder text to display when the field is empty.
  */
-export default function Field({ label, value, onChange, placeholder }) {
+export default function Field({
+	label,
+	value,
+	name = "",
+	onChange,
+	onBlur,
+	placeholder,
+}) {
 	return (
 		<div>
 			<p className="text-sm font-semibold text-gray-900">{label}</p>
 			<input
 				value={value}
+				name={name}
 				onChange={(e) => onChange(e.target.value)}
+				onBlur={onBlur}
 				className="mt-2 w-full rounded-xl border border-gray-200 bg-white p-3 text-sm outline-none focus:ring-2 focus:ring-purple-200"
 				placeholder={placeholder}
 			/>

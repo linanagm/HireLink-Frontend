@@ -10,6 +10,7 @@ import { queryKeys } from "../../../lib/queryKeys";
 import { updateEmployerLogo } from "../../../services/employer.service";
 import { buildAvatarUrl } from "../../../utils/Helpers/avatar";
 import { normalizeUrl } from "../../../utils/normalizeData";
+import { headerSchema } from "../../../utils/validation/employer.validation.js";
 import { useUpdateEmployerProfile } from "./hooks/mutations/useUpdateEmployerMutation.jsx";
 import { useEmployerProfileQuery } from "./hooks/queries/useEmployerProfileQueries";
 
@@ -36,6 +37,16 @@ function Row({ label, value, isLink = false }) {
 }
 
 export default function EmployerProfile() {
+	const [headerTouched, setHeaderTouched] = useState({});
+	const [headerErrors, setHeaderErrors] = useState({});
+	const [headerSubmitAttempted, setHeaderSubmitAttempted] = useState(false);
+
+	const [aboutTouched, setAboutTouched] = useState({});
+	const [aboutErrors, setAboutErrors] = useState({});
+
+	const [overviewTouched, setOverviewTouched] = useState({});
+	const [overviewErrors, setOverviewErrors] = useState({});
+
 	const {
 		data: res,
 		isLoading,
@@ -86,7 +97,48 @@ export default function EmployerProfile() {
 		website: "",
 	});
 
-	const isProfileLoading = isFetching || updateMutation.isPending || isLoading;
+	const isProfileLoading = isLoading;
+	const isUpdating = updateMutation.isPending || avatarMutation.isPending;
+	//
+
+	const yupToErrors = (err) => {
+		const out = {};
+		if (err?.inner?.length) {
+			for (const e of err.inner) {
+				if (!out[e.path]) out[e.path] = e.message;
+			}
+		} else if (err?.path) {
+			out[err.path] = err.message;
+		}
+		return out;
+	};
+
+	async function validateSection(schema, values, setErrors) {
+		try {
+			await schema.validate(values, { abortEarly: false });
+			setErrors({});
+			return { ok: true, errors: {} };
+		} catch (err) {
+			const errors = yupToErrors(err);
+			setErrors(errors);
+			return { ok: false, errors };
+		}
+	}
+
+	async function validateField(schema, values, field, setErrors) {
+		try {
+			await schema.validateAt(field, values);
+			setErrors((prev) => {
+				const next = { ...prev };
+				delete next[field];
+				return next;
+			});
+			return true;
+		} catch (err) {
+			setErrors((prev) => ({ ...prev, [field]: err.message }));
+			return false;
+		}
+	}
 
 	useEffect(() => {
 		setHeaderDraft({
@@ -97,7 +149,23 @@ export default function EmployerProfile() {
 		setOverviewDraft((p) => ({ ...p, website: website || "" }));
 	}, [companyName, location, description, website]);
 
-	const saveHeader = () => {
+	/**
+	 * Save changes to header section
+	 */
+	const saveHeader = async () => {
+		setHeaderSubmitAttempted(true);
+
+		setHeaderTouched((prev) => ({
+			...prev,
+			companyName: true,
+			location: true,
+		}));
+		const values = {
+			companyName: headerDraft.companyName,
+			location: headerDraft.location,
+		};
+		const result = await validateSection(headerSchema, values, setHeaderErrors);
+		if (!result.ok) return;
 		const cleaned = {
 			companyName: (headerDraft.companyName || "").trim(),
 			location: (headerDraft.location || "").trim() || null,
@@ -114,11 +182,17 @@ export default function EmployerProfile() {
 
 	const saveOverview = () => {
 		const cleaned = {
-			website: normalizeUrl(overviewDraft.website).trim() || "-",
+			website: normalizeUrl(overviewDraft.website).trim() || null,
 		};
 		setEditingOverview(false);
 		updateMutation.mutate(cleaned);
 	};
+	const showCompanyNameError =
+		(headerTouched.companyName || headerSubmitAttempted) &&
+		headerErrors.companyName;
+	const headerHasErrors = Boolean(
+		headerErrors.companyName || headerErrors.location,
+	);
 
 	if (isLoading) {
 		return (
@@ -221,14 +295,61 @@ export default function EmployerProfile() {
 										</>
 									) : (
 										<div className="space-y-3 ">
-											<Field
+											{/* <Field
 												label="Company Name"
 												value={headerDraft.companyName}
 												onChange={(v) =>
 													setHeaderDraft((p) => ({ ...p, companyName: v }))
 												}
 												placeholder="Company name"
+											/> */}
+											<Field
+												label="Company Name"
+												name="companyName"
+												value={headerDraft.companyName}
+												onChange={(v) => {
+													setHeaderDraft((p) => ({ ...p, companyName: v }));
+
+													// Validate onChange بس لو touched
+													if (
+														headerSubmitAttempted ||
+														headerTouched.companyName
+													) {
+														validateField(
+															headerSchema,
+															{ ...headerDraft, companyName: v },
+															"companyName",
+															setHeaderErrors,
+														);
+													}
+												}}
+												onBlur={() => {
+													setHeaderTouched((t) => ({
+														...t,
+														companyName: true,
+													}));
+													validateField(
+														headerSchema,
+														headerDraft,
+														"companyName",
+														setHeaderErrors,
+													);
+												}}
+												placeholder="Company name"
 											/>
+											{/* {headerTouched.companyName &&
+												headerErrors.companyName && (
+													<FieldError message={headerErrors.companyName} />
+												)} */}
+											{showCompanyNameError ? (
+												<p className="mt-1 text-xs text-red-600">
+													{headerErrors.companyName}
+												</p>
+											) : (
+												<p className="mt-1 text-xs text-gray-500">
+													Company name
+												</p>
+											)}
 											<Field
 												label="Location"
 												value={headerDraft.location}
@@ -241,8 +362,14 @@ export default function EmployerProfile() {
 												<button
 													type="button"
 													onClick={saveHeader}
-													disabled={updateMutation.isPending}
-													className="px-4 py-2 rounded-xl bg-purple-600 text-white text-sm font-semibold hover:bg-purple-700 transition disabled:opacity-60"
+													disabled={updateMutation.isPending || headerHasErrors}
+													// className={"px-4 py-2 rounded-xl bg-purple-600 text-white text-sm font-semibold hover:bg-purple-700 transition disabled:opacity-60"}
+													className={
+														"px-4 py-2 rounded-xl text-sm font-semibold transition " +
+														(updateMutation.isPending || headerHasErrors
+															? "bg-purple-300 text-white cursor-not-allowed"
+															: "bg-purple-600 text-white hover:bg-purple-700")
+													}
 												>
 													Save
 												</button>
@@ -395,7 +522,7 @@ export default function EmployerProfile() {
 					</section>
 
 					{updateMutation.isPending && (
-						<div className="mt-4 text-sm text-gray-600">Saving…</div>
+						<div className="mt-4 text-xl text-green-600">Saving…</div>
 					)}
 				</div>
 			</CardOverlay>
