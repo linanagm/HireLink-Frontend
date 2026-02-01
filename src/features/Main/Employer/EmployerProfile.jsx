@@ -9,6 +9,7 @@ import { useUploadAvatar } from "../../../hooks/useUploadAvatar";
 import { queryKeys } from "../../../lib/queryKeys";
 import { updateEmployerLogo } from "../../../services/employer.service";
 import { buildAvatarUrl } from "../../../utils/Helpers/avatar";
+import { bindField } from "../../../utils/Helpers/bindField.js";
 import { normalizeUrl } from "../../../utils/normalizeData";
 import { headerSchema } from "../../../utils/validation/employer.validation.js";
 import { useUpdateEmployerProfile } from "./hooks/mutations/useUpdateEmployerMutation.jsx";
@@ -37,6 +38,8 @@ function Row({ label, value, isLink = false }) {
 }
 
 export default function EmployerProfile() {
+	const { isAuthReady, isAuthenticated, currentUser } = useAuth();
+
 	const [headerTouched, setHeaderTouched] = useState({});
 	const [headerErrors, setHeaderErrors] = useState({});
 	const [headerSubmitAttempted, setHeaderSubmitAttempted] = useState(false);
@@ -56,7 +59,7 @@ export default function EmployerProfile() {
 	} = useEmployerProfileQuery();
 
 	const updateMutation = useUpdateEmployerProfile();
-	const { currentUser } = useAuth();
+
 	const { fileRef, onPickAvatar, onAvatarChange, avatarError, avatarMutation } =
 		useUploadAvatar({
 			uploadFn: updateEmployerLogo,
@@ -125,21 +128,6 @@ export default function EmployerProfile() {
 		}
 	}
 
-	async function validateField(schema, values, field, setErrors) {
-		try {
-			await schema.validateAt(field, values);
-			setErrors((prev) => {
-				const next = { ...prev };
-				delete next[field];
-				return next;
-			});
-			return true;
-		} catch (err) {
-			setErrors((prev) => ({ ...prev, [field]: err.message }));
-			return false;
-		}
-	}
-
 	useEffect(() => {
 		setHeaderDraft({
 			companyName: companyName || "",
@@ -187,14 +175,40 @@ export default function EmployerProfile() {
 		setEditingOverview(false);
 		updateMutation.mutate(cleaned);
 	};
-	const showCompanyNameError =
-		(headerTouched.companyName || headerSubmitAttempted) &&
-		headerErrors.companyName;
+
+	const companyNameBind = bindField({
+		name: "companyName",
+		values: headerDraft,
+		setValues: setHeaderDraft,
+		touched: headerTouched,
+		setTouched: setHeaderTouched,
+		errors: headerErrors,
+		setErrors: setHeaderErrors,
+		schema: headerSchema,
+		submitAttempted: headerSubmitAttempted,
+	});
+
+	const locationBind = bindField({
+		name: "location",
+		values: headerDraft,
+		setValues: setHeaderDraft,
+		touched: headerTouched,
+		setTouched: setHeaderTouched,
+		errors: headerErrors,
+		setErrors: setHeaderErrors,
+		schema: headerSchema,
+		submitAttempted: headerSubmitAttempted,
+	});
+
 	const headerHasErrors = Boolean(
 		headerErrors.companyName || headerErrors.location,
 	);
+	const disableHeaderSave =
+		updateMutation.isPending || (headerSubmitAttempted && headerHasErrors);
 
-	if (isLoading) {
+	// render loading state
+	const hasData = Boolean(res?.data);
+	if ((isLoading || isFetching) && !hasData) {
 		return (
 			<div className="min-h-[60vh] flex items-center justify-center">
 				<Loading />
@@ -208,6 +222,14 @@ export default function EmployerProfile() {
 				<div className="rounded-xl border border-red-100 bg-red-50 p-4 text-sm text-red-700">
 					{error?.message || "Failed to load employer profile"}
 				</div>
+			</div>
+		);
+	}
+
+	if (!isAuthReady) {
+		return (
+			<div className="min-h-[60vh] flex items-center justify-center">
+				<Loading />
 			</div>
 		);
 	}
@@ -295,75 +317,47 @@ export default function EmployerProfile() {
 										</>
 									) : (
 										<div className="space-y-3 ">
-											{/* <Field
-												label="Company Name"
-												value={headerDraft.companyName}
-												onChange={(v) =>
-													setHeaderDraft((p) => ({ ...p, companyName: v }))
-												}
-												placeholder="Company name"
-											/> */}
 											<Field
 												label="Company Name"
-												name="companyName"
-												value={headerDraft.companyName}
-												onChange={(v) => {
-													setHeaderDraft((p) => ({ ...p, companyName: v }));
-
-													// Validate onChange بس لو touched
-													if (
-														headerSubmitAttempted ||
-														headerTouched.companyName
-													) {
-														validateField(
-															headerSchema,
-															{ ...headerDraft, companyName: v },
-															"companyName",
-															setHeaderErrors,
-														);
-													}
-												}}
-												onBlur={() => {
-													setHeaderTouched((t) => ({
-														...t,
-														companyName: true,
-													}));
-													validateField(
-														headerSchema,
-														headerDraft,
-														"companyName",
-														setHeaderErrors,
-													);
-												}}
+												value={companyNameBind.value}
+												onChange={companyNameBind.onChange}
+												onBlur={companyNameBind.onBlur}
 												placeholder="Company name"
 											/>
-											{/* {headerTouched.companyName &&
-												headerErrors.companyName && (
-													<FieldError message={headerErrors.companyName} />
-												)} */}
-											{showCompanyNameError ? (
+
+											{companyNameBind.showError ? (
 												<p className="mt-1 text-xs text-red-600">
-													{headerErrors.companyName}
+													{companyNameBind.error}
 												</p>
 											) : (
 												<p className="mt-1 text-xs text-gray-500">
-													Company name
+													ex: "Company Co."
 												</p>
 											)}
+
 											<Field
 												label="Location"
-												value={headerDraft.location}
-												onChange={(v) =>
-													setHeaderDraft((p) => ({ ...p, location: v }))
-												}
+												value={locationBind.value}
+												onChange={locationBind.onChange}
+												onBlur={locationBind.onBlur}
 												placeholder="New York, USA"
 											/>
+
+											{locationBind.showError ? (
+												<p className="mt-1 text-xs text-red-600">
+													{locationBind.error}
+												</p>
+											) : (
+												<p className="mt-1 text-xs text-gray-500">
+													ex: "New York, USA"
+												</p>
+											)}
+
 											<div className="flex items-center gap-2">
 												<button
 													type="button"
 													onClick={saveHeader}
 													disabled={updateMutation.isPending || headerHasErrors}
-													// className={"px-4 py-2 rounded-xl bg-purple-600 text-white text-sm font-semibold hover:bg-purple-700 transition disabled:opacity-60"}
 													className={
 														"px-4 py-2 rounded-xl text-sm font-semibold transition " +
 														(updateMutation.isPending || headerHasErrors
@@ -391,6 +385,9 @@ export default function EmployerProfile() {
 									)}
 								</div>
 							</div>
+							{isFetching && res?.data && (
+								<p className="text-xl text-green-500 mt-2">Refreshing…</p>
+							)}
 
 							{!editingHeader && (
 								<button
