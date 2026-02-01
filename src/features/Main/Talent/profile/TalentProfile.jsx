@@ -7,6 +7,7 @@ import Chip from "../../../../components/UI/Chip";
 import Loading from "../../../../components/UI/Loading";
 import PencilIcon from "../../../../components/UI/PencilIcon";
 import { useTalentProfileQuery } from "../../../../hooks/queries/talent/useTalentProfile";
+import { useAuth } from "../../../../hooks/useAuth";
 import { queryKeys } from "../../../../lib/queryKeys";
 import {
 	removeTalentCertificaties,
@@ -60,6 +61,8 @@ export function Modal({ open, title, onClose, children, footer }) {
 }
 
 export default function TalentProfilePage() {
+	const { isAuthReady } = useAuth();
+
 	// get profile data from get/talent profile return data
 	const { data, isLoading, isFetching, isError, error } =
 		useTalentProfileQuery();
@@ -161,12 +164,15 @@ export default function TalentProfilePage() {
 
 	useEffect(() => {
 		if (!profile) return;
+		//prevent rerender while in edit mode
+		if (editMode === "profile") return;
+
 		setProfileDraft({
 			headline: profile.headline || "",
 			bio: profile.bio || "",
 			location: profile.location || "",
 		});
-	}, [profile]);
+	}, [profile, editMode]);
 
 	const updateProfileM = useMutation({
 		mutationFn: updateTalentProfile,
@@ -272,19 +278,10 @@ export default function TalentProfilePage() {
 		}
 	};
 
-	if (isLoading) return <Loading />;
-	if (isError)
-		return (
-			<div className="p-6 text-red-600">
-				{String(error?.message || "Error")}
-			</div>
-		);
-
 	const closeCertModal = () => {
 		setCertModalOpen(false);
 		setEditingCert(null);
 	};
-	const isProfileLoading = isFetching || isLoading;
 
 	const submitCert = () => {
 		if (!certDraft.name.trim() || !certDraft.issuer.trim()) {
@@ -312,6 +309,30 @@ export default function TalentProfilePage() {
 
 		upsertCertM.mutate(payload);
 	};
+
+	// handle render loading
+	const isProfileLoading = isLoading;
+	const hasData = Boolean(data?.data);
+	if ((isLoading || isFetching) && !hasData) {
+		return (
+			<div className="min-h-[60vh] flex items-center justify-center">
+				<Loading />
+			</div>
+		);
+	}
+	if (!isAuthReady) {
+		return (
+			<div className="min-h-[60vh] flex items-center justify-center">
+				<Loading />
+			</div>
+		);
+	}
+	if (isError)
+		return (
+			<div className="p-6 text-red-600">
+				{String(errorMapper(error) || "Failed to load profile")}
+			</div>
+		);
 
 	return (
 		<div className="max-w-5xl mx-auto px-6 py-8 space-y-6 ">

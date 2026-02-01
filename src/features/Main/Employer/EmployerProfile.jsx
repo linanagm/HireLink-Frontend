@@ -38,17 +38,17 @@ function Row({ label, value, isLink = false }) {
 }
 
 export default function EmployerProfile() {
-	const { isAuthReady, isAuthenticated, currentUser } = useAuth();
+	const { isAuthReady, currentUser } = useAuth();
 
 	const [headerTouched, setHeaderTouched] = useState({});
 	const [headerErrors, setHeaderErrors] = useState({});
 	const [headerSubmitAttempted, setHeaderSubmitAttempted] = useState(false);
 
-	const [aboutTouched, setAboutTouched] = useState({});
-	const [aboutErrors, setAboutErrors] = useState({});
+	// const [aboutTouched, setAboutTouched] = useState({});
+	// const [aboutErrors, setAboutErrors] = useState({});
 
-	const [overviewTouched, setOverviewTouched] = useState({});
-	const [overviewErrors, setOverviewErrors] = useState({});
+	// const [overviewTouched, setOverviewTouched] = useState({});
+	// const [overviewErrors, setOverviewErrors] = useState({});
 
 	const {
 		data: res,
@@ -101,7 +101,7 @@ export default function EmployerProfile() {
 	});
 
 	const isProfileLoading = isLoading;
-	const isUpdating = updateMutation.isPending || avatarMutation.isPending;
+	//const isUpdating = updateMutation.isPending || avatarMutation.isPending;
 	//
 
 	const yupToErrors = (err) => {
@@ -203,8 +203,8 @@ export default function EmployerProfile() {
 	const headerHasErrors = Boolean(
 		headerErrors.companyName || headerErrors.location,
 	);
-	const disableHeaderSave =
-		updateMutation.isPending || (headerSubmitAttempted && headerHasErrors);
+	// const disableHeaderSave =
+	// 	updateMutation.isPending || (headerSubmitAttempted && headerHasErrors);
 
 	// render loading state
 	const hasData = Boolean(res?.data);
