@@ -6,6 +6,7 @@ import CardOverlay from "../../../../components/UI/CardLoader";
 import Chip from "../../../../components/UI/Chip";
 import Loading from "../../../../components/UI/Loading";
 import PencilIcon from "../../../../components/UI/PencilIcon";
+import Saving from "../../../../components/UI/Saving";
 import { useTalentProfileQuery } from "../../../../hooks/queries/talent/useTalentProfile";
 import { useAuth } from "../../../../hooks/useAuth";
 import { queryKeys } from "../../../../lib/queryKeys";
@@ -176,13 +177,49 @@ export default function TalentProfilePage() {
 
 	const updateProfileM = useMutation({
 		mutationFn: updateTalentProfile,
+		onMutate: async (payload) => {
+			await qc.cancelQueries({ queryKey: queryKeys.talentProfile });
+			const prev = qc.getQueryData(queryKeys.talentProfile);
+			// optimistic update
+			qc.setQueryData(queryKeys.talentProfile, (old) => {
+				const raw = old?.data ?? old;
+				const data = raw?.data ?? raw;
+
+				const nextProfile = {
+					...(data?.talentProfile ?? {}),
+					...payload,
+				};
+				if (old?.data?.data?.talentProfile) {
+					return {
+						...old,
+						data: {
+							...old.data,
+							talentProfile: nextProfile,
+						},
+					};
+				}
+				return {
+					...old,
+					data: { ...(raw?.data ?? {}), talentProfile: nextProfile },
+				};
+			});
+			setEditMode(null);
+			return { prev };
+		},
+
 		onSuccess: async (res) => {
 			if (res?.ok === false) throw new Error(res?.message || "Update failed");
-			await qc.invalidateQueries({ queryKey: queryKeys.talentProfile });
-			toast.success("Profile updated");
-			setEditMode(null);
+			//await qc.invalidateQueries({ queryKey: queryKeys.talentProfile });
+			toast.success("Profile Successfully Updated");
+			//setEditMode(null);
 		},
-		onError: (e) => toast.error(e?.message || "Update failed"),
+		// onError: (e) => toast.error(e?.message || "Update failed"),
+		onError: (err, _payload, ctx) => {
+			// rollback لو فشل
+			if (ctx?.prev) qc.setQueryData(queryKeys.talentProfile, ctx.prev);
+			setEditMode("profile"); // رجّعي الفورم (اختياري)
+			toast.error(err?.message || "Profile Update Failed");
+		},
 	});
 
 	// skills
@@ -339,7 +376,6 @@ export default function TalentProfilePage() {
 			<CardOverlay loading={isProfileLoading} label="Updating...">
 				<ProfileHeaderCard
 					name={`${profile.firstName} ${profile.lastName}`}
-					location={profile.location}
 					avatarPublicId={profile.avatarPublicId}
 					completion={completion}
 				/>
@@ -352,7 +388,7 @@ export default function TalentProfilePage() {
 								{profile?.headline || "UX/UI Designer | Frontend Developer"}
 							</h2>
 							<div className="mt-2">
-								<Badge>{profile?.level || "Expert"}</Badge>
+								<Badge>{profile?.location || "Expert"}</Badge>
 							</div>
 						</div>
 
@@ -379,6 +415,7 @@ export default function TalentProfilePage() {
 						</ul>
 					</div>
 				</section>
+				{updateProfileM.isPending && <Saving />}
 
 				{/* Skills chips */}
 				<section className="bg-white border border-slate-200 rounded-2xl p-6 mb-4">

@@ -33,7 +33,8 @@ function App() {
 							style: {
 								background: "#16a34a",
 								color: "#fff",
-								fontSize: "16px",
+								fontSize: "18px",
+								padding: "16px",
 							},
 						},
 
@@ -41,10 +42,11 @@ function App() {
 							style: {
 								background: "#dc2626",
 								color: "#fff",
-								fontSize: "16px",
+								fontSize: "18px",
+								padding: "16px",
 							},
 						},
-						duration: 5000,
+						duration: 8000,
 					}}
 				/>
 

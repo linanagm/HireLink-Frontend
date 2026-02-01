@@ -49,7 +49,7 @@ function AvatarModal({ open, src, onClose }) {
 
 export default function ProfileHeaderCard({
 	name,
-	location,
+
 	avatarPublicId,
 	completion,
 }) {
@@ -63,22 +63,16 @@ export default function ProfileHeaderCard({
 		return avatarPublicId ? buildAvatarUrl(avatarPublicId) : null;
 	}, [avatarPublicId]);
 
-	// ✅ Upload Hook (input controlled هنا فقط)
 	const uploadAvatar = useUploadAvatar({
 		uploadFn: uploadTalentAvatar,
 		fieldName: "avatar",
-		invalidateKeys: [
-			queryKeys.currentUser,
-			queryKeys.talentProfile,
-			// queryKeys.talentAvatar(), // لو عندك فعلا
-		],
+		invalidateKeys: [queryKeys.currentUser, queryKeys.talentProfile],
 		getPublicId: (res) =>
 			res?.data?.talentProfile?.avatarPublicId ??
 			res?.data?.avatarPublicId ??
 			null,
 	});
 
-	// ✅ Delete mutation
 	const deleteAvatar = useMutation({
 		mutationFn: deleteTalentAvatar,
 		onSuccess: async (res) => {
@@ -89,7 +83,7 @@ export default function ProfileHeaderCard({
 				...prev,
 				avatarUrl: null,
 
-				// ✅ لو navbar بيستخدم publicId بدل url
+				// Update avatarPublicId
 				talentProfile: prev?.talentProfile
 					? { ...prev.talentProfile, avatarPublicId: null }
 					: prev?.talentProfile,
@@ -110,7 +104,7 @@ export default function ProfileHeaderCard({
 		onError: (e) => toast.error(e?.message || "Delete failed"),
 	});
 
-	// ✅ v4/v5 compatible busy flags
+	// v4/v5 compatible busy flags
 	const uploadBusy =
 		uploadAvatar?.avatarMutation?.isPending ??
 		uploadAvatar?.avatarMutation?.isLoading ??
@@ -193,14 +187,16 @@ export default function ProfileHeaderCard({
 						hasAvatar={hasAvatar}
 						isBusy={isBusy}
 						onPickFile={onUploadOrReplace} // open picker (no file param)
-						onDelete={onDeletePhoto} // delete (confirm هنا فقط)
+						onDelete={onDeletePhoto} // delete
 						onView={onSeePhoto} // open modal
 					/>
 				</div>
 
 				<div>
 					<div className="font-bold text-slate-900">{name || "Your name"}</div>
-					<div className="text-sm text-slate-500">{location || "Location"}</div>
+					<div className="text-sm text-slate-500">
+						<i class="fa-regular fa-building text-purple-600"></i>
+					</div>
 
 					{uploadAvatar.avatarError ? (
 						<div className="text-xs text-red-600 mt-1">
